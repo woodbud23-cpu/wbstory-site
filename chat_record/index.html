@@ -1,0 +1,25 @@
+﻿<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <title>Chat Record</title>
+</head>
+<body>
+  <h1>Chat Record</h1>
+  <input id="answer" placeholder="輸入答案" />
+  <button id="go">送出</button>
+  <p id="result"></p>
+  <script>
+    document.getElementById('go').addEventListener('click', async () => {
+      const answer = document.getElementById('answer').value.trim();
+      const r = await fetch('/.netlify/functions/checkChatRecord', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ answer })
+      });
+      const data = await r.json();
+      document.getElementById('result').textContent = data.message;
+    });
+  </script>
+</body>
+</html>
