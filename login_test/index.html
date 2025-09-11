@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>登入測試｜wbstory</title>
+  <link rel="stylesheet" href="/login_test/styles.css" />
+</head>
+<body>
+  <main id="app">
+    <!-- Screen: Login -->
+    <section id="screen-login" class="screen active" aria-labelledby="loginTitle">
+      <div class="panel">
+        <h1 id="loginTitle" class="sr-only">登入</h1>
+
+        <div class="field">
+          <label for="account">帳號：</label>
+          <input id="account" type="text" value="William0907" autocomplete="username" />
+        </div>
+
+        <div class="field">
+          <label for="password">密碼：</label>
+          <input id="password" type="password" autocomplete="current-password" />
+          <a class="link-forgot" href="#/forgot">忘記密碼？</a>
+        </div>
+
+        <p id="loginError" class="error" aria-live="polite" hidden>密碼錯誤，請確認後再試</p>
+
+        <div class="actions">
+          <button id="loginBtn" class="btn" type="button">登入</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Screen: Security Questions -->
+    <section id="screen-sq" class="screen" aria-live="polite">
+      <div class="panel">
+        <div class="sq-meta">
+          <strong id="sqTitle">安全提問 1：</strong>
+        </div>
+
+        <div class="sq-question" id="sqQuestion">大學社團名稱？</div>
+
+        <div class="field">
+          <label for="sqAnswer">回答：</label>
+          <input id="sqAnswer" type="text" placeholder="" />
+        </div>
+
+        <p id="sqError" class="error" aria-live="polite" hidden>答案不正確，請再試一次</p>
+
+        <div class="actions">
+          <button id="sqSubmit" class="btn" type="button">提交</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="/login_test/app.js" defer></script>
+</body>
+</html>
