@@ -1,0 +1,147 @@
+/* 哈卡克心理測驗 - styles.css */
+:root{
+  --bg: #f7d86a;           /* 黃色背景，參考範例圖 */
+  --card: #bfe3a8;         /* 淺綠卡片 */
+  --card-2: #acd893;       /* 次淺綠（按鈕/標題底） */
+  --text: #1f2d20;         /* 深色文字 */
+  --text-weak: #2d473b;    /* 次要文字 */
+  --accent: #8cc07c;       /* hover/按下強調色 */
+  --focus: #2f7b59;        /* 焦點外框 */
+  --radius-xl: 28px;
+  --radius-lg: 18px;
+  --radius-md: 12px;
+  --shadow: 0 10px 24px rgba(0,0,0,.12);
+}
+
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body{
+  margin:0;
+  font-family: "Noto Sans TC","PingFang TC","Microsoft JhengHei","Heiti TC",system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+}
+
+#app{
+  min-height: 100%;
+  display: grid;
+  place-items: center;
+  padding: clamp(16px, 3vw, 40px);
+}
+
+.screen{ width: min(980px, 100%); }
+.hidden{ display:none; }
+
+/* Intro */
+
+.intro-wrap{
+  background: var(--card);
+  border-radius: var(--radius-xl);
+  padding: clamp(28px,4vw,48px) clamp(28px,5vw,72px);
+  box-shadow: var(--shadow);
+  text-align: center;
+}
+
+.title{
+  margin: 0 0 clamp(24px, 4vw, 40px);
+  font-size: clamp(28px, 5vw, 56px);
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+.btn{
+  appearance: none;
+  border: none;
+  background: var(--card-2);
+  color: var(--text);
+  padding: 14px 22px;
+  border-radius: 999px;
+  font-size: clamp(16px, 2.8vw, 20px);
+  cursor: pointer;
+  transition: transform .06s ease, filter .15s ease, background-color .15s ease, box-shadow .15s ease;
+  box-shadow: 0 6px 14px rgba(0,0,0,.12);
+}
+.btn:hover{
+  filter: brightness(0.96);
+}
+.btn:active{
+  transform: translateY(1px);
+  filter: brightness(0.92);
+}
+.btn:focus-visible{
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+.btn-primary{
+  padding: 16px 28px;
+}
+
+/* Quiz card */
+
+.card{
+  background: var(--card);
+  border-radius: var(--radius-xl);
+  padding: clamp(18px, 3.5vw, 40px);
+  box-shadow: var(--shadow);
+}
+
+.meta{
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  font-size: clamp(12px, 2.2vw, 14px);
+  color: var(--text-weak);
+  margin-bottom: 8px;
+}
+.brand{
+  background: var(--card-2);
+  padding: 6px 10px;
+  border-radius: var(--radius-md);
+}
+.question{
+  margin: 8px 0 18px;
+  font-size: clamp(18px, 3.2vw, 28px);
+  font-weight: 700;
+}
+
+.options{
+  display: grid;
+  gap: 14px;
+}
+.option-btn{
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: var(--card-2);
+  padding: clamp(12px, 2.8vw, 16px) clamp(14px, 3vw, 18px);
+  border-radius: 999px;
+  border: 1px solid rgba(0,0,0,.06);
+  cursor: pointer;
+  font-size: clamp(16px, 2.8vw, 18px);
+  transition: transform .06s ease, background-color .15s ease, filter .15s ease, box-shadow .15s ease;
+  box-shadow: 0 6px 14px rgba(0,0,0,.08);
+}
+.option-btn:hover{ filter: brightness(0.96); }
+.option-btn:active{ transform: translateY(1px); filter: brightness(0.92); }
+.option-btn:focus-visible{ outline: 3px solid var(--focus); outline-offset: 2px; }
+
+/* Result */
+.result-card h2{ 
+  margin-top: 0;
+  font-size: clamp(22px, 4vw, 36px);
+}
+.muted{ color: var(--text-weak); margin: 6px 0 16px; }
+.actions{ display: flex; gap: 12px; flex-wrap: wrap; }
+.btn-outline{
+  background: transparent;
+  border: 2px solid var(--text);
+}
+.btn-outline:hover{ background: rgba(0,0,0,.05); }
+
+/* Small screens tweaks */
+@media (max-width: 520px){
+  .intro-wrap{ padding: 24px; }
+  .card{ padding: 18px; }
+}

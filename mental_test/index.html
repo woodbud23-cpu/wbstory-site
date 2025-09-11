@@ -1,25 +1,46 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="zh-Hant">
 <head>
   <meta charset="utf-8" />
-  <title>Mental Test</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>哈卡克心理測驗</title>
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <h1>Mental Test</h1>
-  <input id="answer" placeholder="輸入答案" />
-  <button id="go">送出</button>
-  <p id="result"></p>
-  <script>
-    document.getElementById('go').addEventListener('click', async () => {
-      const answer = document.getElementById('answer').value.trim();
-      const r = await fetch('/.netlify/functions/checkMentalTest', {
-        method: 'POST',
-        headers: {'Content-Type':'application/json'},
-        body: JSON.stringify({ answer })
-      });
-      const data = await r.json();
-      document.getElementById('result').textContent = data.message;
-    });
-  </script>
+  <main id="app">
+    <!-- Intro / 1.png-like -->
+    <section class="screen screen--intro" aria-labelledby="title">
+      <div class="intro-wrap">
+        <h1 id="title" class="title">哈卡克心理測驗</h1>
+        <button id="startBtn" class="btn btn-primary" aria-label="開始測驗">開始測驗</button>
+      </div>
+    </section>
+
+    <!-- Quiz / 2.png-like -->
+    <section class="screen screen--quiz hidden" aria-live="polite">
+      <div class="card">
+        <div class="meta">
+          <span class="brand">哈卡克心理測驗</span>
+          <span class="progress" id="progress">第 1 / 10 題</span>
+        </div>
+        <h2 id="questionText" class="question">題目載入中…</h2>
+        <div id="options" class="options" role="list"></div>
+      </div>
+    </section>
+
+    <!-- Result -->
+    <section class="screen screen--result hidden" aria-labelledby="resultTitle">
+      <div class="card result-card">
+        <h2 id="resultTitle">恭喜作答完成</h2>
+        <p class="muted">感謝參與！你可以關閉頁面，或重新開始。</p>
+        <div class="actions">
+          <button class="btn" id="restartBtn">再玩一次</button>
+          <a class="btn btn-outline" href="/">回到首頁</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="app.js" defer></script>
 </body>
 </html>
