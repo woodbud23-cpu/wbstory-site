@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>哈卡克心理測驗</title>
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="/mental_test/styles.css" />
 </head>
 <body>
   <main id="app">
@@ -30,17 +30,22 @@
 
     <!-- Result -->
     <section class="screen screen--result hidden" aria-labelledby="resultTitle">
-      <div class="card result-card">
-        <h2 id="resultTitle">恭喜作答完成</h2>
-        <p class="muted">感謝參與！你可以關閉頁面，或重新開始。</p>
-        <div class="actions">
-          <button class="btn" id="restartBtn">再玩一次</button>
-          <a class="btn btn-outline" href="/">回到首頁</a>
-        </div>
+      <div class="result-card only-visual">
+        <img
+          class="result-image"
+          src="/mental_test/images/result.png"
+          alt="側驗結果：你是解謎者"
+        />
+        <a class="btn btn-primary result-cta" 
+          href="/crime" 
+          target="_blank" 
+          rel="noopener noreferrer">
+          如果想知道更多，請點擊此處
+        </a>
       </div>
     </section>
   </main>
 
-  <script src="app.js" defer></script>
+  <script src="/mental_test/app.js" defer></script>
 </body>
 </html>

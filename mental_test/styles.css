@@ -145,3 +145,24 @@ body{
   .intro-wrap{ padding: 24px; }
   .card{ padding: 18px; }
 }
+.result-card.only-visual{
+  background: transparent;     /* 移除綠色卡片 */
+  box-shadow: none;            /* 無陰影 */
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+}
+
+.result-image{
+  width: min(760px, 94vw);     /* RWD：小螢幕自動縮 */
+  height: auto;
+  border-radius: 16px;         /* 邊角可自行調整，想要完全無圓角就設 0 */
+}
+
+.result-cta{
+  padding: 14px 22px;
+  text-decoration: none;
+  display: inline-block;
+}
