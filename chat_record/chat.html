@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">  
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>聊天</title>
+  <link rel="stylesheet" href="./styles.css" />
+  <script defer src="./data.js"></script>
+  <script>
+    function qs(k){return new URL(location.href).searchParams.get(k);}
+    function fmtDate(d){return d.toISOString().slice(0,10).replaceAll('-','/');}
+    document.addEventListener('DOMContentLoaded', () => {
+      const id = qs('id');
+      const c = CONTACTS.find(x => x.id===id);
+      if(!c){ location.href = './index.html'; return; }
+
+      // AppBar
+      document.querySelector('.title').textContent = c.name;
+      const av = document.querySelector('.app-avatar');
+      if (c.avatar) { av.style.backgroundImage = `url(${c.avatar})`; }
+      else { av.classList.add('placeholder'); av.style.setProperty('--ph-color', c.color); av.innerHTML = `<span>${c.initial}</span>`; }
+
+      // Messages
+      const wrap = document.querySelector('.messages');
+      let currentDate = '';
+      (MESSAGES[id]||[]).forEach(m => {
+        const dateStr = m.ts.split(' ')[0];
+        if (dateStr !== currentDate) {
+          currentDate = dateStr;
+          const day = document.createElement('div');
+          day.className = 'day';
+          day.textContent = dateStr;
+          wrap.appendChild(day);
+        }
+        const bubble = document.createElement('div');
+        bubble.className = `bubble ${m.from==='me' ? 'me' : 'them'}`;
+        bubble.innerHTML = `<p>${m.text}</p><time>${m.ts.split(' ')[1]}</time>`;
+        wrap.appendChild(bubble);
+      });
+    });
+  </script>
+</head>
+<body>
+  <header class="appbar">
+    <div class="appbar-left">
+      <a class="back" href="./index.html" aria-label="返回清單">←</a>
+      <div class="app-avatar"></div>
+      <h1 class="title">...</h1>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="messages" aria-live="polite"></section>
+  </main>
+</body>
+</html>

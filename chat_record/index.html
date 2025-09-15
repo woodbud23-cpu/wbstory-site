@@ -1,25 +1,55 @@
 ﻿<!doctype html>
 <html lang="zh-Hant">
 <head>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
   <meta charset="utf-8" />
-  <title>Chat Record</title>
-</head>
-<body>
-  <h1>Chat Record</h1>
-  <input id="answer" placeholder="輸入答案" />
-  <button id="go">送出</button>
-  <p id="result"></p>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>聊天紀錄</title>
+  <link rel="stylesheet" href="./styles.css" />
+  <script defer src="./data.js"></script>
   <script>
-    document.getElementById('go').addEventListener('click', async () => {
-      const answer = document.getElementById('answer').value.trim();
-      const r = await fetch('/.netlify/functions/checkChatRecord', {
-        method: 'POST',
-        headers: {'Content-Type':'application/json'},
-        body: JSON.stringify({ answer })
+    function lastLineText(arr){
+      if(!arr || !arr.length) return "";
+      // 展開多行
+      const flat = [];
+      arr.forEach(m=>{
+        const parts = String(m.text).split(/\r?\n/).filter(s=>s.trim().length);
+        parts.forEach(line=> flat.push({ ...m, text: line }));
       });
-      const data = await r.json();
-      document.getElementById('result').textContent = data.message;
+      const last = flat[flat.length-1];
+      if(!last) return "";
+      const s = last.text.replace(/\s+/g,' ').trim();
+      return s.length > 28 ? s.slice(0,28)+"…" : s;
+    }
+    document.addEventListener('DOMContentLoaded', () => {
+      const listEl = document.querySelector('#contact-list');
+      CONTACTS.forEach(c => {
+        const latest = lastLineText(MESSAGES[c.id]);
+        const a = document.createElement('a');
+        a.className = 'contact';
+        a.href = `./chat.html?id=${encodeURIComponent(c.id)}`;
+        a.innerHTML = `
+          <div class="avatar ${c.avatar ? '' : 'placeholder'}" 
+              style="${c.avatar ? `background-image:url(${c.avatar});` : `--ph-color:${c.color};`}">
+            ${c.avatar ? '' : `<span>${c.initial}</span>`}
+          </div>
+          <div class="contact-meta">
+            <div class="name">${c.name}</div>
+            ${ latest ? `<div class="subtitle">${latest}</div>` : ``}
+          </div>
+        `;
+        listEl.appendChild(a);
+      });
     });
   </script>
+</head>
+<body>
+  <header class="appbar">
+    <h1>聊天紀錄</h1>
+  </header>
+
+  <main class="container">
+    <nav id="contact-list" class="contact-list" aria-label="聯絡人清單"></nav>
+  </main>
 </body>
 </html>

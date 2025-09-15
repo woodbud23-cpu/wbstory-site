@@ -1,0 +1,69 @@
+:root{
+  --bg:#faf8f2;
+  --text:#1f2a37;
+  --muted:#6b7280;
+  --brand1:#1f5df5;
+  --brand2:#c43dd9;
+  --bubble-them:#8b5cf6;   /* 柔和紫 */
+  --bubble-me:#0ea5a3;     /* 海綠 */
+  --bubble-text:#fff;
+  --divider:#e5e7eb;
+  --card:#ffffff;
+}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  background:var(--bg); color:var(--text);
+}
+
+.appbar{
+  background: linear-gradient(90deg, var(--brand1), var(--brand2));
+  color:#fff; padding:16px 20px;
+  position:sticky; top:0; z-index:10;
+}
+.appbar h1{margin:0; font-size:22px; font-weight:700;}
+.appbar-left{display:flex; align-items:center; gap:12px}
+.appbar .back{color:#fff; text-decoration:none; font-size:20px}
+
+.container{max-width:700px; margin:0 auto; padding:8px 14px 24px;}
+
+.contact-list{display:flex; flex-direction:column; gap:0}
+.contact{
+  display:flex; align-items:center; gap:14px; padding:16px 6px;
+  border-bottom:1px solid var(--divider); text-decoration:none; color:inherit; background:transparent;
+}
+.contact:hover{background:#ffffffaa}
+.contact .name{font-weight:700; font-size:18px}
+.contact .subtitle{font-size:13px; color:var(--muted); margin-top:4px}
+
+.avatar,.app-avatar{
+  width:48px; height:48px; flex:0 0 48px; border-radius:50%;
+  background-size:cover; background-position:center; background-color:#e5e7eb;
+  display:grid; place-items:center; color:#fff; font-weight:700;
+}
+.app-avatar {
+  flex-shrink: 0;
+  flex-grow: 0;
+}
+.placeholder{background:var(--ph-color, #a3a3a3)}
+.placeholder span{filter: drop-shadow(0 1px 1px rgba(0,0,0,.2));}
+
+.messages{padding:14px}
+.day{
+  width:max-content; margin:18px auto; padding:6px 10px; border-radius:999px;
+  background:#ffffffcc; color:var(--muted); font-size:12px; backdrop-filter:saturate(1.2) blur(2px);
+}
+.bubble{
+  max-width:min(80%,400px); padding:12px 14px; border-radius:16px;
+  color:var(--bubble-text); line-height:1.5; position:relative; margin:10px 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.06);
+}
+.bubble.them{background:var(--bubble-them); border-bottom-left-radius:4px}
+.bubble.me{background:var(--bubble-me); margin-left:auto; border-bottom-right-radius:4px}
+.bubble time{display:block; font-size:11px; color:#f1f5f9; margin-top:6px}
+.bubble p {
+  font-size: 18px;  /* ← 改這裡，原本大多是 14px~16px */
+}
