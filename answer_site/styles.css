@@ -66,3 +66,17 @@ select.field {
 select.field option {
   text-align: center;            /* 下拉清單中的選項 */
 }
+select.field {
+  color: black;           /* 預設字體顏色 */
+}
+
+/* 確保選中後仍是黑色 */
+select.field option:checked {
+  color: black;
+  background-color: white; /* 避免藍底 */
+}
+select.field {
+  -webkit-text-fill-color: black; /* 強制選中文字是黑色 */
+  -webkit-appearance: none;       /* 移除系統樣式，交給 CSS 控制 */
+  appearance: none;
+}
