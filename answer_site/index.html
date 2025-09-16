@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>加密聊天室</title>
+<link rel="stylesheet" href="./styles.css" />
+<script defer src="./data.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const form  = document.querySelector('#gate');
+  const input = document.querySelector('#code');
+  const tip   = document.querySelector('#tip');
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const raw = (input.value || '').trim();
+    const id  = PASSWORD_TO_ID[raw];
+    if (id) {
+      location.href = `./section.html?id=${encodeURIComponent(id)}`;
+    } else {
+      tip.textContent = '密碼錯誤';
+      tip.classList.add('error-text');
+      input.classList.add('error-field');
+    }
+  });
+});
+</script>
+</head>
+<body class="centered">
+  <div class="card gate">
+    <h1>加密聊天室</h1>
+    <form id="gate" class="vstack gap-12">
+      <input id="code" class="field" autocomplete="off" />
+      <button class="btn primary" type="submit">提交</button>
+      <div id="tip" class="mt-8"></div>
+    </form>
+  </div>
+</body>
+</html>

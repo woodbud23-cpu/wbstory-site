@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>答案頁</title>
+<link rel="stylesheet" href="./styles.css" />
+<script defer src="./data.js"></script>
+<script>
+const qs   = (k)=>new URL(location.href).searchParams.get(k);
+const wait = (ms)=>new Promise(r=>setTimeout(r,ms));
+
+// 打字機：保留換行
+async function typeText(host, raw, speed=22){
+  host.innerHTML = '';
+  const lines = String(raw).split('\n');
+  for (let i=0;i<lines.length;i++){
+    const p = document.createElement('p');
+    host.appendChild(p);
+    const s = lines[i];
+    for (let j=0;j<s.length;j++){
+      p.textContent += s[j];
+      await wait(speed);
+    }
+    if(i < lines.length-1) await wait(180);
+  }
+}
+
+// 生成「短而內嵌」的欄位（輸入/選擇外觀一致）
+function makeInlineField(def){
+  const w = document.createElement('span');
+  w.className = 'inline-field';
+  if(def.kind === 'select'){
+    const sel = document.createElement('select');
+    sel.className = 'field inline selectlike';
+    if (def.size === 'wide') sel.classList.add('wide');
+    sel.innerHTML = `<option value=""></option>` + def.options.map(o=>`<option>${o}</option>`).join('');
+    w.appendChild(sel);
+    return {wrap:w, get:()=>sel.value.trim(), setError:(on)=>sel.classList.toggle('error-field', on)};
+  }else{
+    const inp = document.createElement('input');
+    inp.className = 'field inline';
+    if (def.size === 'wide') inp.classList.add('wide');
+    if(def.placeholder) inp.placeholder = def.placeholder;
+    w.appendChild(inp);
+    return {wrap:w, get:()=>inp.value.trim(), setError:(on)=>inp.classList.toggle('error-field', on)};
+  }
+}
+
+// 依 rows.parts（字串/欄位key）產生一整段句子
+function renderAnswerRows(container, step, fieldRefs){
+  step.rows.forEach(row=>{
+    const line = document.createElement('div');
+    line.className = 'line';
+    row.parts.forEach(part=>{
+      if(typeof part === 'string'){
+        const span = document.createElement('span');
+        span.textContent = part;
+        line.appendChild(span);
+      }else if(part && part.field){
+        const def = step.fields[part.field];
+        const {wrap,get,setError} = makeInlineField(def);
+        fieldRefs.push({key:part.field, get, setError, def});
+        line.appendChild(wrap);
+      }
+    });
+    container.appendChild(line);
+  });
+}
+
+document.addEventListener('DOMContentLoaded', async ()=>{
+  const id  = qs('id');
+  const sec = SECTION_MAP[id];
+  if(!sec){ location.href='./index.html'; return; }
+
+  const stage = document.querySelector('#stage');
+
+  for(const step of sec.steps){
+    if(step.type==='narrative'){
+      const box = document.createElement('section');
+      box.className = 'block narrative';
+      const content = document.createElement('div');
+      content.className = 'narrative-text';
+      box.appendChild(content);
+      stage.appendChild(box);
+      await typeText(content, step.text);
+      await wait(300);
+
+    }else if(step.type==='answer'){
+      // 題目：句子＋短空格
+      const box = document.createElement('section');
+      box.className = 'block answer';
+      const fieldRefs = [];
+      renderAnswerRows(box, step, fieldRefs);
+
+      // 提交鍵
+      const btn = document.createElement('button');
+      btn.className = 'btn primary';
+      btn.textContent = '提交';
+      box.appendChild(btn);
+      stage.appendChild(box);
+
+      // 錯誤敘述（用敘事框格式、按鈕下方出現）
+      let errorBlock = null;
+      const showError = async ()=>{
+        if(errorBlock) return;
+        errorBlock = document.createElement('section');
+        errorBlock.className = 'block narrative error';
+        const t = document.createElement('div');
+        t.className = 'narrative-text';
+        errorBlock.appendChild(t);
+        stage.appendChild(errorBlock);
+        await typeText(t, '你確定嗎？要不要再想想？', 18);
+      };
+      const clearError = ()=>{
+        if(errorBlock){ errorBlock.remove(); errorBlock=null; }
+      };
+
+      await new Promise(resolve=>{
+        btn.addEventListener('click', ()=>{
+          clearError();
+          // 先清欄位錯誤
+          fieldRefs.forEach(f=>f.setError(false));
+
+          // 值
+          const values = Object.fromEntries(fieldRefs.map(f=>[f.key, f.get()]));
+          let ok = true;
+
+          // 單欄位驗證
+          fieldRefs.forEach(f=>{
+            const acc = f.def.accept;
+            if(Array.isArray(acc) && acc.length){
+              if(!acc.includes(values[f.key])){ ok=false; f.setError(true); }
+            }else if(typeof acc==='string'){
+              if(values[f.key]!==acc){ ok=false; f.setError(true); }
+            }
+          });
+
+          // 雙欄位可對調驗證
+          (step.orderInsensitivePairs || []).forEach(rule => {
+            const a = values[rule.a], b = values[rule.b];
+            const A = fieldRefs.find(x => x.key === rule.a);
+            const B = fieldRefs.find(x => x.key === rule.b);
+
+            // 是否正確配對（順序無關）
+            const isPairOK = rule.accept.some(pair => {
+              const S = new Set(pair);
+              return S.size === new Set([a, b]).size && [a, b].every(x => S.has(x));
+            });
+            if (isPairOK) return; // 這題過
+
+            // 判斷單一值是否屬於「任何合法配對中的一員」
+            const inAny = (val) => rule.accept.some(pair => pair.includes(val));
+
+            const aIn = inAny(a);
+            const bIn = inAny(b);
+
+            ok = false;
+            // 只對一個是「可能正確值」：另一個標錯
+            if (aIn && !bIn) {
+              B && B.setError(true);
+              A && A.setError(false);
+            } else if (!aIn && bIn) {
+              A && A.setError(true);
+              B && B.setError(false);
+            } else {
+              // 兩個都不是合法集合的一員，或各自屬於不同配對 → 兩個都標錯
+              A && A.setError(true);
+              B && B.setError(true);
+            }
+          });
+
+          if(!ok){ showError(); return; }
+
+          // 通過：移除提交鈕與錯誤敘述，進到下一段
+          btn.remove();
+          clearError();
+          resolve();
+        });
+      });
+
+    }else if(step.type==='ending'){
+      const box = document.createElement('section');
+      box.className = 'block ending';
+      const t = document.createElement('div');
+      t.className = 'ending-text';
+      box.appendChild(t);
+      stage.appendChild(box);
+      await typeText(t, step.text, 18);
+
+      const back = document.createElement('a');
+      back.href = './index.html';
+      back.className = 'btn wide';
+      back.textContent = '返回';
+      stage.appendChild(back);
+    }
+  }
+});
+</script>
+</head>
+<body>
+  <main class="container narrow">
+    <div id="stage" class="vstack gap-16"></div>
+  </main>
+</body>
+</html>

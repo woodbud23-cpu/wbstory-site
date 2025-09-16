@@ -66,4 +66,6 @@ body{
 .bubble time{display:block; font-size:11px; color:#f1f5f9; margin-top:6px}
 .bubble p {
   font-size: 18px;  /* ← 改這裡，原本大多是 14px~16px */
+  margin-top: 8px;
+  margin-bottom: 8px;
 }

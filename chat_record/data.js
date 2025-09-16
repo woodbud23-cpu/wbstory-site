@@ -1,10 +1,10 @@
 // 頭像放到 ./assets/avatars/ 下；檔名：me.jpg（張/自己）、he.jpg（何/小胖）、zhuang.jpg（莊/小涵）、guo.jpg（郭/房東）、lin.jpg（林/林孟君）
 
 const CONTACTS = [
-  { id: "lin",    name: "林孟君",  avatar: "./assets/avatars/lin.jpg",    initial: "林", color: "#38d4e2" },
-  { id: "he",     name: "小胖",    avatar: "./assets/avatars/he.jpg",     initial: "何", color: "#b05cf6" },
-  { id: "guo",    name: "房東",    avatar: "./assets/avatars/guo.jpg",    initial: "郭", color: "#f7b655" },
-  { id: "zhuang", name: "小涵",    avatar: "./assets/avatars/zhuang.jpg", initial: "莊", color: "#b45309" }
+  { id: "lin",    name: "林孟君",  avatar: "./assets/avatars/lin.png",    initial: "林", color: "#38d4e2" },
+  { id: "he",     name: "小胖",    avatar: "./assets/avatars/he.png",     initial: "何", color: "#b05cf6" },
+  { id: "guo",    name: "房東",    avatar: "./assets/avatars/guo.png",    initial: "郭", color: "#f7b655" },
+  { id: "zhuang", name: "小純",    avatar: "./assets/avatars/zhuang.png", initial: "莊", color: "#b45309" }
 ];
 
 // 「張」= 自己（me）；其餘為對方（them）。時間格式依原檔。
@@ -43,10 +43,10 @@ const MESSAGES = {
     { from:"them", text:"電話也不接",                     ts:"2025/05/07 13:33" },
     { from:"them", text:"再不回我 小心我殺了你",           ts:"2025/05/07 13:33" },
     { from:"me",   text:"對不起",                         ts:"2025/05/07 13:42" },
-    { from:"me",   text:"我最近跟小涵分手了",             ts:"2025/05/07 13:42" },
+    { from:"me",   text:"我最近跟小純分手了",             ts:"2025/05/07 13:42" },
     { from:"me",   text:"現在心情真的很亂",               ts:"2025/05/07 13:42" },
     { from:"me",   text:"晚上一樣約光榮好嗎 我們吃飯再談", ts:"2025/05/07 13:43" },
-    { from:"them", text:"好 你最好別耍我",                 ts:"2025/05/07 14:16" },
+    { from:"them", text:"那你至少給我留下來付錢",         ts:"2025/05/07 14:16" },
     { from:"them", text:"你再敢耍我 我一定弄死你",         ts:"2025/05/07 14:16" }
   ],
 
@@ -62,12 +62,12 @@ const MESSAGES = {
     { from:"them", text:"我吃完就去上班",                   ts:"2025/05/03 11:13" },
     { from:"me",   text:"好，等等見",                       ts:"2025/05/03 11:15" },
     { from:"them", text:"剛剛看動態",                       ts:"2025/05/03 21:35" },
-    { from:"them", text:"鴨子也要出國工作了欸",               ts:"2025/05/03 21:35" },
+    { from:"them", text:"鴨子跟俊榮一樣 也要出國工作了欸",    ts:"2025/05/03 21:35" },
     { from:"them", text:"真厲害",                           ts:"2025/05/03 21:35" },
     { from:"them", text:"我要是能出國玩就偷笑了",             ts:"2025/05/03 21:36" },
     { from:"them", text:"怎麼了",                           ts:"2025/05/04 12:51" },
     { from:"them", text:"怎麼都不回訊息",                   ts:"2025/05/04 12:51" },
-    { from:"me",   text:"涵，有件事情要告訴你",             ts:"2025/05/04 20:03" },
+    { from:"me",   text:"純，有件事情要告訴你",             ts:"2025/05/04 20:03" },
     { from:"me",   text:"最近我投資那邊發生一點狀況",         ts:"2025/05/04 20:03" },
     { from:"me",   text:"最近經濟可能會有點拮据……",           ts:"2025/05/04 20:03" },
     { from:"me",   text:"月底要出去玩的行程可能要先取消了",   ts:"2025/05/04 20:03" },
