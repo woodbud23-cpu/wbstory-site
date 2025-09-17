@@ -1,7 +1,7 @@
 const QUESTIONS = [
   { q: "大學社團名稱？", answer: "心理測驗創作社", placeholder: "" },
   { q: "媽媽的生日？", answer: "19620525", placeholder: "20010101" },
-  { q: "國中基測考了幾分？", answer: "410", placeholder: "" },
+  { q: "國中升學考試考了幾分？", answer: "410", placeholder: "" },
 ];
 const $ = (s) => document.querySelector(s);
 const screenLogin = $("#screen-login");
