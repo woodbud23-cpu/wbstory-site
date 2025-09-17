@@ -8,8 +8,8 @@
   --shadow:0 8px 24px rgba(0,0,0,.08);
 
   /* 區塊標頭漸層（柔和黃橘） */
-  --brand1:#fbbf24;      /* 橙黃 */
-  --brand2:#f59e0b;      /* 橘色 */
+  --brand1:#e0a62f;      /* 橙黃 */
+  --brand2:#c97a18;      /* 橘色 */
   --chip:#fff7e0;        /* Hint! 小徽章底色 */
 }
 
@@ -140,4 +140,15 @@ body{
 @media (max-width: 480px){
   .page-head h1{ font-size:24px; }
   .item-sub, .item-body p{ font-size:15px; }
+}
+select, option {
+  color: black !important;
+  -webkit-text-fill-color: black !important; /* iOS Safari */
+}
+
+/* 移除 Safari 的系統樣式，交給 CSS 控制 */
+select {
+  -webkit-appearance: none;
+  appearance: none;
+  background-color: #fff;  /* 保持白底 */
 }
