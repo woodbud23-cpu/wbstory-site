@@ -1,0 +1,143 @@
+:root{
+  /* 基礎色彩（柔和黃橘系） */
+  --bg:#fefcf7;          /* 全頁背景：淡米黃 */
+  --card:#fffdf8;        /* 卡片底：微米色 */
+  --text:#222;           /* 主要文字 */
+  --muted:#6b7280;       /* 次要文字 */
+  --line:#f1d9a7;        /* 邊線 */
+  --shadow:0 8px 24px rgba(0,0,0,.08);
+
+  /* 區塊標頭漸層（柔和黃橘） */
+  --brand1:#fbbf24;      /* 橙黃 */
+  --brand2:#f59e0b;      /* 橘色 */
+  --chip:#fff7e0;        /* Hint! 小徽章底色 */
+}
+
+*{ box-sizing:border-box; }
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+}
+
+/* 版面框架 */
+.wrap{ max-width:min(920px,94vw); margin:32px auto; padding:0 8px; }
+
+/* 頁首：置中 */
+.page-head{ text-align:center; }
+.page-head h1{
+  margin:0 0 6px;
+  font-size:28px;
+  font-weight:800;
+}
+.page-head .muted{
+  margin:0 0 16px;
+  color:var(--muted);
+  font-size:15px;
+}
+
+/* 區塊列表 */
+.stack{ display:flex; flex-direction:column; gap:16px; }
+
+/* 區塊卡片 */
+.sec{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:16px;
+  box-shadow:var(--shadow);
+  overflow:hidden;
+}
+
+/* 區塊標頭（漸層） */
+.sec-head{
+  display:flex; justify-content:space-between; align-items:center;
+  padding:16px 18px;
+  background:linear-gradient(90deg,var(--brand1),var(--brand2));
+  color:#3b2c10;           /* 黃橘上更耐看的深褐字 */
+  color:#fff;              /* 若想深色字，註解這行；目前維持白字對比 */
+}
+.sec-titles{ display:flex; align-items:center; gap:16px; }
+
+/* Hint! 徽章 */
+.hint-badge{
+  background:#ffffff1a;
+  border:1px solid #ffffff4d;
+  color:#fff;
+  padding:6px 12px;
+  border-radius:999px;
+  font-weight:800;
+  letter-spacing:.5px;
+}
+.hint-badge.sm{
+  padding:4px 10px;
+  font-size:12px;
+  background:var(--chip);
+  color:#9a6a00;
+  border:0;
+}
+
+/* 區塊副標（括號文字） */
+.sec-sub{ font-size:16px; font-weight:700; }
+
+/* 區塊開關按鈕 */
+.sec-toggle{
+  appearance:none; border:0; border-radius:10px;
+  padding:8px 12px;
+  background:#ffffff22; color:#fff;
+  cursor:pointer;
+}
+.sec-toggle:hover{ background:#ffffff33; }
+
+/* 區塊內容 */
+.sec-body{
+  display:none;
+  background:#fff8ec;                 /* 與主題相近的極淺橘 */
+  border-top:1px solid var(--line);
+  padding:16px;
+}
+.sec.open .sec-body{ display:block; }
+
+/* 內層提示清單 */
+.item-list{ display:flex; flex-direction:column; gap:12px; }
+
+.item{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:12px;
+  overflow:hidden;
+}
+
+/* 子項標頭（可展開） */
+.item-head{
+  width:100%;
+  display:flex; align-items:center; justify-content:space-between;
+  gap:12px;
+  padding:12px 14px;
+  background:#fff7e6;                 /* 柔和的淺橘 */
+  border:0; cursor:pointer; text-align:left;
+}
+
+/* 提示副標（如「謎題的提示」）：加大到與內文一致 */
+.item-sub{
+  font-weight:700;
+  font-size:16px;                     /* ← 放大 */
+}
+
+/* 子項內容 */
+.item-body{ display:none; padding:14px 16px; }
+.item.open .item-body{ display:block; }
+.item-body p{
+  margin:0;
+  line-height:1.8;
+  font-size:16px;                     /* 與 .item-sub 一致 */
+}
+
+/* 展開箭頭 */
+.caret{ opacity:.6; }
+
+/* 小螢幕微調 */
+@media (max-width: 480px){
+  .page-head h1{ font-size:24px; }
+  .item-sub, .item-body p{ font-size:15px; }
+}

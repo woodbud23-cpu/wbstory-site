@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>提示 Hint</title>
+  <link rel="stylesheet" href="./styles.css" />
+  <script defer src="./data.js"></script>
+  <script defer>
+    const $ = (sel, el=document) => el.querySelector(sel);
+    const el = (tag, cls, html) => {
+      const n = document.createElement(tag);
+      if (cls) n.className = cls;
+      if (html != null) n.innerHTML = html;
+      return n;
+    };
+
+    // 依 (A) 分題並產生「提示/進一步提示/答案」標題
+    function buildItems(section) {
+      const items = section.items;
+      const answerIdx = items.reduce((acc, it, i) => (it.isAnswer ? acc.concat(i) : acc), []);
+      const hasSingleQuestion = answerIdx.length === 1;   // 只有一題
+
+      // 計算每個項目屬於第幾題
+      let q = 1, map = [];
+      for (let i=0;i<items.length;i++){
+        map[i] = q;
+        if (items[i].isAnswer) q++;
+      }
+
+      // 產標題文字
+      const rows = [];
+      for (let i=0;i<items.length;i++){
+        const item = items[i];
+        const myQ = map[i];
+        const prevSameQTips = items.slice(0, i).filter((it, idx)=> !it.isAnswer && map[idx]===myQ).length;
+
+        let subtitle;
+        if (hasSingleQuestion) {
+          if (item.isAnswer) subtitle = "謎題的答案";
+          else subtitle = prevSameQTips === 0 ? "謎題的提示" : "謎題的進一步提示";
+        } else {
+          if (item.isAnswer) subtitle = `第${myQ}題的答案`;
+          else subtitle = prevSameQTips === 0 ? `第${myQ}題的提示` : `第${myQ}題的進一步提示`;
+        }
+        rows.push({ subtitle, text: item.text });
+      }
+      return rows;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const root = $('#root');
+
+      DATA_SECTIONS.forEach((sec, idx) => {
+        // 區塊頭
+        const card = el('section','sec');
+        const head = el('div','sec-head');
+        head.innerHTML = `
+          <div class="sec-titles">
+            <div class="hint-badge">Hint!</div>
+            <div class="sec-sub">${sec.subtitle}</div>
+          </div>
+          <button class="sec-toggle" aria-expanded="false">顯示提示 ▾</button>
+        `;
+        card.appendChild(head);
+
+        // 區塊內容（提示清單）
+        const body = el('div','sec-body');
+        const list = el('div','item-list');
+
+        const rows = buildItems(sec);
+        rows.forEach((row, i) => {
+          const item = el('div','item');
+          const header = el('button','item-head');
+          header.innerHTML = `
+            <div class="hint-badge sm">Hint!</div>
+            <div class="item-sub">${row.subtitle}</div>
+            <span class="caret">▾</span>
+          `;
+          const content = el('div','item-body');
+          content.appendChild(el('p','', row.text));
+          item.appendChild(header);
+          item.appendChild(content);
+          list.appendChild(item);
+
+          header.addEventListener('click', () => {
+            const open = item.classList.toggle('open');
+            header.setAttribute('aria-expanded', String(open));
+          });
+        });
+
+        body.appendChild(list);
+        card.appendChild(body);
+        root.appendChild(card);
+
+        // 外層開合
+        head.querySelector('.sec-toggle').addEventListener('click', (e)=>{
+          const open = card.classList.toggle('open');
+          e.currentTarget.textContent = open ? '隱藏提示 ▴' : '顯示提示 ▾';
+          e.currentTarget.setAttribute('aria-expanded', String(open));
+        });
+      });
+    });
+  </script>
+</head>
+<body>
+  <main class="wrap">
+    <header class="page-head">
+      <h1>提示頁</h1>
+      <p class="muted">卡關了嗎？先看提示，小心別直接滑到答案喔！</p>
+    </header>
+    <div id="root" class="stack"></div>
+  </main>
+</body>
+</html>
