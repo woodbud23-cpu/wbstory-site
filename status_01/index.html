@@ -1,41 +1,57 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>遊戲狀態</title>
-  <style>
-    body {
-      margin: 0;
-      height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-family: "Noto Sans TC", sans-serif;
-      background: linear-gradient(135deg, #e0f7fa, #f1f8e9);
-    }
-    .card {
-      background: white;
-      padding: 40px 60px;
-      border-radius: 16px;
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
-      text-align: center;
-      animation: fadeIn 1s ease;
-    }
-    .card h1 {
-      font-size: 24px;
-      color: #2e7d32;
-      margin: 0;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-  </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>勘誤公告</title>
+  <link rel="stylesheet" href="./styles.css"/>
+  <script defer src="./data.js"></script>
+  <script defer>
+    // 小工具
+    const $ = (sel, el=document) => el.querySelector(sel);
+    const el = (tag, cls, html) => {
+      const n = document.createElement(tag);
+      if (cls) n.className = cls;
+      if (html != null) n.innerHTML = html;
+      return n;
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const root = $('#root');
+
+      ERRATA_SECTIONS.forEach((sec, i) => {
+        const card = el('section', 'sec');
+        // 標題（第一行）
+        const head = el('button', 'sec-head', `
+          <h2 class="sec-title">${sec.title}</h2>
+          <span class="caret">▾</span>
+        `);
+        head.setAttribute('aria-expanded', 'false');
+
+        // 內容（其餘行，允許 HTML 連結）
+        const body = el('div', 'sec-body');
+        body.innerHTML = sec.html;
+
+        head.addEventListener('click', () => {
+          const open = card.classList.toggle('open');
+          head.setAttribute('aria-expanded', String(open));
+        });
+
+        card.appendChild(head);
+        card.appendChild(body);
+        root.appendChild(card);
+      });
+    });
+  </script>
 </head>
 <body>
-  <div class="card">
-    <h1>目前遊戲沒有問題，請放心遊玩</h1>
-  </div>
+  <main class="wrap">
+    <header class="page-head">
+      <h1>勘誤網站</h1>
+      <p class="muted">這裡會公告目前已知問題與修正說明。</p>
+    </header>
+
+    <div id="root" class="stack"></div>
+  </main>
 </body>
 </html>

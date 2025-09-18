@@ -1,0 +1,73 @@
+:root{
+  /* 沿用「狀態網站」的白／淺綠調性 */
+  --bg-grad-a:#e0f7fa;  /* 淺青 */
+  --bg-grad-b:#f1f8e9;  /* 淺綠 */
+  --card:#ffffff;       /* 卡片白 */
+  --text:#1f2937;       /* 深灰文字 */
+  --muted:#6b7280;      /* 次要文字 */
+  --line:#e5e7eb;       /* 邊線 */
+  --shadow:0 8px 24px rgba(0,0,0,.10);
+  --accent:#2e7d32;     /* 主綠（標題／按鈕） */
+}
+
+*{ box-sizing:border-box; }
+html,body{ height:100%; }
+body{
+  margin:0;
+  min-height:100%;
+  background: linear-gradient(135deg, var(--bg-grad-a), var(--bg-grad-b));
+  color:var(--text);
+  font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+}
+
+.wrap{ max-width:min(920px,94vw); margin:32px auto; padding:0 12px; }
+.page-head{ text-align:center; animation: fadeIn .6s ease both; }
+.page-head h1{ margin:0 0 6px; font-size:28px; font-weight:800; color:var(--accent); }
+.page-head .muted{ margin:0 0 18px; color:var(--muted); }
+
+.stack{ display:flex; flex-direction:column; gap:14px; }
+
+.sec{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:16px;
+  box-shadow:var(--shadow);
+  overflow:hidden;
+  animation: fadeIn .6s ease both;
+}
+
+.sec-head{
+  width:100%;
+  display:flex; align-items:center; justify-content:space-between;
+  gap:12px;
+  padding:16px 18px;
+  background:#f8fffb;            /* 很淡的綠白 */
+  color:var(--accent);
+  border:0; text-align:left; cursor:pointer;
+}
+.sec-title{ margin:0; font-size:18px; font-weight:800; }
+.caret{ opacity:.55; }
+
+.sec-body{
+  display:none;
+  padding:16px 18px;
+  border-top:1px solid var(--line);
+  background:#ffffff;
+  line-height:1.8;
+}
+.sec.open .sec-body{ display:block; }
+
+.sec-body p{ margin:0 0 10px; }
+.sec-body a{ color:#1b5e20; text-decoration:underline; }
+.sec-body a:hover{ text-decoration:none; }
+
+@keyframes fadeIn {
+  from { opacity:0; transform: translateY(8px); }
+  to   { opacity:1; transform: translateY(0);   }
+}
+
+/* 小尺寸微調 */
+@media (max-width: 480px){
+  .page-head h1{ font-size:24px; }
+  .sec-title{ font-size:17px; }
+}
