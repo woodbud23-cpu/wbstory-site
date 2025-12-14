@@ -6,43 +6,60 @@
   <title>勘誤公告</title>
   <link rel="stylesheet" href="./styles.css"/>
   <script defer src="./data.js"></script>
-  <script defer>
-    // 小工具
-    const $ = (sel, el=document) => el.querySelector(sel);
-    const el = (tag, cls, html) => {
-      const n = document.createElement(tag);
-      if (cls) n.className = cls;
-      if (html != null) n.innerHTML = html;
-      return n;
-    };
+<script defer>
+  // 小工具
+  const $ = (sel, el=document) => el.querySelector(sel);
+  const el = (tag, cls, html) => {
+    const n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (html != null) n.innerHTML = html;
+    return n;
+  };
 
-    document.addEventListener('DOMContentLoaded', () => {
-      const root = $('#root');
+  document.addEventListener('DOMContentLoaded', () => {
+    const root = $('#root');
 
-      ERRATA_SECTIONS.forEach((sec, i) => {
-        const card = el('section', 'sec');
-        // 標題（第一行）
-        const head = el('button', 'sec-head', `
-          <h2 class="sec-title">${sec.title}</h2>
-          <span class="caret">▾</span>
-        `);
+    ERRATA_SECTIONS.forEach((sec, i) => {
+      const card = el('section', 'sec');
+      
+      // 1. 判斷是否有內容 (檢查 sec.html 是否存在且不為空)
+      const hasContent = sec.html && sec.html.trim() !== "";
+
+      // 2. 如果有內容才用 button，否則用 div (避免瀏覽器預設按鈕行為)
+      const headTag = hasContent ? 'button' : 'div';
+
+      // 3. 建立標題區塊
+      // 只有在有內容時，才加入 <span class="caret">
+      const head = el(headTag, 'sec-head', `
+        <h2 class="sec-title">${sec.title}</h2>
+        ${hasContent ? '<span class="caret">▾</span>' : ''}
+      `);
+
+      card.appendChild(head);
+
+      // 4. 根據有無內容決定後續行為
+      if (hasContent) {
+        // --- 有內容：加入內文與點擊事件 ---
         head.setAttribute('aria-expanded', 'false');
 
-        // 內容（其餘行，允許 HTML 連結）
         const body = el('div', 'sec-body');
         body.innerHTML = sec.html;
+        card.appendChild(body);
 
         head.addEventListener('click', () => {
           const open = card.classList.toggle('open');
           head.setAttribute('aria-expanded', String(open));
         });
+      } else {
+        // --- 無內容：調整樣式 ---
+        // 強制游標改為預設 (不要手指圖案)，讓使用者知道不能點
+        head.style.cursor = 'default'; 
+      }
 
-        card.appendChild(head);
-        card.appendChild(body);
-        root.appendChild(card);
-      });
+      root.appendChild(card);
     });
-  </script>
+  });
+</script>
 </head>
 <body>
   <main class="wrap">
