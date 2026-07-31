@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dice Throne - 即時對戰</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+  <div id="game-container">
+    <!-- 頂部資訊欄 -->
+    <header id="game-header">
+      <div class="player-badge me">玩家: <span id="player-name">載入中...</span></div>
+      <div class="game-status" id="game-status">連線對戰中</div>
+      <div class="player-badge opponent">對手: <span id="opponent-header-info">載入中...</span> (手牌: <span id="opponent-hand-count">4</span> 張)</div>
+    </header>
+
+    <!-- 主戰場 -->
+    <main id="battlefield">
+      <!-- 對手區 -->
+      <section class="player-area opponent-area">
+        <h2>對手的英雄面板 (<span id="opponent-hero-title">--</span>)</h2>
+        
+        <div class="stats-panel opponent-stats">
+          <div class="stat-group">
+            <label>生命值 (HP):</label>
+            <input type="number" id="opponent-hp" value="50" disabled readonly>
+          </div>
+          <div class="stat-group">
+            <label>戰鬥點數 (CP):</label>
+            <input type="number" id="opponent-cp" value="2" disabled readonly>
+          </div>
+          <div class="stat-group large-field">
+            <label>狀態 (Status):</label>
+            <textarea id="opponent-status" rows="2" disabled readonly placeholder="無狀態"></textarea>
+          </div>
+        </div>
+
+        <div class="section-title">對手技能面板：<span id="opponent-name">--</span></div>
+        <div id="opponent-abilities-board" class="abilities-container"></div>
+        <div class="dice-section">
+          <h3>對手擲骰區 (公開)</h3>
+          <div class="dice-container" id="opponent-dice"></div>
+        </div>
+      </section>
+
+      <div class="played-cards-section">
+        <h3>已打出/生效中的卡牌 (公開)</h3>
+        <div id="played-cards-container" class="played-cards-container"></div>
+      </div>
+
+      <!-- 我方區 -->
+      <section class="player-area my-area">
+        <h2>我的英雄面板 (<span id="my-hero-title">--</span>)</h2>
+
+        <div class="stats-panel my-stats">
+          <div class="stat-group">
+            <label for="my-hp">生命值 (HP):</label>
+            <input type="number" id="my-hp" value="50">
+          </div>
+          <div class="stat-group">
+            <label for="my-cp">戰鬥點數 (CP):</label>
+            <input type="number" id="my-cp" value="2">
+          </div>
+          <div class="stat-group large-field">
+            <label for="my-status">狀態 (Status):</label>
+            <textarea id="my-status" rows="2" placeholder="請輸入當前狀態/標記..."></textarea>
+          </div>
+        </div>
+        
+        <!-- 技能區 -->
+        <div class="abilities-container" id="abilities-board"></div>
+
+        <!-- 我方擲骰區 -->
+        <div class="dice-section">
+          <h3>我的擲骰區</h3>
+          <div class="dice-container" id="my-dice"></div>
+          <button id="reroll-btn" class="action-btn">重擲未選取骰子</button>
+        </div>
+      </section>
+    </main>
+
+    <!-- 底部玩家手牌與操作區 -->
+    <footer id="player-hand-section">
+      <div class="hand-controls">
+        <h3>我的手牌 (<span id="my-hand-count">0</span>)</h3>
+        <div class="button-group">
+          <button id="draw-card-btn">抽牌 (剩餘 <span id="deck-count">0</span> 張)</button>
+          <button id="shuffle-deck-btn">洗牌</button>
+          <button id="play-card-btn" class="action-btn" disabled>出牌</button>
+          <button id="discard-card-btn" class="action-btn danger" disabled>棄牌</button>
+        </div>
+      </div>
+      <div id="hand-cards-container" class="hand-cards"></div>
+    </footer>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

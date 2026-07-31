@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <title>Dice Throne - 遊戲大廳</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .lobby-box {
+      max-width: 500px;
+      margin: 80px auto;
+      background: #2b2d42;
+      padding: 30px;
+      border-radius: 8px;
+      text-align: center;
+    }
+    .status-badge {
+      display: inline-block;
+      padding: 6px 12px;
+      background: #3a86ff;
+      border-radius: 20px;
+      margin-bottom: 20px;
+      font-weight: bold;
+    }
+  </style>
+  <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+  <div class="lobby-box">
+    <h1>遊戲大廳</h1>
+    <p>歡迎，<b id="display-name" style="color: #f4a261;">--</b>！</p>
+    
+    <div class="status-badge">當前連線/等待人數：<span id="player-count">0</span> / 2</div>
+    
+    <div>
+      <button id="enter-btn" class="action-btn" style="padding: 12px 24px; font-size: 1.1rem;">進入配對等待室</button>
+    </div>
+  </div>
+
+  <script>
+    const username = sessionStorage.getItem('dt_username');
+    if (!username) {
+      window.location.href = 'login.html';
+    } else {
+      document.getElementById('display-name').innerText = username;
+    }
+
+    const socket = io();
+    let isRoomFull = false;
+
+    // 即時監聽大廳與房間人數狀態
+    socket.on('room_status_update', (status) => {
+      document.getElementById('player-count').innerText = status.playerCount;
+      isRoomFull = status.isFull;
+    });
+
+    document.getElementById('enter-btn').addEventListener('click', () => {
+      if (isRoomFull) {
+        alert('目前等待室/遊戲人數已滿 (上限2人)，請稍後再試！');
+      } else {
+        window.location.href = 'waiting.html';
+      }
+    });
+  </script>
+</body>
+</html>

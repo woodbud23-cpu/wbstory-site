@@ -1,0 +1,353 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+body {
+  background-color: #1e1e24;
+  color: #f0f0f0;
+  padding: 15px;
+}
+
+#game-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* Header */
+#game-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #2b2d42;
+  padding: 12px 20px;
+  border-radius: 8px;
+  border: 1px solid #4a4e69;
+}
+
+.player-badge {
+  font-weight: bold;
+  padding: 6px 12px;
+  border-radius: 4px;
+}
+.player-badge.me { background: #3a86ff; }
+.player-badge.opponent { background: #e63946; }
+
+/* Battlefield */
+#battlefield {
+  background: #2b2d42;
+  border-radius: 8px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.divider {
+  border: 0;
+  height: 1px;
+  background: #4a4e69;
+}
+
+/* 玩家/對手 數值與狀態輸入面板 */
+.stats-panel {
+  display: flex;
+  gap: 15px;
+  background: #181925;
+  padding: 12px;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  align-items: flex-start;
+}
+
+.stat-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stat-group label {
+  font-size: 0.85rem;
+  color: #f4a261;
+  font-weight: bold;
+}
+
+.stat-group input[type="number"] {
+  width: 80px;
+  padding: 6px 8px;
+  border-radius: 4px;
+  border: 1px solid #4a4e69;
+  background: #2b2d42;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+.stat-group.large-field {
+  flex-grow: 1;
+}
+
+.stat-group textarea {
+  width: 100%;
+  padding: 6px 8px;
+  border-radius: 4px;
+  border: 1px solid #4a4e69;
+  background: #2b2d42;
+  color: #fff;
+  font-size: 0.9rem;
+  resize: vertical;
+  min-height: 48px;
+}
+
+/* 對手唯讀欄位外觀調整 */
+.stat-group input:disabled,
+.stat-group textarea:disabled {
+  background: #222436;
+  color: #888;
+  border-color: #333;
+  cursor: not-allowed;
+}
+
+/* Dice Section */
+.dice-section {
+  background: #181925;
+  padding: 12px;
+  border-radius: 6px;
+  margin-top: 10px;
+}
+
+.dice-container {
+  display: flex;
+  gap: 10px;
+  margin: 10px 0;
+}
+
+/* 骰子基礎與底色設定 (1-3, 4-5, 6) */
+.die {
+  width: 60px;
+  height: 60px;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  cursor: pointer;
+  user-select: none;
+  border: 3px solid transparent;
+  transition: background-color 0.2s, transform 0.1s;
+}
+
+/* 1, 2, 3 點數：淡藍底 */
+.die.die-val-group-1-3 {
+  background-color: #e3f2fd;
+  color: #0d47a1;
+}
+
+/* 4, 5 點數：淡橙底 */
+.die.die-val-group-4-5 {
+  background-color: #fff3e0;
+  color: #e65100;
+}
+
+/* 6 點數：淡綠底 */
+.die.die-val-group-6 {
+  background-color: #e8f5e9;
+  color: #1b5e20;
+}
+
+.die.selected {
+  border-color: #ff0055;
+  transform: translateY(-4px);
+  box-shadow: 0 4px 8px rgba(255, 0, 85, 0.4);
+}
+
+.die .die-value { font-size: 0.8rem; opacity: 0.75; }
+.die .die-symbol { font-size: 1rem; font-weight: bold; }
+
+.die.disabled {
+  cursor: not-allowed;
+  opacity: 0.85;
+}
+
+/* Hero Abilities Board */
+.abilities-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 12px;
+}
+
+.ability-card {
+  background: #3d405b;
+  border: 2px solid #81b29a;
+  border-radius: 6px;
+  padding: 10px;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.ability-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+  border-bottom: 1px solid #575a7b;
+  padding-bottom: 4px;
+}
+
+.ability-title {
+  font-weight: bold;
+  color: #f4a261;
+}
+
+.ability-dice-req {
+  display: flex;
+  gap: 4px;
+}
+
+.req-tag {
+  font-size: 0.75rem;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-weight: bold;
+}
+
+/* 與擲骰區顏色一致的對應 Class */
+.req-tag.tag-group-1-3 {
+  background-color: #e3f2fd;
+  color: #0d47a1;
+}
+
+.req-tag.tag-group-4-5 {
+  background-color: #fff3e0;
+  color: #e65100;
+}
+
+.req-tag.tag-group-6 {
+  background-color: #e8f5e9;
+  color: #1b5e20;
+}
+
+/* 連鎖與特殊費用的新顏色：淡紫色 */
+.req-tag.tag-group-special {
+  background-color: #f3e5f5;
+  color: #4a148c;
+}
+
+.ability-details {
+  display: none;
+  font-size: 0.85rem;
+  color: #dddddd;
+  margin-top: 6px;
+  line-height: 1.3;
+  background: #2b2d42;
+  padding: 8px;
+  border-radius: 4px;
+}
+
+.ability-card:hover .ability-details {
+  display: block;
+}
+
+/* Hand Section */
+#player-hand-section {
+  background: #2b2d42;
+  border-radius: 8px;
+  padding: 15px;
+}
+
+.hand-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.button-group {
+  display: flex;
+  gap: 10px;
+}
+
+.action-btn {
+  background: #2a9d8f;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.action-btn.danger { background: #e63946; }
+.action-btn:disabled {
+  background: #555;
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.hand-cards {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+}
+
+.card {
+  min-width: 160px;
+  max-width: 180px;
+  background: #333;
+  border: 3px solid #666;
+  border-radius: 6px;
+  padding: 8px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  user-select: none;
+  transition: transform 0.2s;
+}
+
+.card:hover { transform: translateY(-5px); }
+.card.selected {
+  border-color: #f4a261;
+  box-shadow: 0 0 10px #f4a261;
+}
+
+/* Card Border Colors */
+.card.border-橘色 { border-color: #f39c12; }
+.card.border-紅色 { border-color: #e74c3c; }
+.card.border-藍色 { border-color: #3498db; }
+.card.border-黑色 { border-color: #ffffff; } /* 一般升級牌邊框改為白色 */
+.card.border-綠色 { border-color: #2ecc71; } /* 防禦升級邊框 (綠) */
+.card.border-紫色 { border-color: #8e44ad; } /* 被動升級邊框 (紫) */
+
+.card-title { font-size: 0.95rem; font-weight: bold; margin-bottom: 4px; }
+.card-type { font-size: 0.75rem; color: #aaa; margin-bottom: 6px; }
+.card-cost { font-size: 0.8rem; color: #f1c40f; font-weight: bold; }
+.card-desc { font-size: 0.8rem; color: #ddd; margin-top: 6px; }
+.card-dice-types { font-size: 0.75rem; color: #2ecc71; margin-top: 4px; font-weight: bold; }
+
+.played-cards-section {
+  background: #181925;
+  padding: 12px;
+  border-radius: 6px;
+  margin: 10px 0;
+}
+
+.played-cards-container {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  min-height: 120px;
+  padding: 5px;
+}
+
+.played-card {
+  opacity: 0.9;
+  cursor: context-menu; /* 提示右鍵 */
+}

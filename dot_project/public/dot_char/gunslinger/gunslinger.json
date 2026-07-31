@@ -1,0 +1,752 @@
+{
+  "character": "Gunslinger",
+  "dice_mapping": {
+    "1": "子彈",
+    "2": "子彈",
+    "3": "子彈",
+    "4": "衝刺",
+    "5": "衝刺",
+    "6": "靶心"
+  },
+  "hero_board_abilities": [
+    {
+      "id": "ABILITY_GUNS_REVOLVER",
+      "name": "左輪手槍",
+      "ability_type": "basic",
+      "skills": [
+        {
+          "name": "左輪手槍 (3個子彈)",
+          "dice_pattern": [
+            "子彈",
+            "子彈",
+            "子彈"
+          ],
+          "damage": {
+            "type": "normal",
+            "value": 3
+          },
+          "description": "[子彈][子彈][子彈] 造成 3 傷害。"
+        },
+        {
+          "name": "左輪手槍 (4個子彈)",
+          "dice_pattern": [
+            "子彈",
+            "子彈",
+            "子彈",
+            "子彈"
+          ],
+          "damage": {
+            "type": "normal",
+            "value": 4
+          },
+          "description": "[子彈][子彈][子彈][子彈] 造成 4 傷害。"
+        },
+        {
+          "name": "左輪手槍 (5個子彈)",
+          "dice_pattern": [
+            "子彈",
+            "子彈",
+            "子彈",
+            "子彈",
+            "子彈"
+          ],
+          "damage": {
+            "type": "normal",
+            "value": 5
+          },
+          "description": "[子彈][子彈][子彈][子彈][子彈] 造成 5 傷害。"
+        }
+      ]
+    },
+    {
+      "id": "ABILITY_GUNS_BOUNTY_HUNTER",
+      "name": "賞金獵人",
+      "ability_type": "basic",
+      "skills": [
+        {
+          "name": "賞金獵人",
+          "dice_pattern": [
+            "子彈",
+            "子彈",
+            "靶心",
+            "靶心"
+          ],
+          "damage": {
+            "type": "undefendable",
+            "value": 1
+          },
+          "status_effects": [
+            "懸賞"
+          ],
+          "description": "施加懸賞。然後造成 1 無法防禦的傷害。"
+        }
+      ]
+    },
+    {
+      "id": "ABILITY_GUNS_QUICK_DRAW",
+      "name": "快速拔槍 (被動)",
+      "ability_type": "passive",
+      "skills": [
+        {
+          "name": "快速拔槍",
+          "dice_pattern": [],
+          "status_effects": [
+            "裝填"
+          ],
+          "description": "在你的維持階段時，獲得裝填。"
+        }
+      ]
+    },
+    {
+      "id": "ABILITY_GUNS_TAKE_COVER",
+      "name": "尋找掩護",
+      "ability_type": "basic",
+      "skills": [
+        {
+          "name": "尋找掩護",
+          "dice_pattern": [
+            "子彈",
+            "子彈",
+            "衝刺",
+            "衝刺",
+            "衝刺"
+          ],
+          "damage": {
+            "type": "normal",
+            "value": 5
+          },
+          "status_effects": [
+            "閃避"
+          ],
+          "description": "獲得閃避。造成 5 傷害。"
+        }
+      ]
+    },
+    {
+      "id": "ABILITY_GUNS_SHOWDOWN",
+      "name": "最終攤牌",
+      "ability_type": "basic",
+      "skills": [
+        {
+          "name": "小型連鎖",
+          "dice_pattern": [
+            "小型連鎖"
+          ],
+          "damage": {
+            "type": "normal",
+            "value": "7 or 5"
+          },
+          "description": "選擇一名對手作為目標後，你們各自擲 1 顆骰：如果你擲出的點數大於等於對手的點數，造成 7 傷害；否則造成 5 傷害。"
+        }
+      ]
+    },
+    {
+      "id": "ABILITY_GUNS_TRICK_SHOT",
+      "name": "花式射擊",
+      "ability_type": "basic",
+      "skills": [
+        {
+          "name": "大型連鎖",
+          "dice_pattern": [
+            "大型連鎖"
+          ],
+          "damage": {
+            "type": "normal",
+            "value": 7
+          },
+          "status_effects": [
+            "閃避"
+          ],
+          "description": "獲得 2 閃避。造成 7 傷害。"
+        }
+      ]
+    },
+    {
+      "id": "ABILITY_GUNS_BULLSEYE",
+      "name": "死亡之眼",
+      "ability_type": "basic",
+      "skills": [
+        {
+          "name": "死亡之眼",
+          "dice_pattern": [
+            "靶心",
+            "靶心",
+            "靶心",
+            "靶心"
+          ],
+          "damage": {
+            "type": "undefendable",
+            "value": 6
+          },
+          "status_effects": [
+            "擊倒"
+          ],
+          "description": "施加擊倒。造成 6 無法防禦的傷害。"
+        }
+      ]
+    },
+    {
+      "id": "ABILITY_GUNS_DUEL",
+      "name": "對決",
+      "ability_type": "defensive",
+      "skills": [
+        {
+          "name": "對決",
+          "dice_pattern": [
+            "防禦擲骰1"
+          ],
+          "damage": {
+            "type": "normal",
+            "value": "3 or 1"
+          },
+          "description": "你與攻擊者各擲 1 顆骰：如果你擲出的點數大於等於攻擊者的點數，你可以選擇造成 3 傷害；或者防止 ½ 傷害(向上取整)。如果你擲出的點數沒有大於攻擊者的點數，造成 1 傷害。"
+        }
+      ]
+    },
+    {
+      "id": "ABILITY_GUNS_HAIL_OF_BULLETS",
+      "name": "槍林彈雨！",
+      "ability_type": "ultimate",
+      "skills": [
+        {
+          "name": "槍林彈雨！",
+          "dice_pattern": [
+            "靶心",
+            "靶心",
+            "靶心",
+            "靶心",
+            "靶心"
+          ],
+          "damage": {
+            "type": "ultimate",
+            "value": 10
+          },
+          "status_effects": [
+            "閃避",
+            "懸賞",
+            "擊倒",
+            "裝填"
+          ],
+          "description": "獲得閃避。施加懸賞與擊倒。然後造成 10 傷害。如果此時你消耗一個裝填，你可以重擲骰子一次。"
+        }
+      ],
+      "special_rules": "可以透過改變骰子來阻止終極能力發動。否則任何對手在此能力結算完成之前都無法進行任何行動。"
+    }
+  ],
+  "cards": [
+    {
+      "id": "GUNS 10 v2",
+      "title": "這次休想！",
+      "cost": 1,
+      "type": "擲骰階段行動",
+      "border_color": "橘色",
+      "is_attack_modifier": false,
+      "description": "一名所選玩家防止 6 來襲傷害。"
+    },
+    {
+      "id": "GUNS 15 v2",
+      "title": "再一次！",
+      "cost": 1,
+      "type": "擲骰階段行動",
+      "border_color": "橘色",
+      "is_attack_modifier": false,
+      "description": "一名所選玩家可以在他的進攻擲骰階段，進行額外一次重擲最多五顆骰子的擲骰嘗試。"
+    },
+    {
+      "id": "GUNS 13 v2",
+      "title": "狂野！",
+      "cost": 2,
+      "type": "擲骰階段行動",
+      "border_color": "橘色",
+      "is_attack_modifier": false,
+      "description": "改變任意一顆骰子的點數。"
+    },
+    {
+      "id": "GUNS 16 v2",
+      "title": "伸出援手",
+      "cost": 1,
+      "type": "擲骰階段行動",
+      "border_color": "橘色",
+      "is_attack_modifier": false,
+      "description": "選擇你的對手的其中一顆骰子，強迫他重擲該顆骰子。"
+    },
+    {
+      "id": "GUNS 12 v2",
+      "title": "再試一次！",
+      "cost": 1,
+      "type": "擲骰階段行動",
+      "border_color": "橘色",
+      "is_attack_modifier": false,
+      "description": "你或一名所選的隊友可以重擲最多兩顆骰子 (重擲同一顆骰子兩次；或者是重擲兩顆不同骰子。)"
+    },
+    {
+      "id": "GUNS 18 v2",
+      "title": "我要六點！",
+      "cost": 1,
+      "type": "擲骰階段行動",
+      "border_color": "橘色",
+      "is_attack_modifier": false,
+      "description": "將你的其中一顆骰子的點數改變為 6。"
+    },
+    {
+      "id": "GUNS 11 v2",
+      "title": "雙倍狂野！",
+      "cost": 3,
+      "type": "擲骰階段行動",
+      "border_color": "橘色",
+      "is_attack_modifier": false,
+      "description": "改變任意兩顆骰子的點數。"
+    },
+    {
+      "id": "GUNS 14 v2",
+      "title": "同化！",
+      "cost": 1,
+      "type": "擲骰階段行動",
+      "border_color": "橘色",
+      "is_attack_modifier": false,
+      "description": "將你的其中一顆骰子的點數，改變為與你的另一顆骰子相同的點數 (兩顆骰子必須是在同一階段，並且出於同樣目的被擲出。)"
+    },
+    {
+      "id": "GUNS E v2 - 1",
+      "title": "狂野西部！",
+      "cost": 1,
+      "type": "擲骰階段行動",
+      "border_color": "橘色",
+      "is_attack_modifier": true,
+      "status_effects": [
+        "裝填"
+      ],
+      "damage": {
+        "type": "normal",
+        "value": 1
+      },
+      "description": "當你消耗一個裝填時，你可以重擲該骰一次。如果你有進行重擲，將額外 1 傷害加到結果中。"
+    },
+    {
+      "id": "GUNS E v2 - 2",
+      "title": "吃子彈吧！",
+      "cost": 1,
+      "type": "擲骰階段行動",
+      "border_color": "橘色",
+      "is_attack_modifier": true,
+      "status_effects": [
+        "擊倒"
+      ],
+      "damage": {
+        "type": "normal",
+        "value": "1 * [子彈]"
+      },
+      "description": "擲 5 顆骰：將 1 × [子彈] 加到傷害總和中。如果至少增加了 4 傷害，施加擊倒。"
+    },
+    {
+      "id": "GUNS 17 v2",
+      "title": "強化防禦！",
+      "cost": 0,
+      "type": "擲骰階段行動",
+      "border_color": "橘色",
+      "is_attack_modifier": false,
+      "description": "一名所選玩家可以在他的防禦擲骰階段，進行額外一次重擲最多五顆骰子的擲骰嘗試。"
+    },
+    {
+      "id": "GUNS D v2 - 1",
+      "title": "三倍！",
+      "cost": 2,
+      "type": "瞬發行動",
+      "border_color": "紅色",
+      "description": "抽取 3 張卡牌。"
+    },
+    {
+      "id": "GUNS D v2 - 2",
+      "title": "哼，再見！",
+      "cost": 2,
+      "type": "瞬發行動",
+      "border_color": "紅色",
+      "description": "移除一名所選玩家身上的一個狀態效果標記。"
+    },
+    {
+      "id": "GUNS D v2 - 3",
+      "title": "收入！",
+      "cost": 0,
+      "type": "瞬發行動",
+      "border_color": "紅色",
+      "description": "獲得 2 CP。"
+    },
+    {
+      "id": "GUNS D v2 - 4",
+      "title": "雙倍！",
+      "cost": 1,
+      "type": "瞬發行動",
+      "border_color": "紅色",
+      "description": "抽取 2 張卡牌。"
+    },
+    {
+      "id": "GUNS D v2 - 5",
+      "title": "翻轉！",
+      "cost": 1,
+      "type": "瞬發行動",
+      "border_color": "紅色",
+      "description": "將任意一顆骰子的點數增加或減少 1 (點數 1 的骰子不能減少；點數 6 的骰子不能增加。)"
+    },
+    {
+      "id": "GUNS F v2 - 1",
+      "title": "懸賞！",
+      "cost": 2,
+      "type": "主要階段行動",
+      "border_color": "藍色",
+      "status_effects": [
+        "懸賞"
+      ],
+      "description": "對一名所選對手施加懸賞。"
+    },
+    {
+      "id": "GUNS F v2 - 2",
+      "title": "滾出去！",
+      "cost": 1,
+      "type": "主要階段行動",
+      "border_color": "藍色",
+      "description": "移除一名所選玩家身上的一個狀態效果標記。"
+    },
+    {
+      "id": "GUNS F v2 - 3",
+      "title": "什麼狀態效果？",
+      "cost": 2,
+      "type": "主要階段行動",
+      "border_color": "藍色",
+      "description": "移除一名所選玩家身上的所有狀態效果標記。"
+    },
+    {
+      "id": "GUNS F v2 - 4",
+      "title": "死亡輪盤！",
+      "cost": 1,
+      "type": "主要階段行動",
+      "border_color": "藍色",
+      "status_effects": [
+        "擊倒",
+        "懸賞"
+      ],
+      "damage": {
+        "type": "normal",
+        "value": 2
+      },
+      "description": "選擇一名玩家然後擲 1 顆骰：若擲出 [子彈]，造成 2 傷害。若擲出 [衝刺]，施加擊倒。若擲出 [靶心]，施加懸賞。"
+    },
+    {
+      "id": "GUNS F v2 - 5",
+      "title": "打帶跑！",
+      "cost": 0,
+      "type": "主要階段行動",
+      "border_color": "藍色",
+      "status_effects": [
+        "懸賞",
+        "擊倒"
+      ],
+      "description": "擲 1 顆骰：若擲出 [靶心]，對一名所選對手施加懸賞與擊倒。若擲出任何其他結果，抽取 1 張卡牌。"
+    },
+    {
+      "id": "GUNS F v2 - 6",
+      "title": "轉送！",
+      "cost": 2,
+      "type": "主要階段行動",
+      "border_color": "藍色",
+      "description": "將一名所選玩家身上的 1 個狀態效果標記轉送到另一名所選玩家身上。"
+    },
+    {
+      "id": "GUNS F v2 - 7",
+      "title": "試試手氣！",
+      "cost": 0,
+      "type": "主要階段行動",
+      "border_color": "藍色",
+      "description": "擲 1 顆骰：獲得等同於擲出點數 ½ 的 CP (向上取整)。"
+    },
+    {
+      "id": "GUNS F v2 - 8",
+      "title": "轉動槍膛！",
+      "cost": 1,
+      "type": "主要階段行動",
+      "border_color": "藍色",
+      "status_effects": [
+        "裝填"
+      ],
+      "description": "獲得裝填。"
+    },
+    {
+      "id": "GUNS C v2",
+      "title": "花式射擊 II",
+      "cost": 2,
+      "type": "英雄升級",
+      "border_color": "黑色",
+      "skills": [
+        {
+          "name": "大型連鎖",
+          "dice_pattern": [
+            "大型連鎖"
+          ],
+          "damage": {
+            "type": "normal",
+            "value": 8
+          },
+          "status_effects": [
+            "閃避"
+          ],
+          "description": "獲得 2 閃避。造成 8 傷害。"
+        },
+        {
+          "name": "槍托重擊",
+          "dice_pattern": [
+            "衝刺",
+            "衝刺",
+            "靶心"
+          ],
+          "damage": {
+            "type": "undefendable",
+            "value": 1
+          },
+          "status_effects": [
+            "閃避",
+            "擊倒"
+          ],
+          "description": "獲得閃避，施加擊倒。造成 1 無法防禦的傷害。"
+        }
+      ]
+    },
+    {
+      "id": "GUNS A v2 - 1",
+      "title": "最終攤牌 II",
+      "cost": 2,
+      "type": "英雄升級",
+      "border_color": "黑色",
+      "skills": [
+        {
+          "name": "小型連鎖",
+          "dice_pattern": [
+            "小型連鎖"
+          ],
+          "damage": {
+            "type": "normal",
+            "value": "8 or 6"
+          },
+          "description": "選擇一名對手作為目標後，你們各自擲 1 顆骰：如果你擲出的點數大於等於對手的點數，造成 8 傷害；否則造成 6 傷害。"
+        }
+      ]
+    },
+    {
+      "id": "GUNS A v2 - 2",
+      "title": "最終攤牌 III",
+      "cost": 3,
+      "type": "英雄升級",
+      "border_color": "黑色",
+      "skills": [
+        {
+          "name": "小型連鎖",
+          "dice_pattern": [
+            "小型連鎖"
+          ],
+          "damage": {
+            "type": "normal",
+            "value": "9 or 6"
+          },
+          "description": "選擇一名對手作為目標後，你們各自擲 1 顆骰：如果你擲出的點數大於等於對手的點數，造成 9 傷害；否則造成 6 傷害。"
+        }
+      ]
+    },
+    {
+      "id": "GUNS A v2 - 3",
+      "title": "左輪手槍 II",
+      "cost": 2,
+      "type": "英雄升級",
+      "border_color": "黑色",
+      "skills": [
+        {
+          "name": "左輪手槍 II (3個子彈)",
+          "dice_pattern": [
+            "子彈",
+            "子彈",
+            "子彈"
+          ],
+          "damage": {
+            "type": "normal",
+            "value": 4
+          },
+          "description": "[子彈][子彈][子彈] 造成 4 傷害。"
+        },
+        {
+          "name": "左輪手槍 II (4個子彈)",
+          "dice_pattern": [
+            "子彈",
+            "子彈",
+            "子彈",
+            "子彈"
+          ],
+          "damage": {
+            "type": "normal",
+            "value": 5
+          },
+          "description": "[子彈][子彈][子彈][子彈] 造成 5 傷害。"
+        },
+        {
+          "name": "左輪手槍 II (5個子彈)",
+          "dice_pattern": [
+            "子彈",
+            "子彈",
+            "子彈",
+            "子彈",
+            "子彈"
+          ],
+          "damage": {
+            "type": "normal",
+            "value": 6
+          },
+          "status_effects": [
+            "擊倒"
+          ],
+          "description": "[子彈][子彈][子彈][子彈][子彈] 造成 6 傷害。若擲出 4 個相同點數 (數字)，施加擊倒。"
+        }
+      ]
+    },
+    {
+      "id": "GUNS I v2",
+      "title": "死亡之眼 II",
+      "cost": 2,
+      "type": "英雄升級",
+      "border_color": "黑色",
+      "skills": [
+        {
+          "name": "死亡之眼 II",
+          "dice_pattern": [
+            "靶心",
+            "靶心",
+            "靶心",
+            "靶心"
+          ],
+          "damage": {
+            "type": "undefendable",
+            "value": 8
+          },
+          "status_effects": [
+            "擊倒"
+          ],
+          "description": "施加擊倒。造成 8 無法防禦的傷害。"
+        },
+        {
+          "name": "執法者",
+          "dice_pattern": [
+            "靶心",
+            "靶心",
+            "靶心"
+          ],
+          "status_effects": [
+            "閃避",
+            "懸賞",
+            "擊倒"
+          ],
+          "description": "獲得閃避。對最多兩名所選對手施加懸賞與擊倒。"
+        }
+      ]
+    },
+    {
+      "id": "GUNS A v2 - 4",
+      "title": "賞金獵人 II",
+      "cost": 1,
+      "type": "英雄升級",
+      "border_color": "黑色",
+      "skills": [
+        {
+          "name": "賞金獵人 II",
+          "dice_pattern": [
+            "子彈",
+            "子彈",
+            "靶心",
+            "靶心"
+          ],
+          "damage": {
+            "type": "undefendable",
+            "value": 2
+          },
+          "status_effects": [
+            "懸賞"
+          ],
+          "description": "施加懸賞。然後造成 2 無法防禦的傷害。"
+        }
+      ]
+    },
+    {
+      "id": "GUNS C v2 - 2",
+      "title": "尋找掩護 II",
+      "cost": 2,
+      "type": "英雄升級",
+      "border_color": "黑色",
+      "skills": [
+        {
+          "name": "尋找掩護 II",
+          "dice_pattern": [
+            "子彈",
+            "子彈",
+            "衝刺",
+            "衝刺",
+            "衝刺"
+          ],
+          "damage": {
+            "type": "normal",
+            "value": 6
+          },
+          "status_effects": [
+            "閃避"
+          ],
+          "description": "獲得閃避。造成 6 傷害。"
+        },
+        {
+          "name": "鎖定目標",
+          "dice_pattern": [
+            "衝刺",
+            "衝刺",
+            "衝刺"
+          ],
+          "status_effects": [
+            "閃避",
+            "懸賞"
+          ],
+          "description": "獲得 2 閃避。施加懸賞。"
+        }
+      ]
+    },
+    {
+      "id": "GUNS B v2",
+      "title": "對決 II",
+      "cost": 3,
+      "type": "英雄升級",
+      "border_color": "綠色",
+      "subtype": "防禦升級",
+      "skills": [
+        {
+          "name": "對決 II",
+          "dice_pattern": [
+            "防禦擲骰1"
+          ],
+          "damage": {
+            "type": "normal",
+            "value": "3 or 1"
+          },
+          "description": "你與攻擊者各擲 1 顆骰：如果你擲出的點數大於等於攻擊者的點數，你可以選擇造成 3 傷害；或者防止 ½ 傷害(向上取整)。如果你擲出的點數小於攻擊者的點數，造成 1 傷害。"
+        }
+      ]
+    },
+    {
+      "id": "GUNS H v2",
+      "title": "快速拔槍 II",
+      "cost": 2,
+      "type": "英雄升級",
+      "border_color": "紫色",
+      "subtype": "被動升級",
+      "skills": [
+        {
+          "name": "快速拔槍 II",
+          "dice_pattern": [],
+          "status_effects": [
+            "裝填"
+          ],
+          "description": "在你的維持階段時，獲得裝填。當你消耗一個裝填時，你可以重擲該骰一次。"
+        }
+      ]
+    }
+  ]
+}
