@@ -48,6 +48,8 @@ window.addEventListener('DOMContentLoaded', async () => {
     initGame();
     setupSocket();
     setupEventListeners();
+  } else {
+    alert("載入英雄資料失敗，請檢查網路或檔案路徑！");
   }
 });
 
@@ -62,7 +64,7 @@ function getMyHeroType() {
 async function loadHeroData(filePath, target = 'player') {
   try {
     const response = await fetch(filePath);
-    if (!response.ok) throw new Error(`讀取 JSON 失敗`);
+    if (!response.ok) throw new Error(`讀取 JSON 失敗: ${filePath}`);
     const data = await response.json();
     if (target === 'player') heroData = data;
     else opponentHeroData = data;
@@ -123,7 +125,7 @@ function setupSocket() {
       state.opponent.abilities = data.abilities;
     }
     if (data.playedCards) {
-    state.opponent.playedCards = data.playedCards;
+      state.opponent.playedCards = data.playedCards;
     }
     
     // 渲染對手 UI
@@ -245,8 +247,8 @@ function createAbilityCardEl(ability, mapping = {}) {
 
 // 骰子渲染與操作
 function renderDice() {
-  const myMapping = heroData.dice_mapping || {};
-  const oppMapping = opponentHeroData.dice_mapping || {};
+  const myMapping = heroData ? (heroData.dice_mapping || {}) : {};
+  const oppMapping = opponentHeroData ? (opponentHeroData.dice_mapping || {}) : {};
 
   const myContainer = document.getElementById('my-dice');
   if (myContainer) {
@@ -343,53 +345,51 @@ function renderHand() {
   document.getElementById('my-hand-count').innerText = state.hand.length;
 
   state.hand.forEach((card, idx) => {
-  const cardEl = document.createElement('div');
-  cardEl.className = `card border-${card.border_color} ${state.selectedCardIndex === idx ? 'selected' : ''}`;
-  
-  const mainTitle = card.title || (card.skills && card.skills[0] ? card.skills[0].name : "未命名卡牌");
-  
-  // 顯示副標題邏輯：若為攻擊修正則加上 (攻擊修正)
-  const displayType = card.is_attack_modifier ? `${card.type}(攻擊修正)` : card.type;
+    const cardEl = document.createElement('div');
+    cardEl.className = `card border-${card.border_color} ${state.selectedCardIndex === idx ? 'selected' : ''}`;
+    
+    const mainTitle = card.title || (card.skills && card.skills[0] ? card.skills[0].name : "未命名卡牌");
+    const displayType = card.is_attack_modifier ? `${card.type}(攻擊修正)` : card.type;
 
-  if (card.skills && card.skills.length > 0) {
-    let innerHTML = `
-      <div>
-        <div class="card-title">${mainTitle}</div>
-        <div class="card-type">${displayType}</div>
-        <div class="card-cost">CP: ${card.cost}</div>
-        ${card.skills[0].dice_pattern && card.skills[0].dice_pattern.length > 0 ? `<div class="card-dice-types">需求: [${card.skills[0].dice_pattern.join(', ')}]</div>` : ''}
-      </div>
-      <div class="card-desc">${card.skills[0].description}</div>
-    `;
-
-    for (let sIdx = 1; sIdx < card.skills.length; sIdx++) {
-      const sk = card.skills[sIdx];
-      innerHTML += `
-        <hr style="margin: 6px 0; border: 0; border-top: 1px dashed #ccc;">
+    if (card.skills && card.skills.length > 0) {
+      let innerHTML = `
         <div>
-          <div class="card-title" style="font-size:0.9em;">${sk.name}</div>
-          ${sk.dice_pattern && sk.dice_pattern.length > 0 ? `<div class="card-dice-types">需求: [${sk.dice_pattern.join(', ')}]</div>` : ''}
+          <div class="card-title">${mainTitle}</div>
+          <div class="card-type">${displayType}</div>
+          <div class="card-cost">CP: ${card.cost}</div>
+          ${card.skills[0].dice_pattern && card.skills[0].dice_pattern.length > 0 ? `<div class="card-dice-types">需求: [${card.skills[0].dice_pattern.join(', ')}]</div>` : ''}
         </div>
-        <div class="card-desc">${sk.description}</div>
+        <div class="card-desc">${card.skills[0].description}</div>
+      `;
+
+      for (let sIdx = 1; sIdx < card.skills.length; sIdx++) {
+        const sk = card.skills[sIdx];
+        innerHTML += `
+          <hr style="margin: 6px 0; border: 0; border-top: 1px dashed #ccc;">
+          <div>
+            <div class="card-title" style="font-size:0.9em;">${sk.name}</div>
+            ${sk.dice_pattern && sk.dice_pattern.length > 0 ? `<div class="card-dice-types">需求: [${sk.dice_pattern.join(', ')}]</div>` : ''}
+          </div>
+          <div class="card-desc">${sk.description}</div>
+        `;
+      }
+      cardEl.innerHTML = innerHTML;
+    } else {
+      cardEl.innerHTML = `
+        <div>
+          <div class="card-title">${mainTitle}</div>
+          <div class="card-type">${displayType}</div>
+          <div class="card-cost">CP: ${card.cost}</div>
+        </div>
+        <div class="card-desc">${card.description || ''}</div>
       `;
     }
-    cardEl.innerHTML = innerHTML;
-  } else {
-    cardEl.innerHTML = `
-      <div>
-        <div class="card-title">${mainTitle}</div>
-        <div class="card-type">${displayType}</div>
-        <div class="card-cost">CP: ${card.cost}</div>
-      </div>
-      <div class="card-desc">${card.description || ''}</div>
-    `;
-  }
 
-  cardEl.addEventListener('click', () => {
-    state.selectedCardIndex = (state.selectedCardIndex === idx) ? null : idx;
-    renderHand();
-  });
-  container.appendChild(cardEl);
+    cardEl.addEventListener('click', () => {
+      state.selectedCardIndex = (state.selectedCardIndex === idx) ? null : idx;
+      renderHand();
+    });
+    container.appendChild(cardEl);
   });
 
   const hasSelection = state.selectedCardIndex !== null;
@@ -403,11 +403,9 @@ function playSelectedCard() {
   const card = state.hand[state.selectedCardIndex];
 
   if (card.type === "英雄升級" && card.skills) {
-    // 技能升級牌：直接升級，不顯示在打出區，放入棄牌堆
     applyUpgradeCard(card);
     state.discardPile.push(card);
   } else {
-    // 非技能牌：放入公開打出區 (附帶標註擁有者)
     state.playedCards.push({
       ...card,
       owner: myUsername
@@ -426,7 +424,6 @@ function renderPlayedCards() {
   if (!container) return;
   container.innerHTML = '';
 
-  // 合併雙方打出的卡牌進行展示
   const allPlayedCards = [
     ...state.playedCards.map(c => ({ ...c, isMine: true })),
     ...state.opponent.playedCards.map(c => ({ ...c, isMine: false }))
@@ -448,11 +445,9 @@ function renderPlayedCards() {
       <div class="card-desc">${card.description || ''}</div>
     `;
 
-    // 點擊右鍵棄掉自己打出的卡牌
     cardEl.addEventListener('contextmenu', (e) => {
-      e.preventDefault(); // 阻止系統預設右鍵選單
+      e.preventDefault();
       if (card.isMine) {
-        // 從我方打出區移除
         const pIdx = state.playedCards.findIndex(c => c.id === card.id);
         if (pIdx !== -1) {
           const removed = state.playedCards.splice(pIdx, 1)[0];
@@ -483,7 +478,6 @@ function discardSelectedCard() {
 function applyUpgradeCard(upgradeCard) {
   if (!upgradeCard.skills || upgradeCard.skills.length === 0) return;
 
-  // 1. 取得這張升級卡對應的基本技能卡 (透過清理後的技能名稱匹配，例如 "左輪手槍 II" -> "左輪手槍")
   const cleanUpgradeTitle = upgradeCard.title
     ? upgradeCard.title.replace(/\s*(II|III)\b/g, '').replace(/\s*\([^)]*\)/g, '').trim()
     : "";
@@ -494,31 +488,24 @@ function applyUpgradeCard(upgradeCard) {
   });
 
   if (targetAbility) {
-    // 更新能力大標題
     if (upgradeCard.title) targetAbility.name = upgradeCard.title;
 
-    // 2. 如果升級卡包含多個技能（例如 左輪手槍 包含 3/4/5 子彈三個技能）
     upgradeCard.skills.forEach(upSkill => {
-      // 提取括號內的條件標籤作為比對依據 (例如 "(3個子彈)")
       const tagMatch = upSkill.name.match(/\((.*?)\)/);
       const tag = tagMatch ? tagMatch[1] : null;
 
       let skillIdx = -1;
       if (tag) {
-        // 精準尋找原本技能列表中名稱含有相同括號標籤的子技能
         skillIdx = targetAbility.skills.findIndex(s => s.name.includes(tag));
       }
 
       if (skillIdx !== -1) {
-        // 在「對應位置」精準替換升級後的子技能，保持原始順序不亂掉
         targetAbility.skills[skillIdx] = upSkill;
       } else {
-        // 若找不到對應的子技能（例如升級新增的副技能），則 append 到最後
         targetAbility.skills.push(upSkill);
       }
     });
   } else {
-    // 找不到對應基礎技能時，新增為全新技能能力
     state.abilities.push({
       id: `UPGRADE_${upgradeCard.id}`,
       name: upgradeCard.title || upgradeCard.skills[0].name,

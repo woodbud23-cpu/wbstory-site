@@ -29,7 +29,8 @@
       color: #f4a261;
     }
   </style>
-  <script src="/socket.io/socket.io.js"></script>
+  <!-- 修正 1：改用 CDN 載入 Socket.io Client -->
+  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
 </head>
 <body>
   <div class="waiting-box">
@@ -53,7 +54,7 @@
   <script>
     const username = sessionStorage.getItem('dt_username');
     if (!username) {
-      window.location.href = 'login.html';
+      window.location.href = './login.html';
     }
 
     const socket = io();
@@ -69,10 +70,10 @@
     // 伺服器拒絕加入（如人數已滿）
     socket.on('error_message', (msg) => {
       alert(msg);
-      window.location.href = 'lobby.html';
+      window.location.href = './lobby.html';
     });
 
-    // 實時更新選角清單（將其他人已選擇的角色禁用）
+    // 實時更新選角清單
     socket.on('hero_selection_update', (selectedHeroes) => {
       Array.from(heroSelect.options).forEach(option => {
         if (selectedHeroes.includes(option.value)) {
@@ -84,7 +85,6 @@
         }
       });
 
-      // 自動將下拉選單切換至第一個未被禁用的選項
       const availableOption = Array.from(heroSelect.options).find(opt => !opt.disabled);
       if (availableOption) {
         heroSelect.value = availableOption.value;
@@ -103,15 +103,13 @@
       statusArea.style.display = 'block';
     });
 
-    // **關鍵點：收到雙方完成通知，同步轉跳至 game.html**
+    // 收到雙方完成通知，同步轉跳至 game.html
     socket.on('match_start', (data) => {
       statusText.innerText = '配對成功！即將進入遊戲...';
-      
-      // 將配對結果暫存於 Session，方便後續 game.html 讀取雙方資訊
       sessionStorage.setItem('dt_match_info', JSON.stringify(data));
 
       setTimeout(() => {
-        window.location.href = 'game.html';
+        window.location.href = './game.html';
       }, 1000);
     });
   </script>

@@ -22,7 +22,8 @@
       font-weight: bold;
     }
   </style>
-  <script src="/socket.io/socket.io.js"></script>
+  <!-- 修正 1：改用 CDN 載入 Socket.io Client，避免 404 錯誤 -->
+  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
 </head>
 <body>
   <div class="lobby-box">
@@ -39,12 +40,12 @@
   <script>
     const username = sessionStorage.getItem('dt_username');
     if (!username) {
-      window.location.href = 'login.html';
+      window.location.href = './login.html';
     } else {
       document.getElementById('display-name').innerText = username;
     }
 
-    const socket = io();
+    const socket = io(); // 若後端在不同 Port，請改為 io('http://wbstory.site:你的Port')
     let isRoomFull = false;
 
     // 即時監聽大廳與房間人數狀態
@@ -57,7 +58,8 @@
       if (isRoomFull) {
         alert('目前等待室/遊戲人數已滿 (上限2人)，請稍後再試！');
       } else {
-        window.location.href = 'waiting.html';
+        // 修正 2：確保相對路徑正確
+        window.location.href = './waiting.html';
       }
     });
   </script>
