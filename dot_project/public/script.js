@@ -112,7 +112,9 @@ function initGame() {
 
 // 建立即時 Socket 監聽
 function setupSocket() {
-  socket = io();
+  const socket = io({
+    transports: ['websocket']
+  });
 
   // 接收對手的實時數據更新
   socket.on('opponent_action', (data) => {

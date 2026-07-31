@@ -57,7 +57,9 @@
       window.location.href = './login.html';
     }
 
-    const socket = io();
+    const socket = io({
+      transports: ['websocket']
+    });
     const heroSelect = document.getElementById('hero-select');
     const confirmBtn = document.getElementById('confirm-btn');
     const selectionArea = document.getElementById('selection-area');

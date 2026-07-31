@@ -5,7 +5,15 @@ const path = require('path');
 
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server);
+
+// 修正 1：配置 CORS 與允許 WebSocket 協定，避免線上部署時跨域與 HTTP polling 無窮迴圈
+const io = new Server(server, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"]
+  },
+  transports: ['websocket', 'polling']
+});
 
 // 靜態檔案服務
 app.use(express.static(path.join(__dirname, 'public')));
@@ -24,6 +32,19 @@ io.on('connection', (socket) => {
 
   // 2. 玩家嘗試加入 Waiting Room
   socket.on('join_waiting', (userData) => {
+    const inputUsername = userData.username || '無名氏';
+    
+    // 檢查是不是同一個玩家重新整理網頁（如果是，覆蓋舊的 socket 紀錄）
+    const existingSocketId = Object.keys(roomState.players).find(
+      id => roomState.players[id].username === inputUsername
+    );
+
+    if (existingSocketId && existingSocketId !== socket.id) {
+      console.log(`[更新] 玩家 ${inputUsername} 重新連線，更新 Socket ID`);
+      delete roomState.players[existingSocketId];
+    }
+
+    // 重新計算人數
     const playerCount = Object.keys(roomState.players).length;
 
     if (playerCount >= 2) {
@@ -34,7 +55,7 @@ io.on('connection', (socket) => {
     // 註冊玩家資訊
     roomState.players[socket.id] = {
       socketId: socket.id,
-      username: userData.username || '無名氏',
+      username: inputUsername,
       hero: null,
       ready: false
     };
