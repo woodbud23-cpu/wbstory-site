@@ -6,21 +6,25 @@ const path = require('path');
 const app = express();
 const server = http.createServer(app);
 
-// 修正 1：配置 CORS 與允許 WebSocket 協定，避免線上部署時跨域與 HTTP polling 無窮迴圈
+// 修正 1：移除限制性的 transports，並保持跨域 CORS 開放
 const io = new Server(server, {
   cors: {
-    origin: "*",
+    origin: "*", // 允許來自 Netlify (wbstory.site) 的跨域連線
     methods: ["GET", "POST"]
-  },
-  transports: ['websocket', 'polling']
+  }
 });
 
-// 靜態檔案服務
+// 靜態檔案服務（選用，保留相容性）
 app.use(express.static(path.join(__dirname, 'public')));
+
+// 健康檢查 Endpoint（讓 Render 偵測 Server 是否活著）
+app.get('/', (req, res) => {
+  res.send('Dice Throne Backend is running!');
+});
 
 // 遊戲狀態庫
 let roomState = {
-  players: {}, // socket.id -> { id, username, hero, ready }
+  players: {}, // socket.id -> { socketId, username, hero, ready }
   selectedHeroes: [] // 已被選擇的角色列表 ['gunslinger', 'samurai']
 };
 
@@ -32,7 +36,7 @@ io.on('connection', (socket) => {
 
   // 2. 玩家嘗試加入 Waiting Room
   socket.on('join_waiting', (userData) => {
-    const inputUsername = userData.username || '無名氏';
+    const inputUsername = userData?.username || '無名氏';
     
     // 檢查是不是同一個玩家重新整理網頁（如果是，覆蓋舊的 socket 紀錄）
     const existingSocketId = Object.keys(roomState.players).find(
@@ -136,7 +140,8 @@ function checkMatchStart() {
   }
 }
 
+// 修正 2：明確監聽 '0.0.0.0' 以符合雲端平台 (Render) 的 Port 綁定規範
 const PORT = process.env.PORT || 3000;
-server.listen(PORT, () => {
-  console.log(`伺服器已啟動：http://localhost:${PORT}`);
+server.listen(PORT, '0.0.0.0', () => {
+  console.log(`伺服器已啟動，Listening on port ${PORT}`);
 });

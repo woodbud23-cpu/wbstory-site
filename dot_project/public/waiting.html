@@ -57,15 +57,23 @@
       window.location.href = './login.html';
     }
 
-    const socket = io();
+    // 指向你的 Render 後端網址（範例：https://dice-throne-backend.onrender.com）
+    // 注意：加入 transports: ['polling', 'websocket'] 讓它能從 polling 平滑升級到 websocket
+    const socket = io('https://dot-backend-9y8l.onrender.com', {
+      transports: ['polling', 'websocket']
+    });
+
     const heroSelect = document.getElementById('hero-select');
     const confirmBtn = document.getElementById('confirm-btn');
     const selectionArea = document.getElementById('selection-area');
     const statusArea = document.getElementById('status-area');
     const statusText = document.getElementById('status-text');
 
-    // 進入等待室即註冊加入
-    socket.emit('join_waiting', { username });
+    // 關鍵修正：確保連線成功後才發送 join_waiting
+    socket.on('connect', () => {
+      console.log('Socket 連線成功，Socket ID:', socket.id);
+      socket.emit('join_waiting', { username });
+    });
 
     // 伺服器拒絕加入（如人數已滿）
     socket.on('error_message', (msg) => {
@@ -78,7 +86,9 @@
       Array.from(heroSelect.options).forEach(option => {
         if (selectedHeroes.includes(option.value)) {
           option.disabled = true;
-          option.innerText = option.innerText.replace(' (已被選擇)', '') + ' (已被選擇)';
+          if (!option.innerText.includes('(已被選擇)')) {
+            option.innerText += ' (已被選擇)';
+          }
         } else {
           option.disabled = false;
           option.innerText = option.innerText.replace(' (已被選擇)', '');
