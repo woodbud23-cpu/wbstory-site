@@ -111,13 +111,23 @@ function initGame() {
 }
 
 // 建立即時 Socket 監聽
+// 建立即時 Socket 監聽
 function setupSocket() {
-  const socket = io({
-    transports: ['websocket']
+  // 修正 1：移除 const，直接賦值給全域變數 socket，否則 syncMyStateToOpponent 會因為 socket 為 null 而無法發送
+  // 修正 2：明確填入 Render 後端網址並加入 transports
+  socket = io('https://dot-backend-9y8l.onrender.com', {
+    transports: ['polling', 'websocket']
+  });
+
+  socket.on('connect', () => {
+    console.log('對戰 Socket 連線成功！Socket ID:', socket.id);
+    // 連線成功後立即同步一次狀態給對方
+    syncMyStateToOpponent();
   });
 
   // 接收對手的實時數據更新
   socket.on('opponent_action', (data) => {
+    console.log('收到對手操作數據:', data);
     state.opponent.hp = data.hp;
     state.opponent.cp = data.cp;
     state.opponent.status = data.status;
@@ -140,9 +150,6 @@ function setupSocket() {
     renderOpponentAbilities();
     renderDice();
   });
-
-  // 初始廣播一次狀態
-  syncMyStateToOpponent();
 }
 
 // 發送我方狀態給對方
