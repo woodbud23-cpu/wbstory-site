@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 盤後選股智囊儀表板</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f4f6f9; padding: 20px; }
+        .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        .btn { background: #007aff; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-size: 16px; cursor: pointer; }
+        .alert { color: #d9534f; font-weight: bold; }
+        .buy { color: #28a745; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h2>🚀 AI 盤後選股智囊儀表板</h2>
+        <button class="btn" onclick="fetchAIResult()">執行盤後 AI 分析</button>
+    </div>
+
+    <div id="result" class="card" style="display:none;">
+        <p><strong>📊 大盤狀態：</strong><span id="market"></span></p>
+        <p><strong>📊 剩餘可買空位：</strong><span id="slots"></span> 檔</p>
+        <hr>
+        <h3>🚨 明日建議賣出清單</h3>
+        <ul id="sell-list"></ul>
+        <hr>
+        <h3>🏆 明日 09:15 建議買進候選標的</h3>
+        <ul id="buy-list"></ul>
+    </div>
+
+    <script>
+        const RENDER_API_URL = "https://stock-robot-backend.onrender.com/api/predict"; // 換成你的 Render 網址
+        const SECRET_KEY = "MyQuantSecret2026"; // 你的安全密鑰
+
+        async function fetchAIResult() {
+            try {
+                const res = await fetch(RENDER_API_URL, {
+                    headers: { "x-api-key": SECRET_KEY }
+                });
+                const data = await res.json();
+                
+                document.getElementById('result').style.display = 'block';
+                document.getElementById('market').innerText = data.market_status === 'Bull' ? '🟢 牛市' : '🔴 熊市';
+                document.getElementById('slots').innerText = data.available_slots;
+
+                // 渲染賣出
+                const sellUl = document.getElementById('sell-list');
+                sellUl.innerHTML = data.sell_alerts.length === 0 ? '<li>✅ 無須賣出任何持股</li>' : '';
+                data.sell_alerts.forEach(item => {
+                    sellUl.innerHTML += `<li class="alert">${item.stock_id} ${item.stock_name} | 原因: ${item.reason}</li>`;
+                });
+
+                // 渲染買進
+                const buyUl = document.getElementById('buy-list');
+                buyUl.innerHTML = data.buy_candidates.length === 0 ? '<li>💡 今日無符合高品質門檻之標的</li>' : '';
+                data.buy_candidates.forEach(item => {
+                    buyUl.innerHTML += `<li class="buy">股票代號: [ ${item.stock_id} ] | AI 評分: ${item.buy_score} | 收盤價: ${item.close_price}元 <br> 🛡️ 09:15 昨收防線: ${item.yesterday_defense} 元 | 硬停損價: ${item.hard_stop_price} 元</li><br>`;
+                });
+
+            } catch (err) {
+                alert("存取失敗，請確認 API 網址與密鑰！");
+            }
+        }
+    </script>
+</body>
+</html>
