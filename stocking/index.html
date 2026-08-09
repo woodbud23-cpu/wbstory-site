@@ -5,99 +5,211 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI 盤後選股智囊儀表板</title>
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f4f6f9; padding: 20px; }
-        .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 20px; }
-        .btn { background: #007aff; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-size: 16px; cursor: pointer; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f4f6f9; padding: 20px; color: #333; }
+        .container { max-width: 900px; margin: 0 auto; }
+        .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.08); margin-bottom: 20px; }
+        .btn { background: #007aff; color: white; border: none; padding: 10px 18px; border-radius: 8px; font-size: 15px; cursor: pointer; margin-right: 10px; font-weight: 600; }
+        .btn-update { background: #34c759; }
+        .btn-del { background: #ff3b30; padding: 4px 8px; font-size: 12px; }
         .btn:disabled { background: #a0a0a0; cursor: not-allowed; }
+        .form-group { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
+        .form-group input { padding: 8px 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; flex: 1; min-width: 120px; }
         .alert { color: #d9534f; font-weight: bold; }
         .buy { color: #28a745; font-weight: bold; }
-        .loading { color: #e67e22; font-weight: bold; font-size: 16px; margin-top: 10px; }
+        .loading { color: #e67e22; font-weight: bold; font-size: 15px; margin-top: 10px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { border-bottom: 1px solid #eee; padding: 8px; text-align: left; font-size: 14px; }
+        th { background: #f8f9fa; }
     </style>
 </head>
 <body>
 
+<div class="container">
+
+    <!-- 操作主控台 -->
     <div class="card">
         <h2>🚀 AI 盤後選股智囊儀表板</h2>
-        <button id="run-btn" class="btn" onclick="fetchAIResult()">執行盤後 AI 分析</button>
-        <div id="loading-msg" class="loading" style="display:none;">⏳ AI 模型計算中（若後端休眠中，首次啟動約需 30~45 秒，請稍候...）</div>
+        <div>
+            <button id="show-btn" class="btn" onclick="fetchAIResult()">⚡ 查看 AI 分析結果 (0.1秒秒出)</button>
+            <button id="calc-btn" class="btn btn-update" onclick="recalculateAI()">🔄 手動即時重新計算與更新</button>
+        </div>
+        <div id="loading-msg" class="loading" style="display:none;">⏳ 背景計算中（進行數據增量更新與模型推理，請稍候約 15-20 秒...）</div>
     </div>
 
+    <!-- 輸入持股視窗 -->
+    <div class="card">
+        <h3>➕ 輸入/更新今日買入持股</h3>
+        <div class="form-group">
+            <input type="text" id="in-id" placeholder="股票代號 (例: 3710)">
+            <input type="text" id="in-name" placeholder="股票名稱 (例: 連展投控)">
+            <input type="date" id="in-date">
+            <input type="number" step="0.01" id="in-price" placeholder="買入成交價">
+            <input type="number" id="in-shares" placeholder="股數 (預設 1000)" value="1000">
+            <button class="btn" onclick="addPortfolio()">儲存持股</button>
+        </div>
+    </div>
+
+    <!-- AI 分析展現區 -->
     <div id="result" class="card" style="display:none;">
-        <p><strong>📊 大盤狀態：</strong><span id="market"></span></p>
-        <p><strong>📊 剩餘可買空位：</strong><span id="slots"></span> 檔</p>
+        <p><strong>📊 當前大盤狀態：</strong><span id="market"></span> | <strong>最後更新時間：</strong><span id="update-time"></span></p>
+        <p><strong>📊 持股數：</strong><span id="hold-count"></span> 檔 | <strong>剩餘可買空位：</strong><span id="slots"></span> 档</p>
+        
         <hr>
-        <h3>🚨 明日建議賣出清單</h3>
-        <ul id="sell-list"></ul>
+        <h3>🚨 持股監視與賣出/移動停利預警</h3>
+        <div id="sell-container"></div>
+
+        <hr>
+        <h3>📦 當前持股動態資產表</h3>
+        <div id="holding-container"></div>
+
         <hr>
         <h3>🏆 明日 09:15 建議買進候選標的</h3>
         <ul id="buy-list"></ul>
     </div>
 
-    <script>
-        // ★ 請確認此網址為你 Render 後端發給你的真實 API 網址！
-        const RENDER_API_URL = "https://stock-robot-backend.onrender.com/api/predict"; 
-        const SECRET_KEY = "MyQuantSecret2026"; 
+</div>
 
-        async function fetchAIResult() {
-            const btn = document.getElementById('run-btn');
-            const loading = document.getElementById('loading-msg');
-            const resultCard = document.getElementById('result');
+<script>
+    const RENDER_API_URL = "https://stock-robot-backend.onrender.com"; 
+    const SECRET_KEY = "MyQuantSecret2026"; 
 
-            btn.disabled = true;
-            loading.style.display = 'block';
-            resultCard.style.display = 'none';
+    // 初始化預設日期為今天
+    document.getElementById('in-date').valueAsDate = new Date();
 
-            try {
-                const res = await fetch(RENDER_API_URL, {
-                    method: 'GET',
-                    headers: { 
-                        'accept': 'application/json',
-                        'x-api-key': SECRET_KEY 
-                    }
-                });
-
-                if (!res.ok) {
-                    throw new Error(`伺服器回應異常: ${res.status} ${res.statusText}`);
-                }
-
-                const data = await res.json();
-                
-                resultCard.style.display = 'block';
-                document.getElementById('market').innerText = data.market_status === 'Bull' ? '🟢 牛市' : '🔴 熊市';
-                document.getElementById('slots').innerText = data.available_slots;
-
-                // 渲染賣出
-                const sellUl = document.getElementById('sell-list');
-                sellUl.innerHTML = (data.sell_alerts && data.sell_alerts.length > 0) 
-                    ? '' 
-                    : '<li>✅ 目前所有持股狀態良好，明日無須賣出任何股票。</li>';
-                
-                if (data.sell_alerts) {
-                    data.sell_alerts.forEach(item => {
-                        sellUl.innerHTML += `<li class="alert">⚠️ 持股 [ ${item.stock_id} ${item.stock_name} ] | 原因: ${item.reason}</li>`;
-                    });
-                }
-
-                // 渲染買進
-                const buyUl = document.getElementById('buy-list');
-                buyUl.innerHTML = (data.buy_candidates && data.buy_candidates.length > 0) 
-                    ? '' 
-                    : '<li>💡 今日無符合高品質門檻之標的。</li>';
-                
-                if (data.buy_candidates) {
-                    data.buy_candidates.forEach((item, idx) => {
-                        buyUl.innerHTML += `<li class="buy">[${idx + 1}] 股票代號: [ ${item.stock_id} ] | AI 評分: ${item.buy_score} | 今收: ${item.close_price}元 <br> 🛡️ 09:15 昨收防線: ${item.yesterday_defense} 元 | 硬停損價: ${item.hard_stop_price} 元</li><br>`;
-                    });
-                }
-
-            } catch (err) {
-                alert(`❌ 存取失敗！\n錯誤原因: ${err.message}\n\n請按 F12 開啟 Console 查看詳細日誌。`);
-                console.error("Fetch Error:", err);
-            } finally {
-                btn.disabled = false;
-                loading.style.display = 'none';
-            }
+    // 1. 讀取快取結果 (0.1秒秒出)
+    async function fetchAIResult() {
+        try {
+            const res = await fetch(`${RENDER_API_URL}/api/predict`, {
+                headers: { 'x-api-key': SECRET_KEY }
+            });
+            const data = await res.json();
+            renderUI(data);
+        } catch (err) {
+            alert(`存取失敗: ${err.message}`);
         }
-    </script>
+    }
+
+    // 2. 手動觸發背景計算
+    async function recalculateAI() {
+        const loading = document.getElementById('loading-msg');
+        const cBtn = document.getElementById('calc-btn');
+        loading.style.display = 'block';
+        cBtn.disabled = true;
+
+        try {
+            const res = await fetch(`${RENDER_API_URL}/api/recalculate`, {
+                method: 'POST',
+                headers: { 'x-api-key': SECRET_KEY }
+            });
+            const data = await res.json();
+            alert("✅ 計算完成！已更新最新 AI 分析數據。");
+            fetchAIResult(); // 自動重新抓取顯示
+        } catch (err) {
+            alert(`計算失敗: ${err.message}`);
+        } finally {
+            loading.style.display = 'none';
+            cBtn.disabled = false;
+        }
+    }
+
+    // 3. 新增/更新持股
+    async function addPortfolio() {
+        const stock_id = document.getElementById('in-id').value;
+        const stock_name = document.getElementById('in-name').value;
+        const buy_date = document.getElementById('in-date').value;
+        const buy_price = parseFloat(document.getElementById('in-price').value);
+        const shares = parseInt(document.getElementById('in-shares').value) || 1000;
+
+        if (!stock_id || !buy_price || !buy_date) {
+            alert("請完整填寫股票代號、買入日期與成交價！");
+            return;
+        }
+
+        try {
+            const res = await fetch(`${RENDER_API_URL}/api/portfolio/add`, {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'x-api-key': SECRET_KEY 
+                },
+                body: JSON.stringify({ stock_id, stock_name, buy_date, buy_price, shares })
+            });
+            alert("✅ 持股已成功新增/更新！");
+            fetchAIResult();
+        } catch (err) {
+            alert(`新增失敗: ${err.message}`);
+        }
+    }
+
+    // 4. 刪除持股
+    async function deletePortfolio(stock_id) {
+        if (!confirm(`確定要移除持股 [${stock_id}] 嗎？`)) return;
+
+        try {
+            const res = await fetch(`${RENDER_API_URL}/api/portfolio/delete/${stock_id}`, {
+                method: 'DELETE',
+                headers: { 'x-api-key': SECRET_KEY }
+            });
+            alert(`✅ 已移除持股 ${stock_id}`);
+            fetchAIResult();
+        } catch (err) {
+            alert(`刪除失敗: ${err.message}`);
+        }
+    }
+
+    // 渲染 UI 畫面
+    function renderUI(data) {
+        document.getElementById('result').style.display = 'block';
+        document.getElementById('market').innerText = data.market_status === 'Bull' ? '🟢 牛市' : '🔴 熊市';
+        document.getElementById('update-time').innerText = data.updated_at || '無';
+        document.getElementById('hold-count').innerText = data.current_holdings_count;
+        document.getElementById('slots').innerText = data.available_slots;
+
+        // 賣出與移動停利警告
+        const sellContainer = document.getElementById('sell-container');
+        if (!data.sell_alerts || data.sell_alerts.length === 0) {
+            sellContainer.innerHTML = '<p>✅ 目前所有持股狀態良好，明日無須賣出任何股票。</p>';
+        } else {
+            let html = '<ul>';
+            data.sell_alerts.forEach(item => {
+                html += `<li class="alert">⚠️ 持股 [ ${item.stock_id} ${item.stock_name} ] | 報酬: ${item.return_pct}% <br> 👉 <strong>警訊原因: ${item.reason}</strong></li>`;
+            });
+            html += '</ul>';
+            sellContainer.innerHTML = html;
+        }
+
+        // 當前持股資產表
+        const holdContainer = document.getElementById('holding-container');
+        if (!data.holdings || data.holdings.length === 0) {
+            holdContainer.innerHTML = '<p>目前無任何庫存紀錄。</p>';
+        } else {
+            let table = '<table><tr><th>代號</th><th>名稱</th><th>買入價</th><th>最新價</th><th>最高價</th><th>報酬率</th><th>持有天數</th><th>操作</th></tr>';
+            data.holdings.forEach(h => {
+                const color = h.return_pct >= 0 ? '#28a745' : '#d9534f';
+                table += `<tr>
+                    <td>${h.stock_id}</td>
+                    <td>${h.stock_name}</td>
+                    <td>${h.buy_price}</td>
+                    <td>${h.close_price}</td>
+                    <td>${h.highest_price}</td>
+                    <td style="color:${color}; font-weight:bold;">${h.return_pct}%</td>
+                    <td>${h.hold_days}天</td>
+                    <td><button class="btn btn-del" onclick="deletePortfolio('${h.stock_id}')">平倉移除</button></td>
+                </tr>`;
+            });
+            table += '</table>';
+            holdContainer.innerHTML = table;
+        }
+
+        // 買进推薦
+        const buyUl = document.getElementById('buy-list');
+        buyUl.innerHTML = (data.buy_candidates && data.buy_candidates.length > 0) ? '' : '<li>💡 今日無符合高品質門檻之標的。</li>';
+        if (data.buy_candidates) {
+            data.buy_candidates.forEach((item, idx) => {
+                buyUl.innerHTML += `<li class="buy">[${idx + 1}] 股票代號: [ ${item.stock_id} ] | AI 評分: ${item.buy_score} | 今收: ${item.close_price}元 <br> 🛡️ 09:15 昨收防線: ${item.yesterday_defense} 元 | 硬停損價: ${item.hard_stop_price} 元</li><br>`;
+            });
+        }
+    }
+</script>
 </body>
 </html>
