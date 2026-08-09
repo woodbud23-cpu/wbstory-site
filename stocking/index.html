@@ -8,15 +8,18 @@
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f4f6f9; padding: 20px; }
         .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 20px; }
         .btn { background: #007aff; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-size: 16px; cursor: pointer; }
+        .btn:disabled { background: #a0a0a0; cursor: not-allowed; }
         .alert { color: #d9534f; font-weight: bold; }
         .buy { color: #28a745; font-weight: bold; }
+        .loading { color: #e67e22; font-weight: bold; font-size: 16px; margin-top: 10px; }
     </style>
 </head>
 <body>
 
     <div class="card">
         <h2>🚀 AI 盤後選股智囊儀表板</h2>
-        <button class="btn" onclick="fetchAIResult()">執行盤後 AI 分析</button>
+        <button id="run-btn" class="btn" onclick="fetchAIResult()">執行盤後 AI 分析</button>
+        <div id="loading-msg" class="loading" style="display:none;">⏳ AI 模型計算中（若後端休眠中，首次啟動約需 30~45 秒，請稍候...）</div>
     </div>
 
     <div id="result" class="card" style="display:none;">
@@ -31,36 +34,68 @@
     </div>
 
     <script>
-        const RENDER_API_URL = "https://stock-robot-backend.onrender.com/api/predict"; // 換成你的 Render 網址
-        const SECRET_KEY = "MyQuantSecret2026"; // 你的安全密鑰
+        // ★ 請確認此網址為你 Render 後端發給你的真實 API 網址！
+        const RENDER_API_URL = "https://stock-robot-backend.onrender.com/api/predict"; 
+        const SECRET_KEY = "MyQuantSecret2026"; 
 
         async function fetchAIResult() {
+            const btn = document.getElementById('run-btn');
+            const loading = document.getElementById('loading-msg');
+            const resultCard = document.getElementById('result');
+
+            btn.disabled = true;
+            loading.style.display = 'block';
+            resultCard.style.display = 'none';
+
             try {
                 const res = await fetch(RENDER_API_URL, {
-                    headers: { "x-api-key": SECRET_KEY }
+                    method: 'GET',
+                    headers: { 
+                        'accept': 'application/json',
+                        'x-api-key': SECRET_KEY 
+                    }
                 });
+
+                if (!res.ok) {
+                    throw new Error(`伺服器回應異常: ${res.status} ${res.statusText}`);
+                }
+
                 const data = await res.json();
                 
-                document.getElementById('result').style.display = 'block';
+                resultCard.style.display = 'block';
                 document.getElementById('market').innerText = data.market_status === 'Bull' ? '🟢 牛市' : '🔴 熊市';
                 document.getElementById('slots').innerText = data.available_slots;
 
                 // 渲染賣出
                 const sellUl = document.getElementById('sell-list');
-                sellUl.innerHTML = data.sell_alerts.length === 0 ? '<li>✅ 無須賣出任何持股</li>' : '';
-                data.sell_alerts.forEach(item => {
-                    sellUl.innerHTML += `<li class="alert">${item.stock_id} ${item.stock_name} | 原因: ${item.reason}</li>`;
-                });
+                sellUl.innerHTML = (data.sell_alerts && data.sell_alerts.length > 0) 
+                    ? '' 
+                    : '<li>✅ 目前所有持股狀態良好，明日無須賣出任何股票。</li>';
+                
+                if (data.sell_alerts) {
+                    data.sell_alerts.forEach(item => {
+                        sellUl.innerHTML += `<li class="alert">⚠️ 持股 [ ${item.stock_id} ${item.stock_name} ] | 原因: ${item.reason}</li>`;
+                    });
+                }
 
                 // 渲染買進
                 const buyUl = document.getElementById('buy-list');
-                buyUl.innerHTML = data.buy_candidates.length === 0 ? '<li>💡 今日無符合高品質門檻之標的</li>' : '';
-                data.buy_candidates.forEach(item => {
-                    buyUl.innerHTML += `<li class="buy">股票代號: [ ${item.stock_id} ] | AI 評分: ${item.buy_score} | 收盤價: ${item.close_price}元 <br> 🛡️ 09:15 昨收防線: ${item.yesterday_defense} 元 | 硬停損價: ${item.hard_stop_price} 元</li><br>`;
-                });
+                buyUl.innerHTML = (data.buy_candidates && data.buy_candidates.length > 0) 
+                    ? '' 
+                    : '<li>💡 今日無符合高品質門檻之標的。</li>';
+                
+                if (data.buy_candidates) {
+                    data.buy_candidates.forEach((item, idx) => {
+                        buyUl.innerHTML += `<li class="buy">[${idx + 1}] 股票代號: [ ${item.stock_id} ] | AI 評分: ${item.buy_score} | 今收: ${item.close_price}元 <br> 🛡️ 09:15 昨收防線: ${item.yesterday_defense} 元 | 硬停損價: ${item.hard_stop_price} 元</li><br>`;
+                    });
+                }
 
             } catch (err) {
-                alert("存取失敗，請確認 API 網址與密鑰！");
+                alert(`❌ 存取失敗！\n錯誤原因: ${err.message}\n\n請按 F12 開啟 Console 查看詳細日誌。`);
+                console.error("Fetch Error:", err);
+            } finally {
+                btn.disabled = false;
+                loading.style.display = 'none';
             }
         }
     </script>
