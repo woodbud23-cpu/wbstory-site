@@ -9,7 +9,6 @@
         .container { max-width: 900px; margin: 0 auto; }
         .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.08); margin-bottom: 20px; }
         .btn { background: #007aff; color: white; border: none; padding: 10px 18px; border-radius: 8px; font-size: 15px; cursor: pointer; margin-right: 10px; margin-bottom: 8px; font-weight: 600; transition: all 0.3s ease; }
-        .btn-update-data { background: #17a2b8; }
         .btn-update { background: #34c759; }
         .btn-del { background: #ff3b30; padding: 4px 8px; font-size: 12px; margin-bottom: 0; }
         .btn-download { background: #6c757d; font-size: 13px; padding: 6px 12px; margin-bottom: 0; }
@@ -19,6 +18,7 @@
         .alert { color: #d9534f; font-weight: bold; }
         .buy { color: #28a745; font-weight: bold; }
         
+        .time-badge { font-size: 15px; color: #495057; background: #e9ecef; padding: 8px 14px; border-radius: 6px; display: inline-block; margin-top: 10px; font-weight: bold; }
         .status-box { padding: 12px; border-radius: 8px; margin-top: 15px; font-size: 14px; font-weight: bold; display: none; }
         .status-loading { background: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
         .status-success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
@@ -37,9 +37,15 @@
     <!-- 操作主控台 -->
     <div class="card">
         <h2>🚀 AI 盤後選股智囊儀表板</h2>
+        
+        <!-- 自動顯示最新一次更新時間 -->
+        <div class="time-badge">
+            🕒 最近一次資料更新時間 (台灣時間): <span id="header-last-update">伺服器連線確認中...</span>
+        </div>
+        <br><br>
+
         <div>
-            <button id="show-btn" class="btn" onclick="fetchAIResult()">⚡ 查看 AI 分析結果 (0.1秒秒出)</button>
-            <button id="data-btn" class="btn btn-update-data" onclick="updateStockData()">📥 手動增量更新最新股價 (含除權息自動校正)</button>
+            <button id="show-btn" class="btn" onclick="fetchAIResult()">⚡ 印出 / 顯示 AI 分析結果</button>
             <button id="calc-btn" class="btn btn-update" onclick="recalculateAI()">🔄 手動即時重新計算與更新 AI</button>
         </div>
         
@@ -49,7 +55,7 @@
     <!-- 輸入持股視窗 -->
     <div class="card">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-            <h3 style="margin: 0;">➕ 輸入/更新今日買入持股</h3>
+            <h3 style="margin: 0;">➕ 輸入/更新今日買入持股 (同步 GitHub)</h3>
             <button class="btn btn-download" onclick="downloadPortfolio()">📥 下載伺服器 Excel 備份</button>
         </div>
         <div class="form-group">
@@ -89,7 +95,33 @@
     let pollTimer = null;
     document.getElementById('in-date').valueAsDate = new Date();
 
-    // 1. 讀取 AI 分析結果 (具備即時任務監控能力)
+    // 網頁一打開，自動向伺服器查詢最近一次更新時間 (並順便喚醒主機)
+    window.addEventListener('DOMContentLoaded', () => {
+        checkServerTime();
+    });
+
+    async function checkServerTime() {
+        try {
+            const res = await fetch(`${RENDER_API_URL}/api/predict`, {
+                headers: { 'x-api-key': SECRET_KEY }
+            });
+            const data = await res.json();
+            
+            if (data.status === "running") {
+                document.getElementById('header-last-update').innerText = "⏳ 伺服器正於背景即時運算全市場數據中...";
+                showStatus("loading", `⏳ ${data.message}`);
+                startPolling();
+            } else if (data.updated_at) {
+                document.getElementById('header-last-update').innerText = data.updated_at;
+            } else {
+                document.getElementById('header-last-update').innerText = "尚未有歷史更新紀錄";
+            }
+        } catch (err) {
+            document.getElementById('header-last-update').innerText = "伺服器喚醒中，請稍後...";
+        }
+    }
+
+    // 1. 印出 / 顯示 AI 分析結果
     async function fetchAIResult() {
         try {
             const res = await fetch(`${RENDER_API_URL}/api/predict`, {
@@ -104,12 +136,13 @@
             }
 
             if (data.status === "no_cache") {
-                alert("目前尚未有快取資料，請先點擊「手動即時重新計算」進行首次全市場 AI 分析。");
+                alert("目前尚未有快取資料，請等待 18:00 自動計算，或點擊「手動即時重新計算」。");
                 return;
             }
 
             renderUI(data);
-            showStatus("success", `✅ 讀取成功！數據最後更新於: ${data.updated_at}`);
+            document.getElementById('header-last-update').innerText = data.updated_at || "未知";
+            showStatus("success", `✅ 讀取成功！數據更新於: ${data.updated_at}`);
             setTimeout(() => { document.getElementById('status-box').style.display = 'none'; }, 3000);
 
         } catch (err) {
@@ -117,26 +150,9 @@
         }
     }
 
-    // 2. 手動觸發最新股價增量更新
-    async function updateStockData() {
-        showStatus("loading", "📥 已成功觸發股價增量更新！請等候系統連線下載...");
-
-        try {
-            await fetch(`${RENDER_API_URL}/api/update_data`, {
-                method: 'POST',
-                headers: { 'x-api-key': SECRET_KEY }
-            });
-            
-            startPolling();
-        } catch (err) {
-            alert(`更新失敗: ${err.message}`);
-            showStatus("none");
-        }
-    }
-
-    // 3. 手動觸發全市場 AI 重新計算
+    // 2. 手動觸發全市場 AI 重新計算
     async function recalculateAI() {
-        showStatus("loading", "🚀 已觸發全市場 AI 重算！請等候 3~5 分鐘背景計算完成...");
+        showStatus("loading", "🚀 已觸發全市場即時抓取與 AI 重算！請等候背景運算...");
 
         try {
             await fetch(`${RENDER_API_URL}/api/recalculate`, {
@@ -151,10 +167,10 @@
         }
     }
 
-    // 4. 自動監視輪詢 (精準即時狀態回傳)
+    // 3. 自動監視輪詢
     function startPolling() {
         if (pollTimer) return;
-        setButtonsDisabled(true);
+        document.getElementById('calc-btn').disabled = true;
         
         pollTimer = setInterval(async () => {
             try {
@@ -165,9 +181,11 @@
                 
                 if (data.status === "running") {
                     showStatus("loading", `⏳ ${data.message}`);
+                    document.getElementById('header-last-update').innerText = "⏳ 即時運算中...";
                 } else if (data.status === "success") {
                     stopPolling();
                     renderUI(data);
+                    document.getElementById('header-last-update').innerText = data.updated_at;
                     showStatus("success", `🎉 任務已成功完成！數據更新於: ${data.updated_at}`);
                 }
             } catch (e) {}
@@ -179,15 +197,10 @@
             clearInterval(pollTimer);
             pollTimer = null;
         }
-        setButtonsDisabled(false);
+        document.getElementById('calc-btn').disabled = false;
     }
 
-    function setButtonsDisabled(disabled) {
-        document.getElementById('calc-btn').disabled = disabled;
-        document.getElementById('data-btn').disabled = disabled;
-    }
-
-    // 5. 新增持股
+    // 4. 新增持股 (同步寫入 Excel 並 Commit 回 GitHub)
     async function addPortfolio() {
         const stock_id = document.getElementById('in-id').value;
         const stock_name = document.getElementById('in-name').value;
@@ -209,14 +222,14 @@
                 },
                 body: JSON.stringify({ stock_id, stock_name, buy_date, buy_price, shares })
             });
-            alert("✅ 持股已成功更新！");
+            alert("✅ 持股已成功更新並同步至 GitHub！");
             fetchAIResult();
         } catch (err) {
             alert(`新增失敗: ${err.message}`);
         }
     }
 
-    // 6. 刪除持股
+    // 5. 刪除持股
     async function deletePortfolio(stock_id) {
         if (!confirm(`確定要移除持股 [${stock_id}] 嗎？`)) return;
 
@@ -232,7 +245,7 @@
         }
     }
 
-    // 7. 下載伺服器 Excel 備份
+    // 6. 下載伺服器 Excel 備份
     async function downloadPortfolio() {
         try {
             const res = await fetch(`${RENDER_API_URL}/api/portfolio/download`, {
