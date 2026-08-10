@@ -41,7 +41,6 @@
             <button id="calc-btn" class="btn btn-update" onclick="recalculateAI()">🔄 手動即時重新計算與更新</button>
         </div>
         
-        <!-- 動態監視狀態區 -->
         <div id="status-box" class="status-box"></div>
     </div>
 
@@ -86,49 +85,43 @@
     const SECRET_KEY = "MyQuantSecret2026"; 
 
     let pollTimer = null;
-
     document.getElementById('in-date').valueAsDate = new Date();
 
-    // 1. 讀取 AI 分析結果 (支援喚醒與自動監視)
-    async function fetchAIResult(quiet = false) {
-        const statusBox = document.getElementById('status-box');
-        
+    // 1. 0.1 秒極速讀取 (只讀快取，絕不自動輪詢)
+    async function fetchAIResult() {
         try {
             const res = await fetch(`${RENDER_API_URL}/api/predict`, {
                 headers: { 'x-api-key': SECRET_KEY }
             });
             const data = await res.json();
             
-            if (data.status === "calculating") {
-                showStatus("loading", "⏳ 伺服器已被喚醒，AI 模型正於背景進行全市場運算中，系統將自動監視進度...");
-                startPolling();
+            if (data.status === "no_cache") {
+                alert("目前尚未有快取資料，請先點擊「手動重新計算」進行首次全市場 AI 分析。");
                 return;
             }
 
-            if (pollTimer) stopPolling();
             renderUI(data);
-            showStatus("success", `✅ 分析完成！數據最後更新於: ${data.updated_at}`);
-            
-            setTimeout(() => { statusBox.style.display = 'none'; }, 4000);
+            showStatus("success", `✅ 讀取成功！數據最後更新於: ${data.updated_at}`);
+            setTimeout(() => { document.getElementById('status-box').style.display = 'none'; }, 3000);
 
         } catch (err) {
-            if (!quiet) alert(`存取失敗: ${err.message}`);
+            alert(`存取失敗: ${err.message}`);
         }
     }
 
-    // 2. 手動觸發背景計算
+    // 2. 唯一觸發全市場 AI 評分運算的按鈕
     async function recalculateAI() {
         const cBtn = document.getElementById('calc-btn');
         cBtn.disabled = true;
-        showStatus("loading", "🚀 已成功觸發 AI 背景計算！系統正自動監視運算進度，完成後將自動印出結果...");
+        showStatus("loading", "🚀 已觸發全市場 AI 重算！請等候 3~5 分鐘背景計算完成...");
 
         try {
-            const res = await fetch(`${RENDER_API_URL}/api/recalculate`, {
+            await fetch(`${RENDER_API_URL}/api/recalculate`, {
                 method: 'POST',
                 headers: { 'x-api-key': SECRET_KEY }
             });
-            const data = await res.json();
-            startPolling();
+            
+            startPolling(); // 開始自動監視，直到計算完成
         } catch (err) {
             alert(`觸發失敗: ${err.message}`);
             cBtn.disabled = false;
@@ -136,14 +129,21 @@
         }
     }
 
-    // 3. 自動輪詢監控機制 (每 10 秒檢查一次)
+    // 3. 自動監視輪詢
     function startPolling() {
         if (pollTimer) return;
-        document.getElementById('calc-btn').disabled = true;
-        
         pollTimer = setInterval(async () => {
-            console.log("🔍 背景自動監視 AI 運算進度中...");
-            await fetchAIResult(true);
+            try {
+                const res = await fetch(`${RENDER_API_URL}/api/predict`, {
+                    headers: { 'x-api-key': SECRET_KEY }
+                });
+                const data = await res.json();
+                if (data.status === "success") {
+                    stopPolling();
+                    renderUI(data);
+                    showStatus("success", `🎉 AI 模型計算完成！數據更新於: ${data.updated_at}`);
+                }
+            } catch (e) {}
         }, 10000);
     }
 
@@ -155,7 +155,7 @@
         document.getElementById('calc-btn').disabled = false;
     }
 
-    // 4. 新增持股
+    // 4. 新增持股：0.01秒更新後端，0.1秒秒刷新前端畫面！
     async function addPortfolio() {
         const stock_id = document.getElementById('in-id').value;
         const stock_name = document.getElementById('in-name').value;
@@ -169,7 +169,7 @@
         }
 
         try {
-            const res = await fetch(`${RENDER_API_URL}/api/portfolio/add`, {
+            await fetch(`${RENDER_API_URL}/api/portfolio/add`, {
                 method: 'POST',
                 headers: { 
                     'Content-Type': 'application/json',
@@ -177,41 +177,39 @@
                 },
                 body: JSON.stringify({ stock_id, stock_name, buy_date, buy_price, shares })
             });
-            alert("✅ 持股已成功新增！系統將於背景重新計算停利停損點。");
-            startPolling();
+            alert("✅ 持股已成功更新！");
+            fetchAIResult(); // 秒級刷新畫面
         } catch (err) {
             alert(`新增失敗: ${err.message}`);
         }
     }
 
-    // 5. 刪除持股
+    // 5. 刪除持股：秒級刷新！
     async function deletePortfolio(stock_id) {
         if (!confirm(`確定要移除持股 [${stock_id}] 嗎？`)) return;
 
         try {
-            const res = await fetch(`${RENDER_API_URL}/api/portfolio/delete/${stock_id}`, {
+            await fetch(`${RENDER_API_URL}/api/portfolio/delete/${stock_id}`, {
                 method: 'DELETE',
                 headers: { 'x-api-key': SECRET_KEY }
             });
             alert(`✅ 已移除持股 ${stock_id}`);
-            startPolling();
+            fetchAIResult(); // 秒級刷新畫面
         } catch (err) {
             alert(`刪除失敗: ${err.message}`);
         }
     }
 
-    // 6. 下載伺服器上的持股 Excel 檔
+    // 6. 下載伺服器 Excel 備份
     async function downloadPortfolio() {
         try {
             const res = await fetch(`${RENDER_API_URL}/api/portfolio/download`, {
                 headers: { 'x-api-key': SECRET_KEY }
             });
-            
             if (!res.ok) {
                 alert("下載失敗：伺服器上尚無持股紀錄檔。");
                 return;
             }
-
             const blob = await res.blob();
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
@@ -222,11 +220,10 @@
             a.remove();
             window.URL.revokeObjectURL(url);
         } catch (err) {
-            alert(`下載發生錯誤: ${err.message}`);
+            alert(`下載錯誤: ${err.message}`);
         }
     }
 
-    // 顯示 UI 狀態列
     function showStatus(type, msg) {
         const box = document.getElementById('status-box');
         box.style.display = 'block';
@@ -241,7 +238,6 @@
         }
     }
 
-    // 渲染 UI 畫面
     function renderUI(data) {
         document.getElementById('result').style.display = 'block';
         document.getElementById('market').innerText = data.market_status === 'Bull' ? '🟢 牛市' : '🔴 熊市';
@@ -249,7 +245,6 @@
         document.getElementById('hold-count').innerText = data.current_holdings_count;
         document.getElementById('slots').innerText = data.available_slots;
 
-        // 賣出與移動停利警告
         const sellContainer = document.getElementById('sell-container');
         if (!data.sell_alerts || data.sell_alerts.length === 0) {
             sellContainer.innerHTML = '<p>✅ 目前所有持股狀態良好，明日無須賣出任何股票。</p>';
@@ -262,7 +257,6 @@
             sellContainer.innerHTML = html;
         }
 
-        // 當前持股資產表
         const holdContainer = document.getElementById('holding-container');
         if (!data.holdings || data.holdings.length === 0) {
             holdContainer.innerHTML = '<p>目前無任何庫存紀錄。</p>';
@@ -285,7 +279,6 @@
             holdContainer.innerHTML = table;
         }
 
-        // 買進推薦
         const buyUl = document.getElementById('buy-list');
         buyUl.innerHTML = (data.buy_candidates && data.buy_candidates.length > 0) ? '' : '<li>💡 今日無符合高品質門檻之標的。</li>';
         if (data.buy_candidates) {
