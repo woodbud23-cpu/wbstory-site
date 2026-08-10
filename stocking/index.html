@@ -89,7 +89,7 @@
     let pollTimer = null;
     document.getElementById('in-date').valueAsDate = new Date();
 
-    // 1. 0.1 秒極速讀取
+    // 1. 讀取 AI 分析結果 (具備即時任務監控能力)
     async function fetchAIResult() {
         try {
             const res = await fetch(`${RENDER_API_URL}/api/predict`, {
@@ -97,6 +97,12 @@
             });
             const data = await res.json();
             
+            if (data.status === "running") {
+                showStatus("loading", `⏳ ${data.message}`);
+                startPolling();
+                return;
+            }
+
             if (data.status === "no_cache") {
                 alert("目前尚未有快取資料，請先點擊「手動即時重新計算」進行首次全市場 AI 分析。");
                 return;
@@ -113,9 +119,7 @@
 
     // 2. 手動觸發最新股價增量更新
     async function updateStockData() {
-        const dBtn = document.getElementById('data-btn');
-        dBtn.disabled = true;
-        showStatus("loading", "📥 正從 FinMind 增量下載全市場最新股價數據，並自動檢測除權息校正中 (約需 2~3 分鐘)...");
+        showStatus("loading", "📥 已成功觸發股價增量更新！請等候系統連線下載...");
 
         try {
             await fetch(`${RENDER_API_URL}/api/update_data`, {
@@ -123,18 +127,15 @@
                 headers: { 'x-api-key': SECRET_KEY }
             });
             
-            startPolling("股價增量更新與 AI 分析中...");
+            startPolling();
         } catch (err) {
             alert(`更新失敗: ${err.message}`);
-            dBtn.disabled = false;
             showStatus("none");
         }
     }
 
     // 3. 手動觸發全市場 AI 重新計算
     async function recalculateAI() {
-        const cBtn = document.getElementById('calc-btn');
-        cBtn.disabled = true;
         showStatus("loading", "🚀 已觸發全市場 AI 重算！請等候 3~5 分鐘背景計算完成...");
 
         try {
@@ -143,16 +144,15 @@
                 headers: { 'x-api-key': SECRET_KEY }
             });
             
-            startPolling("AI 模型重新計算中...");
+            startPolling();
         } catch (err) {
             alert(`觸發失敗: ${err.message}`);
-            cBtn.disabled = false;
             showStatus("none");
         }
     }
 
-    // 4. 自動監視輪詢
-    function startPolling(msg = "背景處理中...") {
+    // 4. 自動監視輪詢 (精準即時狀態回傳)
+    function startPolling() {
         if (pollTimer) return;
         setButtonsDisabled(true);
         
@@ -162,13 +162,16 @@
                     headers: { 'x-api-key': SECRET_KEY }
                 });
                 const data = await res.json();
-                if (data.status === "success") {
+                
+                if (data.status === "running") {
+                    showStatus("loading", `⏳ ${data.message}`);
+                } else if (data.status === "success") {
                     stopPolling();
                     renderUI(data);
-                    showStatus("success", `🎉 ${msg} 已成功完成！數據更新於: ${data.updated_at}`);
+                    showStatus("success", `🎉 任務已成功完成！數據更新於: ${data.updated_at}`);
                 }
             } catch (e) {}
-        }, 10000);
+        }, 8000);
     }
 
     function stopPolling() {
