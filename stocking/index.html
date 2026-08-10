@@ -8,15 +8,22 @@
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f4f6f9; padding: 20px; color: #333; }
         .container { max-width: 900px; margin: 0 auto; }
         .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.08); margin-bottom: 20px; }
-        .btn { background: #007aff; color: white; border: none; padding: 10px 18px; border-radius: 8px; font-size: 15px; cursor: pointer; margin-right: 10px; font-weight: 600; }
+        .btn { background: #007aff; color: white; border: none; padding: 10px 18px; border-radius: 8px; font-size: 15px; cursor: pointer; margin-right: 10px; font-weight: 600; transition: all 0.3s ease; }
         .btn-update { background: #34c759; }
         .btn-del { background: #ff3b30; padding: 4px 8px; font-size: 12px; }
-        .btn:disabled { background: #a0a0a0; cursor: not-allowed; }
+        .btn-download { background: #17a2b8; font-size: 13px; padding: 6px 12px; }
+        .btn:disabled { background: #a0a0a0; cursor: not-allowed; opacity: 0.7; }
         .form-group { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
         .form-group input { padding: 8px 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; flex: 1; min-width: 120px; }
         .alert { color: #d9534f; font-weight: bold; }
         .buy { color: #28a745; font-weight: bold; }
-        .loading { color: #e67e22; font-weight: bold; font-size: 15px; margin-top: 10px; }
+        
+        .status-box { padding: 12px; border-radius: 8px; margin-top: 15px; font-size: 14px; font-weight: bold; display: none; }
+        .status-loading { background: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
+        .status-success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .spinner { display: inline-block; width: 12px; height: 12px; border: 2px solid #856404; border-radius: 50%; border-top-color: transparent; animation: spin 1s linear infinite; margin-right: 8px; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
         table { width: 100%; border-collapse: collapse; margin-top: 10px; }
         th, td { border-bottom: 1px solid #eee; padding: 8px; text-align: left; font-size: 14px; }
         th { background: #f8f9fa; }
@@ -33,12 +40,17 @@
             <button id="show-btn" class="btn" onclick="fetchAIResult()">⚡ 查看 AI 分析結果 (0.1秒秒出)</button>
             <button id="calc-btn" class="btn btn-update" onclick="recalculateAI()">🔄 手動即時重新計算與更新</button>
         </div>
-        <div id="loading-msg" class="loading" style="display:none;">⏳ 背景計算中（進行數據增量更新與模型推理，請稍候約 15-20 秒...）</div>
+        
+        <!-- 動態監視狀態區 -->
+        <div id="status-box" class="status-box"></div>
     </div>
 
     <!-- 輸入持股視窗 -->
     <div class="card">
-        <h3>➕ 輸入/更新今日買入持股</h3>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <h3 style="margin: 0;">➕ 輸入/更新今日買入持股</h3>
+            <button class="btn btn-download" onclick="downloadPortfolio()">📥 下載伺服器 Excel 備份</button>
+        </div>
         <div class="form-group">
             <input type="text" id="in-id" placeholder="股票代號 (例: 3710)">
             <input type="text" id="in-name" placeholder="股票名稱 (例: 連展投控)">
@@ -52,7 +64,7 @@
     <!-- AI 分析展現區 -->
     <div id="result" class="card" style="display:none;">
         <p><strong>📊 當前大盤狀態：</strong><span id="market"></span> | <strong>最後更新時間：</strong><span id="update-time"></span></p>
-        <p><strong>📊 持股數：</strong><span id="hold-count"></span> 檔 | <strong>剩餘可買空位：</strong><span id="slots"></span> 档</p>
+        <p><strong>📊 持股數：</strong><span id="hold-count"></span> 檔 | <strong>剩餘可買空位：</strong><span id="slots"></span> 檔</p>
         
         <hr>
         <h3>🚨 持股監視與賣出/移動停利預警</h3>
@@ -73,28 +85,42 @@
     const RENDER_API_URL = "https://stock-robot-backend.onrender.com"; 
     const SECRET_KEY = "MyQuantSecret2026"; 
 
-    // 初始化預設日期為今天
+    let pollTimer = null;
+
     document.getElementById('in-date').valueAsDate = new Date();
 
-    // 1. 讀取快取結果 (0.1秒秒出)
-    async function fetchAIResult() {
+    // 1. 讀取 AI 分析結果 (支援喚醒與自動監視)
+    async function fetchAIResult(quiet = false) {
+        const statusBox = document.getElementById('status-box');
+        
         try {
             const res = await fetch(`${RENDER_API_URL}/api/predict`, {
                 headers: { 'x-api-key': SECRET_KEY }
             });
             const data = await res.json();
+            
+            if (data.status === "calculating") {
+                showStatus("loading", "⏳ 伺服器已被喚醒，AI 模型正於背景進行全市場運算中，系統將自動監視進度...");
+                startPolling();
+                return;
+            }
+
+            if (pollTimer) stopPolling();
             renderUI(data);
+            showStatus("success", `✅ 分析完成！數據最後更新於: ${data.updated_at}`);
+            
+            setTimeout(() => { statusBox.style.display = 'none'; }, 4000);
+
         } catch (err) {
-            alert(`存取失敗: ${err.message}`);
+            if (!quiet) alert(`存取失敗: ${err.message}`);
         }
     }
 
     // 2. 手動觸發背景計算
     async function recalculateAI() {
-        const loading = document.getElementById('loading-msg');
         const cBtn = document.getElementById('calc-btn');
-        loading.style.display = 'block';
         cBtn.disabled = true;
+        showStatus("loading", "🚀 已成功觸發 AI 背景計算！系統正自動監視運算進度，完成後將自動印出結果...");
 
         try {
             const res = await fetch(`${RENDER_API_URL}/api/recalculate`, {
@@ -102,17 +128,34 @@
                 headers: { 'x-api-key': SECRET_KEY }
             });
             const data = await res.json();
-            alert("✅ 計算完成！已更新最新 AI 分析數據。");
-            fetchAIResult(); // 自動重新抓取顯示
+            startPolling();
         } catch (err) {
-            alert(`計算失敗: ${err.message}`);
-        } finally {
-            loading.style.display = 'none';
+            alert(`觸發失敗: ${err.message}`);
             cBtn.disabled = false;
+            showStatus("none");
         }
     }
 
-    // 3. 新增/更新持股
+    // 3. 自動輪詢監控機制 (每 10 秒檢查一次)
+    function startPolling() {
+        if (pollTimer) return;
+        document.getElementById('calc-btn').disabled = true;
+        
+        pollTimer = setInterval(async () => {
+            console.log("🔍 背景自動監視 AI 運算進度中...");
+            await fetchAIResult(true);
+        }, 10000);
+    }
+
+    function stopPolling() {
+        if (pollTimer) {
+            clearInterval(pollTimer);
+            pollTimer = null;
+        }
+        document.getElementById('calc-btn').disabled = false;
+    }
+
+    // 4. 新增持股
     async function addPortfolio() {
         const stock_id = document.getElementById('in-id').value;
         const stock_name = document.getElementById('in-name').value;
@@ -134,14 +177,14 @@
                 },
                 body: JSON.stringify({ stock_id, stock_name, buy_date, buy_price, shares })
             });
-            alert("✅ 持股已成功新增/更新！");
-            fetchAIResult();
+            alert("✅ 持股已成功新增！系統將於背景重新計算停利停損點。");
+            startPolling();
         } catch (err) {
             alert(`新增失敗: ${err.message}`);
         }
     }
 
-    // 4. 刪除持股
+    // 5. 刪除持股
     async function deletePortfolio(stock_id) {
         if (!confirm(`確定要移除持股 [${stock_id}] 嗎？`)) return;
 
@@ -151,9 +194,50 @@
                 headers: { 'x-api-key': SECRET_KEY }
             });
             alert(`✅ 已移除持股 ${stock_id}`);
-            fetchAIResult();
+            startPolling();
         } catch (err) {
             alert(`刪除失敗: ${err.message}`);
+        }
+    }
+
+    // 6. 下載伺服器上的持股 Excel 檔
+    async function downloadPortfolio() {
+        try {
+            const res = await fetch(`${RENDER_API_URL}/api/portfolio/download`, {
+                headers: { 'x-api-key': SECRET_KEY }
+            });
+            
+            if (!res.ok) {
+                alert("下載失敗：伺服器上尚無持股紀錄檔。");
+                return;
+            }
+
+            const blob = await res.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `my_portfolio_${new Date().toISOString().slice(0,10)}.xlsx`;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            window.URL.revokeObjectURL(url);
+        } catch (err) {
+            alert(`下載發生錯誤: ${err.message}`);
+        }
+    }
+
+    // 顯示 UI 狀態列
+    function showStatus(type, msg) {
+        const box = document.getElementById('status-box');
+        box.style.display = 'block';
+        if (type === "loading") {
+            box.className = "status-box status-loading";
+            box.innerHTML = `<span class="spinner"></span>${msg}`;
+        } else if (type === "success") {
+            box.className = "status-box status-success";
+            box.innerHTML = msg;
+        } else {
+            box.style.display = 'none';
         }
     }
 
@@ -201,7 +285,7 @@
             holdContainer.innerHTML = table;
         }
 
-        // 買进推薦
+        // 買進推薦
         const buyUl = document.getElementById('buy-list');
         buyUl.innerHTML = (data.buy_candidates && data.buy_candidates.length > 0) ? '' : '<li>💡 今日無符合高品質門檻之標的。</li>';
         if (data.buy_candidates) {
