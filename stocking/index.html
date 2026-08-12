@@ -93,6 +93,7 @@
     const SECRET_KEY = "MyQuantSecret2026"; 
 
     let pollTimer = null;
+    let initialTimestamp = null; // 用於比對快取是否真正更新
     document.getElementById('in-date').valueAsDate = new Date();
 
     // 網頁一打開，自動向伺服器查詢最近一次更新時間 (並順便喚醒主機)
@@ -108,11 +109,12 @@
             const data = await res.json();
             
             if (data.status === "running") {
-                document.getElementById('header-last-update').innerText = "⏳ 伺服器正於背景即時運算全市場數據中...";
-                showStatus("loading", `⏳ ${data.message}`);
+                document.getElementById('header-last-update').innerText = "⏳ 伺服器/Actions 正於背景即時運算全市場數據中...";
+                showStatus("loading", `⏳ ${data.message || '雲端運算中...'}`);
                 startPolling();
             } else if (data.updated_at) {
                 document.getElementById('header-last-update').innerText = data.updated_at;
+                initialTimestamp = data.updated_at;
             } else {
                 document.getElementById('header-last-update').innerText = "尚未有歷史更新紀錄";
             }
@@ -130,13 +132,13 @@
             const data = await res.json();
             
             if (data.status === "running") {
-                showStatus("loading", `⏳ ${data.message}`);
+                showStatus("loading", `⏳ ${data.message || '雲端運算中...'}`);
                 startPolling();
                 return;
             }
 
             if (data.status === "no_cache") {
-                alert("目前尚未有快取資料，請等待 18:00 自動計算，或點擊「手動即時重新計算」。");
+                alert("目前尚未有快取資料，請等待自動計算，或點擊「手動即時重新計算」。");
                 return;
             }
 
@@ -150,19 +152,32 @@
         }
     }
 
-    // 2. 手動觸發全市場 AI 重新計算
+    // 2. 手動觸發全市場 AI 重新計算 (叫 GitHub Actions 開跑)
     async function recalculateAI() {
-        showStatus("loading", "🚀 已觸發全市場即時抓取與 AI 重算！請等候背景運算...");
+        showStatus("loading", "🚀 已成功發送指令給 GitHub Actions！雲端極速運算啟動中...");
+        document.getElementById('calc-btn').disabled = true;
 
         try {
-            await fetch(`${RENDER_API_URL}/api/recalculate`, {
+            const res = await fetch(`${RENDER_API_URL}/api/recalculate`, {
                 method: 'POST',
                 headers: { 'x-api-key': SECRET_KEY }
             });
+            const data = await res.json();
             
-            startPolling();
+            if (res.ok) {
+                showStatus("loading", `⏳ ${data.message}`);
+                // 💡 強制延遲 15 秒後才開始輪詢，避開舊的快取數據，並確保標記運算狀態
+                setTimeout(() => {
+                    startPolling();
+                }, 15000);
+            } else {
+                alert(`觸發失敗: ${data.detail || '未知錯誤'}`);
+                document.getElementById('calc-btn').disabled = false;
+                showStatus("none");
+            }
         } catch (err) {
             alert(`觸發失敗: ${err.message}`);
+            document.getElementById('calc-btn').disabled = false;
             showStatus("none");
         }
     }
@@ -180,16 +195,20 @@
                 const data = await res.json();
                 
                 if (data.status === "running") {
-                    showStatus("loading", `⏳ ${data.message}`);
-                    document.getElementById('header-last-update').innerText = "⏳ 即時運算中...";
+                    showStatus("loading", `⏳ ${data.message || 'GitHub Actions 正在極速處理 2,000 檔 Parquet 中...'}`);
+                    document.getElementById('header-last-update').innerText = "⏳ 雲端即時運算中...";
                 } else if (data.status === "success") {
-                    stopPolling();
-                    renderUI(data);
-                    document.getElementById('header-last-update').innerText = data.updated_at;
-                    showStatus("success", `🎉 任務已成功完成！數據更新於: ${data.updated_at}`);
+                    // 檢查 updated_at 是否有變更 (確認拿到的是新產出的快取)
+                    if (data.updated_at !== initialTimestamp) {
+                        stopPolling();
+                        renderUI(data);
+                        document.getElementById('header-last-update').innerText = data.updated_at;
+                        initialTimestamp = data.updated_at;
+                        showStatus("success", `🎉 GitHub Actions 運算完成！最新數據更新於: ${data.updated_at}`);
+                    }
                 }
             } catch (e) {}
-        }, 8000);
+        }, 10000);
     }
 
     function stopPolling() {
