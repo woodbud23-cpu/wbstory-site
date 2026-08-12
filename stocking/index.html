@@ -10,6 +10,7 @@
         .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.08); margin-bottom: 20px; }
         .btn { background: #007aff; color: white; border: none; padding: 10px 18px; border-radius: 8px; font-size: 15px; cursor: pointer; margin-right: 10px; margin-bottom: 8px; font-weight: 600; transition: all 0.3s ease; }
         .btn-update { background: #34c759; }
+        .btn-offline { background: #ff9500; } /* 橘色離線按鈕 */
         .btn-del { background: #ff3b30; padding: 4px 8px; font-size: 12px; margin-bottom: 0; }
         .btn-download { background: #6c757d; font-size: 13px; padding: 6px 12px; margin-bottom: 0; }
         .btn:disabled { background: #a0a0a0; cursor: not-allowed; opacity: 0.7; }
@@ -46,7 +47,8 @@
 
         <div>
             <button id="show-btn" class="btn" onclick="fetchAIResult()">⚡ 印出 / 顯示 AI 分析結果</button>
-            <button id="calc-btn" class="btn btn-update" onclick="recalculateAI()">🔄 手動即時重新計算與更新 AI</button>
+            <button id="calc-btn" class="btn btn-update" onclick="recalculateAI(false)">🔄 全網增量更新 + AI 計算</button>
+            <button id="offline-btn" class="btn btn-offline" onclick="recalculateAI(true)">⚡ 純 AI 離線推理 (不打 API)</button>
         </div>
         
         <div id="status-box" class="status-box"></div>
@@ -152,32 +154,39 @@
         }
     }
 
-    // 2. 手動觸發全市場 AI 重新計算 (叫 GitHub Actions 開跑)
-    async function recalculateAI() {
-        showStatus("loading", "🚀 已成功發送指令給 GitHub Actions！雲端極速運算啟動中...");
-        document.getElementById('calc-btn').disabled = true;
+    // 2. 手動觸發全市場 AI 重新計算 (支持正常增量模式與離線純 AI 模式)
+    async function recalculateAI(offlineMode = false) {
+        const modeText = offlineMode ? "離線純 AI 推理 (不打 API)" : "全網增量更新 + AI 計算";
+        showStatus("loading", `🚀 已成功發送指令給 GitHub Actions！雲端 [${modeText}] 啟動中...`);
+        setButtonsDisabled(true);
 
         try {
+            // 如果是離線模式，可帶入離線參數，或調用統一路由
             const res = await fetch(`${RENDER_API_URL}/api/recalculate`, {
                 method: 'POST',
-                headers: { 'x-api-key': SECRET_KEY }
+                headers: { 
+                    'x-api-key': SECRET_KEY,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ offline_only: offlineMode })
             });
             const data = await res.json();
             
             if (res.ok) {
                 showStatus("loading", `⏳ ${data.message}`);
-                // 💡 強制延遲 15 秒後才開始輪詢，避開舊的快取數據，並確保標記運算狀態
+                // 離線模式等待時間較短 (8秒)，完整更新模式稍長 (15秒)
+                const delayMs = offlineMode ? 8000 : 15000;
                 setTimeout(() => {
                     startPolling();
-                }, 15000);
+                }, delayMs);
             } else {
                 alert(`觸發失敗: ${data.detail || '未知錯誤'}`);
-                document.getElementById('calc-btn').disabled = false;
+                setButtonsDisabled(false);
                 showStatus("none");
             }
         } catch (err) {
             alert(`觸發失敗: ${err.message}`);
-            document.getElementById('calc-btn').disabled = false;
+            setButtonsDisabled(false);
             showStatus("none");
         }
     }
@@ -185,7 +194,7 @@
     // 3. 自動監視輪詢
     function startPolling() {
         if (pollTimer) return;
-        document.getElementById('calc-btn').disabled = true;
+        setButtonsDisabled(true);
         
         pollTimer = setInterval(async () => {
             try {
@@ -195,7 +204,7 @@
                 const data = await res.json();
                 
                 if (data.status === "running") {
-                    showStatus("loading", `⏳ ${data.message || 'GitHub Actions 正在極速處理 2,000 檔 Parquet 中...'}`);
+                    showStatus("loading", `⏳ ${data.message || 'GitHub Actions 正在極速處理中...'}`);
                     document.getElementById('header-last-update').innerText = "⏳ 雲端即時運算中...";
                 } else if (data.status === "success") {
                     // 檢查 updated_at 是否有變更 (確認拿到的是新產出的快取)
@@ -208,7 +217,7 @@
                     }
                 }
             } catch (e) {}
-        }, 10000);
+        }, 8000);
     }
 
     function stopPolling() {
@@ -216,7 +225,12 @@
             clearInterval(pollTimer);
             pollTimer = null;
         }
-        document.getElementById('calc-btn').disabled = false;
+        setButtonsDisabled(false);
+    }
+
+    function setButtonsDisabled(disabled) {
+        document.getElementById('calc-btn').disabled = disabled;
+        document.getElementById('offline-btn').disabled = disabled;
     }
 
     // 4. 新增持股 (同步寫入 Excel 並 Commit 回 GitHub)
