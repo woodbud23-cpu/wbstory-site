@@ -1,12 +1,553 @@
-﻿<!doctype html>
-<html lang="zh-Hant">
+<!DOCTYPE html>
+<html lang="zh-TW" class="scroll-smooth">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>OKAY · 個人網站（施工中）</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>木芽故事館 | Woodbud Story - 跨媒材解謎工作室</title>
+  
+  <!-- Google Fonts: Cinzel, Noto Serif TC, Noto Sans TC -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;700;900&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- 模組化 CSS -->
+  <link rel="stylesheet" href="./css/style.css" />
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            bg: {
+              primary: '#0D0E13',
+              surface: '#151822',
+              hover: '#1E2230'
+            },
+            accent: {
+              gold: '#D4AF37',
+              'gold-light': '#F3E5AB',
+              crimson: '#9E2A2B',
+              'blue-mystic': '#3A506B'
+            },
+            text: {
+              headline: '#E8DCCA',
+              body: '#C5C6C7',
+              muted: '#7D828A'
+            }
+          },
+          fontFamily: {
+            serif: ['"Cinzel"', '"Noto Serif TC"', 'serif'],
+            sans: ['"Noto Sans TC"', 'sans-serif'],
+            mono: ['Courier New', 'monospace']
+          }
+        }
+      }
+    }
+  </script>
 </head>
-<body>
-  <h1>OKAY</h1>
-  <p>個人網站施工中，請先前往解謎體驗：</p>
+<body class="min-h-screen relative font-sans selection:bg-accent-gold selection:text-black">
+
+  <!-- ================= 1. 開場動態 SVG Logo OVERLAY ================= -->
+  <div id="intro-overlay" class="fixed inset-0 z-50 bg-[#0A0B0E] flex flex-col items-center justify-center transition-opacity duration-700">
+    <div class="relative w-56 h-56 flex items-center justify-center">
+      <svg class="absolute inset-0 w-full h-full animate-pulse-slow" viewBox="0 0 200 200">
+        <circle cx="100" cy="100" r="90" fill="none" stroke="rgba(212, 175, 55, 0.2)" stroke-width="1" stroke-dasharray="6 6"/>
+      </svg>
+
+      <svg class="w-44 h-44 logo-svg" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path id="path-roots" class="draw-path root-line" 
+              d="M100 160 C75 145 50 145 25 160 M100 160 C125 145 150 145 175 160" 
+              stroke="#E8DCCA" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" />
+
+        <path id="path-stem" class="draw-path stem-line" 
+              d="M100 160 L100 35" 
+              stroke="#E8DCCA" stroke-width="5.5" stroke-linecap="round" />
+
+        <path id="path-left-leaf" class="draw-path leaf-line" 
+              d="M100 85 C65 50 25 45 40 70 C55 95 85 90 100 85 Z" 
+              stroke="#E8DCCA" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" />
+        
+        <path id="path-right-leaf" class="draw-path leaf-line" 
+              d="M100 85 C135 50 175 45 160 70 C145 95 115 90 100 85 Z" 
+              stroke="#E8DCCA" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+    </div>
+
+    <div class="mt-6 text-center space-y-2">
+      <h1 id="intro-title" class="text-3xl font-serif font-bold tracking-[0.35em] text-text-headline opacity-0 transition-opacity duration-500">木芽故事館</h1>
+      <p id="intro-subtitle" class="text-xs text-accent-gold tracking-[0.45em] uppercase font-serif opacity-0 transition-opacity duration-500">WOODBUD STORY</p>
+      <div id="intro-status" class="text-xs text-text-muted font-mono mt-2 opacity-0 transition-opacity duration-500">
+        [ GERMINATING CHRONICLES... ]
+      </div>
+    </div>
+
+    <button id="skip-intro-btn" class="absolute top-6 right-6 text-xs text-text-muted hover:text-accent-gold border border-text-muted/30 hover:border-accent-gold rounded px-3 py-1.5 transition font-mono">
+      略過 [SKIP] ➔
+    </button>
+  </div>
+
+  <!-- ================= 2. 頂部導覽列 (NAVBAR) ================= -->
+  <header class="fixed top-0 left-0 right-0 z-40 bg-[#0D0E13]/90 backdrop-blur-md border-b border-border-subtle">
+    <div class="max-w-6xl mx-auto px-6 h-20 flex items-center justify-between">
+      <a href="#" class="flex items-center gap-3 group">
+        <div class="w-9 h-9 rounded-full border border-border-subtle flex items-center justify-center p-0.5 bg-black group-hover:border-accent-gold transition overflow-hidden">
+          <img src="./image/logo.jpg" alt="Woodbud Logo" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='./image/logo.png';" />
+        </div>
+        <div>
+          <span class="font-serif font-bold text-lg tracking-wider text-text-headline group-hover:text-accent-gold transition">木芽故事館</span>
+          <span class="text-[11px] text-text-muted block font-serif tracking-[0.2em] uppercase">Woodbud Story</span>
+        </div>
+      </a>
+
+      <nav class="hidden md:flex items-center gap-8 text-base text-text-body font-medium">
+        <a href="#projects" class="nav-link hover:text-accent-gold transition py-1">解謎檔案</a>
+        <a href="#minigame" class="nav-link hover:text-accent-gold transition py-1">解鎖試煉</a>
+        <a href="#about" class="nav-link hover:text-accent-gold transition py-1">幕後密室</a>
+        <a href="#dimensions" class="nav-link hover:text-accent-gold transition py-1">解謎維度</a>
+        <a href="#contact" class="nav-link hover:text-accent-gold transition py-1">發起通訊</a>
+        <button id="replay-intro-btn" title="重播開場動畫" class="text-text-muted hover:text-accent-gold transition p-1 ml-2">
+          <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+        </button>
+      </nav>
+
+      <button id="mobile-menu-btn" class="md:hidden text-text-headline p-1">
+        <i data-lucide="menu" class="w-6 h-6"></i>
+      </button>
+    </div>
+
+    <div id="mobile-menu" class="hidden md:hidden bg-bg-surface border-b border-border-subtle px-6 py-5 space-y-4 text-base">
+      <a href="#projects" class="block mobile-nav-link text-text-headline hover:text-accent-gold">解謎檔案 (Projects)</a>
+      <a href="#minigame" class="block mobile-nav-link text-text-headline hover:text-accent-gold">解鎖試煉 (Mini-game)</a>
+      <a href="#about" class="block mobile-nav-link text-text-headline hover:text-accent-gold">幕後密室 (About)</a>
+      <a href="#dimensions" class="block mobile-nav-link text-text-headline hover:text-accent-gold">解謎維度 (Dimensions)</a>
+      <a href="#contact" class="block mobile-nav-link text-text-headline hover:text-accent-gold">發起通訊 (Contact)</a>
+    </div>
+  </header>
+
+  <!-- ================= 3. HERO 主視覺區 (section-hero) ================= -->
+  <section class="section-hero pt-44 pb-28 px-6 text-center relative border-b border-border-subtle">
+    <div class="max-w-5xl mx-auto">
+      <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-border-subtle bg-bg-surface text-accent-gold text-sm font-serif tracking-widest mb-8">
+        <span class="w-2 h-2 rounded-full bg-accent-crimson animate-pulse"></span>
+        實境解謎 × 沉浸敘事
+      </div>
+      
+      <h1 class="text-4xl sm:text-6xl md:text-7xl font-serif font-black tracking-tight leading-tight mb-8">
+        <span class="gold-gradient-text block">
+          故事，在虛實的縫隙中萌芽
+        </span>
+      </h1>
+
+      <p class="text-lg sm:text-xl md:text-2xl text-text-body max-w-3xl mx-auto leading-relaxed font-sans mb-14">
+        揉合紙本書寫、實體線索與數位謎局，打破螢幕邊界，帶來專屬於你的沉浸探索。
+      </p>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+        <div class="p-6 rounded-xl bg-bg-surface/80 border border-border-subtle hover:border-accent-gold/50 transition">
+          <div class="text-4xl font-serif font-bold text-accent-gold mb-2">100%</div>
+          <div class="text-base text-text-body">原創世界觀故事</div>
+        </div>
+        <div class="p-6 rounded-xl bg-bg-surface/80 border border-border-subtle hover:border-accent-gold/50 transition">
+          <div class="text-3xl font-serif font-bold text-text-headline mb-2">實體＋數位</div>
+          <div class="text-base text-text-body">跨媒材互動道具</div>
+        </div>
+        <div class="p-6 rounded-xl bg-bg-surface/80 border border-border-subtle hover:border-accent-gold/50 transition">
+          <div class="text-3xl font-serif font-bold text-accent-gold-light mb-2">客製企劃</div>
+          <div class="text-base text-text-body">專屬活動與跨界合作</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 4. 解謎檔案 (PROJECTS - section-projects) ================= -->
+  <section id="projects" class="section-projects py-24 border-b border-border-subtle px-6">
+    <div class="max-w-5xl mx-auto">
+      <div class="flex items-center gap-3 mb-10 text-left">
+        <div class="w-10 h-0.5 bg-accent-gold"></div>
+        <h2 class="text-base sm:text-lg uppercase font-serif tracking-[0.2em] text-accent-gold font-bold">01. 解謎檔案 / PROJECTS</h2>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- 產品 1 (保留 project_01.png 路徑) -->
+        <div class="bg-bg-surface/90 rounded-xl border border-accent-gold/40 overflow-hidden flex flex-col glow-border transition duration-300">
+          <div class="h-48 bg-[#1a1c26] relative flex items-center justify-center overflow-hidden">
+            <img src="./image/project_01.png" alt="心理測驗殺人事件" class="w-full h-full object-cover transition duration-500 hover:scale-105" 
+                 onerror="this.onerror=null; this.parentElement.classList.add('flex','items-center','justify-center'); this.parentElement.innerHTML='<div class=\'text-text-muted font-serif text-sm tracking-widest\'>[ 心理測驗殺人事件 ]</div>';" />
+            <div class="absolute inset-0 bg-gradient-to-t from-bg-surface via-transparent to-transparent z-10 pointer-events-none"></div>
+            <span class="absolute top-3 left-3 z-20 bg-accent-crimson text-text-headline text-xs font-serif font-bold px-3 py-1 rounded shadow">現正發售</span>
+          </div>
+          <div class="p-6 flex-1 flex flex-col justify-between">
+            <div>
+              <h3 class="text-2xl font-serif font-bold text-text-headline mb-3">心理測驗殺人事件</h3>
+              <p class="text-base text-text-body mb-4 leading-relaxed line-clamp-3">
+                一場包裝在心理測驗背後的精密謀殺。揉合實體物件分析與心理學邏輯陷阱，親手抽絲剝繭深藏在潛意識深處的罪行。
+              </p>
+              <div class="text-sm font-mono text-text-muted mb-6">遊玩人數：1-4 人 ｜ 時間：120 分鐘</div>
+            </div>
+            <a href="https://example.com/checkout" target="_blank" rel="noopener noreferrer" 
+               class="block text-center w-full py-3 px-4 rounded bg-accent-gold hover:bg-accent-gold-light text-bg-primary font-serif font-bold text-base transition shadow">
+              前往購買作品 ➔
+            </a>
+          </div>
+        </div>
+
+        <!-- 產品 2 -->
+        <div class="bg-bg-surface/60 rounded-xl border border-border-subtle overflow-hidden flex flex-col opacity-75">
+          <div class="h-48 bg-[#11131a] flex items-center justify-center">
+            <span class="text-sm font-serif text-text-muted tracking-widest">[ 企劃檔案保密中 ]</span>
+          </div>
+          <div class="p-6 flex-1 flex flex-col justify-between">
+            <div>
+              <h3 class="text-2xl font-serif font-bold text-text-muted mb-3">寶島探險隊</h3>
+              <p class="text-base text-text-muted mb-4 leading-relaxed">
+                結合在地人文風土與戶外實境探索的冒險解謎企劃，即將踏上一場未知的島嶼尋寶旅程。
+              </p>
+            </div>
+            <button disabled class="w-full py-3 px-4 rounded bg-bg-surface-hover text-text-muted text-sm font-serif tracking-widest cursor-not-allowed border border-border-subtle">
+              COMING SOON
+            </button>
+          </div>
+        </div>
+
+        <!-- 產品 3 -->
+        <div class="bg-bg-surface/60 rounded-xl border border-border-subtle overflow-hidden flex flex-col opacity-75">
+          <div class="h-48 bg-[#11131a] flex items-center justify-center">
+            <span class="text-sm font-serif text-text-muted tracking-widest">[ 企劃檔案保密中 ]</span>
+          </div>
+          <div class="p-6 flex-1 flex flex-col justify-between">
+            <div>
+              <h3 class="text-2xl font-serif font-bold text-text-muted mb-3">高級大人的浪漫戀曲</h3>
+              <p class="text-base text-text-muted mb-4 leading-relaxed">
+                專為成熟心智打造的情感推理與曖昧博弈，在微醺與謊言交織的夜晚，解開彼此心房。
+              </p>
+            </div>
+            <button disabled class="w-full py-3 px-4 rounded bg-bg-surface-hover text-text-muted text-sm font-serif tracking-widest cursor-not-allowed border border-border-subtle">
+              COMING SOON
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 5. 解鎖試煉 (MINI-GAME - section-minigame) ================= -->
+  <section id="minigame" class="section-minigame py-24 border-b border-border-subtle px-6">
+    <div class="max-w-6xl mx-auto">
+      <div class="flex items-center gap-3 mb-4 text-left">
+        <div class="w-10 h-0.5 bg-accent-gold"></div>
+        <h2 class="text-base sm:text-lg uppercase font-serif tracking-[0.2em] text-accent-gold font-bold">02. 解鎖試煉 / MINI-GAME</h2>
+      </div>
+      
+      <h3 class="text-3xl sm:text-4xl font-serif font-bold text-text-headline text-left mb-10">終端通訊密碼解鎖</h3>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        
+        <!-- 左欄：終端輸入方塊 -->
+        <div class="lg:col-span-7 bg-bg-surface/90 p-6 sm:p-8 rounded-xl border border-border-subtle glow-border">
+          <div class="flex items-center justify-between border-b border-border-subtle pb-3 mb-5 font-mono text-sm text-text-muted">
+            <span>TERMINAL // DECRYPTION_PROTOCOL</span>
+            <span class="text-accent-gold animate-pulse">● READY</span>
+          </div>
+
+          <form id="puzzle-form" class="space-y-4">
+            <div>
+              <label class="block text-xs font-mono text-text-muted mb-1.5">ENTER PASSCODE :</label>
+              <input type="text" id="puzzle-input" placeholder="請輸入解謎暗號..." 
+                     class="w-full bg-[#090a0f] border border-border-subtle rounded px-4 py-3 text-text-headline font-mono text-base focus:outline-none focus:border-accent-gold transition" />
+            </div>
+            <button type="submit" class="w-full bg-bg-surface-hover hover:bg-accent-gold hover:text-bg-primary text-text-headline text-sm font-serif font-bold tracking-widest py-3.5 rounded transition border border-border-subtle">
+              [ 執行驗證 DECRYPT ]
+            </button>
+          </form>
+
+          <div id="puzzle-result" class="hidden mt-5 p-4 rounded bg-[#162117] border border-accent-gold/50 text-sm font-mono">
+            <p class="text-accent-gold font-bold">✔ 驗證成功！機密檔案已解鎖：</p>
+            <p class="text-text-headline mt-1.5 leading-relaxed">恭喜破解終端！專屬折扣碼：<span class="text-accent-gold-light font-bold select-all">WOODBUD2026</span>（結帳享 9 折優惠）</p>
+          </div>
+          <div id="puzzle-error" class="hidden mt-5 p-3.5 rounded bg-[#241315] border border-accent-crimson text-sm font-mono text-red-300">
+            ✖ 驗證失敗：暗號不正確，請重新檢視線索。
+          </div>
+        </div>
+
+        <!-- 右欄：任務清單 (保留 01. 消失的簡報 PRESENTATION) -->
+        <div class="lg:col-span-5 space-y-4" id="minigame-mission-list">
+          
+          <div class="mission-card is-active bg-bg-surface/90 border border-accent-gold/50 rounded-xl p-5 transition-all duration-300 cursor-pointer">
+            <div class="flex items-center justify-between">
+              <h4 class="text-lg font-serif font-bold text-text-headline flex items-center gap-2.5">
+                <span class="w-2 h-2 rounded-full bg-accent-gold animate-pulse"></span>
+                01. 消失的簡報 PRESENTATION
+              </h4>
+              <span class="text-xs font-mono text-accent-gold border border-accent-gold/30 px-2 py-0.5 rounded mission-badge">進行中</span>
+            </div>
+            
+            <div class="mission-content mt-3.5 pt-3.5 border-t border-border-subtle text-sm sm:text-base text-text-body leading-relaxed">
+              明天馬上就要向客戶簡報了，負責做投影片的同事卻突然失聯，投影片也不知所蹤，我該怎麼辦才好？
+            </div>
+          </div>
+
+          <div class="mission-card is-locked bg-bg-surface/40 border border-border-subtle rounded-xl p-5 opacity-60 cursor-not-allowed">
+            <div class="flex items-center justify-between">
+              <h4 class="text-lg font-serif font-bold text-text-muted flex items-center gap-2.5">
+                <i data-lucide="lock" class="w-4 h-4 text-text-muted"></i>
+                02. ???
+              </h4>
+              <span class="text-xs font-mono text-text-muted border border-border-subtle px-2 py-0.5 rounded">未解鎖</span>
+            </div>
+          </div>
+
+          <div class="mission-card is-locked bg-bg-surface/40 border border-border-subtle rounded-xl p-5 opacity-60 cursor-not-allowed">
+            <div class="flex items-center justify-between">
+              <h4 class="text-lg font-serif font-bold text-text-muted flex items-center gap-2.5">
+                <i data-lucide="lock" class="w-4 h-4 text-text-muted"></i>
+                03. ???
+              </h4>
+              <span class="text-xs font-mono text-text-muted border border-border-subtle px-2 py-0.5 rounded">未解鎖</span>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 6. 幕後密室 (ABOUT - 底部金句顏色已統一為金色) ================= -->
+  <section id="about" class="section-about py-24 border-b border-border-subtle px-6">
+    <div class="max-w-6xl mx-auto">
+      <div class="flex items-center gap-3 mb-10 text-left">
+        <div class="w-10 h-0.5 bg-accent-gold"></div>
+        <h2 class="text-base sm:text-lg uppercase font-serif tracking-[0.2em] text-accent-gold font-bold">03. 幕後密室 / ABOUT</h2>
+      </div>
+
+      <div class="about-flex-container flex flex-col lg:flex-row gap-5 items-stretch" id="about-accordion">
+        
+        <!-- 區塊一：創辦人 -->
+        <div id="panel-architect" class="about-panel is-expanded bg-bg-surface/90 rounded-xl border border-border-subtle cursor-pointer overflow-hidden relative flex flex-col justify-between">
+          
+          <div class="collapsed-view flex flex-col items-center text-center justify-center h-full px-2 py-8 space-y-4">
+            <span class="text-sm font-mono text-accent-gold uppercase tracking-wider">[ 展開 ]</span>
+            <div>
+              <h3 class="text-2xl font-serif font-bold text-text-headline">創辦人</h3>
+              <span class="text-xs text-accent-gold font-serif tracking-wider uppercase block mt-1">Architect</span>
+            </div>
+            
+            <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden border-2 border-accent-gold/50 my-2 bg-[#0a0b0e] flex-shrink-0 shadow-lg">
+              <img src="./image/founder.jpg" alt="笑芽" class="w-full h-full object-cover" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'w-full h-full flex items-center justify-center text-xs text-text-muted\'>笑芽</div>';" />
+            </div>
+
+            <div>
+              <h4 class="text-xl font-serif font-bold text-text-headline">笑芽</h4>
+              <p class="text-base text-text-muted mt-1.5 leading-snug font-sans">解謎設計師<br>推理作家</p>
+            </div>
+          </div>
+
+          <div class="expanded-view p-6 sm:p-10 space-y-5">
+            <div class="flex items-center justify-between border-b border-border-subtle pb-3">
+              <h3 class="text-2xl sm:text-4xl font-serif font-bold text-text-headline">
+                創辦人 <span class="text-accent-gold font-serif whitespace-nowrap">｜ The Architect</span>
+              </h3>
+            </div>
+
+            <div class="flex items-center gap-6 my-3">
+              <div class="w-24 h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden border-2 border-accent-gold/60 flex-shrink-0 bg-[#0a0b0e] shadow-xl">
+                <img src="./image/founder.jpg" alt="創辦人 笑芽" class="w-full h-full object-cover" onerror="this.onerror=null; this.parentElement.innerHTML='<span class=\'text-sm text-text-muted font-mono\'>[創辦人]</span>';" />
+              </div>
+              <div>
+                <h4 class="text-2xl sm:text-3xl font-serif font-bold text-white mb-2">▍笑芽</h4>
+                <p class="text-sm sm:text-base font-mono text-accent-gold tracking-wide">台大心理 ｜ 實境解謎設計師 ｜ 推理小說作家</p>
+              </div>
+            </div>
+
+            <blockquote class="about-quote p-4 sm:p-5 rounded bg-[#0b0c10] border-l-4 border-accent-gold text-accent-gold-light font-serif italic text-lg sm:text-xl leading-relaxed">
+              「現實與虛構的邊界，往往只隔著一場精心策劃的謎局。」
+            </blockquote>
+
+            <div class="about-paragraphs space-y-3">
+              <p class="text-text-body text-base sm:text-lg leading-relaxed">
+                大學畢業後從事推理小說創作，寫作計畫曾獲文化部青年創作補助，小說預計於 2026 年出版。擁有超過 3 年沉浸式實境遊戲與密室逃脫的設計經驗，專注於機關邏輯、心流引導與場域張力的雕琢。
+              </p>
+              <p class="text-text-body text-base sm:text-lg leading-relaxed">
+                2025 年獨立發起首款沉浸式盒裝解謎募資計畫並順利達標，成功將線下龐大的密室體驗濃縮至玩家掌心。
+              </p>
+              <div class="pt-3 border-t border-border-subtle">
+                <p class="text-base sm:text-lg font-serif font-bold text-accent-gold tracking-wide">
+                  「心理學是研究人心，而謎題設計，是將理論化為真實體驗的藝術。」
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 區塊二：工作室 -->
+        <div id="panel-workshop" class="about-panel is-collapsed bg-bg-surface/70 rounded-xl border border-border-subtle cursor-pointer overflow-hidden relative flex flex-col justify-between">
+          
+          <div class="collapsed-view flex flex-col items-center text-center justify-center h-full px-2 py-8 space-y-4">
+            <span class="text-sm font-mono text-accent-gold uppercase tracking-wider">[ 展開 ]</span>
+            <div>
+              <h3 class="text-2xl font-serif font-bold text-text-headline">工作室</h3>
+              <span class="text-xs text-accent-gold font-serif tracking-wider uppercase block mt-1">Workshop</span>
+            </div>
+
+            <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden border-2 border-accent-gold/50 my-2 bg-[#0a0b0e] flex-shrink-0 shadow-lg">
+              <img src="./image/logo.jpg" alt="木芽故事館" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='./image/logo.png';" />
+            </div>
+
+            <div>
+              <h4 class="text-xl font-serif font-bold text-text-headline">木芽故事館</h4>
+              <p class="text-base text-text-muted mt-1.5 leading-snug font-sans">跨媒材獨立<br>解謎工作室</p>
+            </div>
+          </div>
+
+          <div class="expanded-view p-6 sm:p-10 space-y-5">
+            <div class="flex items-center justify-between border-b border-border-subtle pb-3">
+              <h3 class="text-2xl sm:text-4xl font-serif font-bold text-text-headline">
+                工作室 <span class="text-accent-gold font-serif whitespace-nowrap">｜ The Workshop</span>
+              </h3>
+            </div>
+
+            <div class="flex items-center gap-6 my-3">
+              <div class="w-24 h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden border-2 border-accent-gold/60 flex-shrink-0 bg-[#0a0b0e] shadow-xl">
+                <img src="./image/logo.jpg" alt="木芽故事館" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='./image/logo.png';" />
+              </div>
+              <div>
+                <h4 class="text-2xl sm:text-3xl font-serif font-bold text-white mb-2">▍木芽故事館</h4>
+                <p class="text-sm sm:text-base text-text-muted font-mono">Woodbud Story ｜ 2025 創立</p>
+              </div>
+            </div>
+
+            <blockquote class="about-quote p-4 sm:p-5 rounded bg-[#0f1117] border-l-4 border-accent-gold text-accent-gold-light font-serif italic text-lg sm:text-xl leading-relaxed">
+              「從理性的土壤破土而出的故事。」
+            </blockquote>
+
+            <div class="about-paragraphs space-y-3">
+              <p class="text-text-body text-base sm:text-lg leading-relaxed">
+                工作室成立於 2025 年。不製造廉價的通關數字，只打造令人屏息的「沉浸式體驗」。
+              </p>
+              <p class="text-text-body text-base sm:text-lg leading-relaxed">
+                從桌面上的便攜式實境遊戲，到即將展開的原創劇本殺、推理小說與新型態桌上遊戲，木芽致力於打破載體的界線。我們將紮實的推理文學、沉浸式空間設計與心理機制無縫縫合，讓玩家不只是在「玩一場遊戲」，而是化身為故事的核心。
+              </p>
+              <div class="pt-3 border-t border-border-subtle">
+                <p class="text-base sm:text-lg font-serif font-bold text-accent-gold tracking-wide">
+                  「種子已經埋下，謎題已經就緒。你，準備好翻開第一頁了嗎？」
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 7. 解謎維度 (DIMENSIONS) ================= -->
+  <section id="dimensions" class="section-dimensions py-24 border-b border-border-subtle px-6">
+    <div class="max-w-5xl mx-auto">
+      <div class="flex items-center gap-3 mb-10 text-left">
+        <div class="w-10 h-0.5 bg-accent-gold"></div>
+        <h2 class="text-base sm:text-lg uppercase font-serif tracking-[0.2em] text-accent-gold font-bold">04. 解謎維度 / DIMENSIONS</h2>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-left">
+        <div class="p-8 sm:p-10 rounded-xl bg-bg-surface/80 border border-border-subtle hover:border-accent-gold/50 transition">
+          <i data-lucide="user" class="w-8 h-8 text-accent-gold mb-5"></i>
+          <h3 class="text-2xl font-serif font-bold text-text-headline mb-4">單人解謎的純粹樂趣</h3>
+          <p class="text-base sm:text-lg text-text-body leading-relaxed">
+            一人獨享極致的沉浸心流。不受干擾地穿梭於線索與文字之間，享受純粹推理與親手揭開謎底的快感。
+          </p>
+        </div>
+
+        <div class="p-8 sm:p-10 rounded-xl bg-bg-surface/80 border border-border-subtle hover:border-accent-gold/50 transition">
+          <i data-lucide="users" class="w-8 h-8 text-accent-gold mb-5"></i>
+          <h3 class="text-2xl font-serif font-bold text-text-headline mb-4">雙人協作的默契火花</h3>
+          <p class="text-base sm:text-lg text-text-body leading-relaxed">
+            雙向資訊差與思維碰撞。在互相推理、交叉對照線索的過程中建立信任，共享解開謎題瞬間的心動驚喜。
+          </p>
+        </div>
+
+        <div class="p-8 sm:p-10 rounded-xl bg-bg-surface/80 border border-border-subtle hover:border-accent-gold/50 transition">
+          <i data-lucide="briefcase" class="w-8 h-8 text-accent-gold mb-5"></i>
+          <h3 class="text-2xl font-serif font-bold text-text-headline mb-4">企業解謎的團隊效能</h3>
+          <p class="text-base sm:text-lg text-text-body leading-relaxed">
+            打破傳統沉悶的培訓框架。在危機劇本中深度考驗跨部門溝通、資源整合與高壓邏輯決策的協作能力。
+          </p>
+        </div>
+
+        <div class="p-8 sm:p-10 rounded-xl bg-bg-surface/80 border border-border-subtle hover:border-accent-gold/50 transition">
+          <i data-lucide="sparkles" class="w-8 h-8 text-accent-gold mb-5"></i>
+          <h3 class="text-2xl font-serif font-bold text-text-headline mb-4">專屬客製化活動策劃</h3>
+          <p class="text-base sm:text-lg text-text-body leading-relaxed">
+            結合實體空間場域、文創IP或品牌故事，量身訂製獨一無二的實境尋寶與沉浸式互動探索企劃。
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 8. 發起通訊 (CONTACT) ================= -->
+  <section id="contact" class="section-contact py-24 border-b border-border-subtle px-6">
+    <div class="max-w-5xl mx-auto">
+      
+      <div class="flex items-center gap-3 mb-6 text-left">
+        <div class="w-10 h-0.5 bg-accent-gold"></div>
+        <h2 class="text-base sm:text-lg uppercase font-serif tracking-[0.2em] text-accent-gold font-bold">05. 發起通訊 / CONTACT</h2>
+      </div>
+
+      <h3 class="text-3xl sm:text-4xl font-serif font-bold text-text-headline text-center mb-12">與木芽故事館取得聯繫</h3>
+
+      <div class="max-w-xl mx-auto">
+        <form id="contact-form" class="space-y-5 bg-bg-surface/90 p-8 rounded-xl border border-border-subtle">
+          <div>
+            <label class="block text-sm font-serif text-text-muted mb-1.5">您的稱呼 / 單位名稱 *</label>
+            <input type="text" required class="w-full bg-[#090a0f] border border-border-subtle rounded px-4 py-3 text-base text-text-headline focus:outline-none focus:border-accent-gold transition" />
+          </div>
+          <div>
+            <label class="block text-sm font-serif text-text-muted mb-1.5">聯絡 Email *</label>
+            <input type="email" required class="w-full bg-[#090a0f] border border-border-subtle rounded px-4 py-3 text-base text-text-headline focus:outline-none focus:border-accent-gold transition" />
+          </div>
+          <div>
+            <label class="block text-sm font-serif text-text-muted mb-1.5">需求類型</label>
+            <select class="w-full bg-[#090a0f] border border-border-subtle rounded px-4 py-3 text-base text-text-headline focus:outline-none focus:border-accent-gold transition">
+              <option value="product">解謎遊戲購買諮詢</option>
+              <option value="custom">專屬客製活動</option>
+              <option value="license">故事劇本版權授權</option>
+              <option value="bulk">大量購買方案</option>
+              <option value="other">其他服務</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-serif text-text-muted mb-1.5">合作訊息內容 *</label>
+            <textarea rows="4" required class="w-full bg-[#090a0f] border border-border-subtle rounded px-4 py-3 text-base text-text-headline focus:outline-none focus:border-accent-gold transition"></textarea>
+          </div>
+          <button type="submit" class="w-full py-3.5 bg-accent-gold hover:bg-accent-gold-light text-bg-primary font-serif font-bold text-base rounded transition shadow">
+            發送通訊訊息 ➔
+          </button>
+        </form>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ================= 9. 頁尾 FOOTER ================= -->
+  <footer class="py-10 bg-[#08090C] border-t border-border-subtle text-sm text-text-muted font-serif">
+    <div class="max-w-6xl mx-auto px-6 flex items-center justify-center gap-3.5">
+      <p>© 2026 木芽故事館 Woodbud Story. All Rights Reserved.</p>
+      
+      <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" 
+         title="追蹤木芽故事館 Instagram" 
+         class="group w-8 h-8 rounded-full border border-border-subtle bg-bg-surface flex items-center justify-center transition-all duration-300 hover:border-accent-gold hover:shadow-[0_0_12px_rgba(212,175,55,0.35)]">
+        <svg class="w-4 h-4 fill-current text-accent-gold/70 group-hover:text-accent-gold-light transition-colors duration-300" viewBox="0 0 24 24">
+          <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+      </svg>
+    </a>
+  </div>
+</footer>
+
+  <!-- ================= 模組化 JS ================= -->
+  <script type="module" src="./js/main.js"></script>
 </body>
 </html>

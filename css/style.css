@@ -1,0 +1,249 @@
+/* ================= DESIGN TOKENS ================= */
+:root {
+  --bg-primary: #0D0E13;
+  --bg-surface: #151822;
+  --bg-surface-hover: #1E2230;
+  
+  --accent-gold: #D4AF37;
+  --accent-gold-light: #F3E5AB;
+  --accent-crimson: #9E2A2B;
+  --accent-blue-mystic: #3A506B;
+
+  --text-headline: #E8DCCA;
+  --text-body: #C5C6C7;
+  --text-muted: #7D828A;
+
+  --border-subtle: rgba(212, 175, 55, 0.16);
+  --border-focus: rgba(212, 175, 55, 0.6);
+
+  --font-serif: "Cinzel", "Noto Serif TC", serif;
+  --font-sans: "Noto Sans TC", sans-serif;
+}
+
+/* ================= 基礎設定 ================= */
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-body);
+  font-family: var(--font-sans);
+}
+
+.border-border-subtle {
+  border-color: var(--border-subtle);
+}
+
+.glow-border {
+  box-shadow: 0 0 24px rgba(212, 175, 55, 0.06);
+  transition: all 0.3s ease;
+}
+.glow-border:hover {
+  box-shadow: 0 0 32px rgba(212, 175, 55, 0.2);
+  border-color: var(--border-focus);
+}
+
+.gold-gradient-text {
+  background: linear-gradient(135deg, #F3E5AB 0%, #D4AF37 50%, #AA7C11 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+@keyframes pulseSlow {
+  0%, 100% { transform: scale(1); opacity: 0.2; }
+  50% { transform: scale(1.05); opacity: 0.5; }
+}
+.animate-pulse-slow {
+  animation: pulseSlow 3s ease-in-out infinite;
+}
+
+/* ================= 各區塊專屬背景色調與光影節奏 ================= */
+
+/* 1. Hero 區：深邃星夜，頂部柔藍光暈 */
+.section-hero {
+  background: 
+    radial-gradient(circle at 50% 15%, rgba(58, 80, 107, 0.28), transparent 60%),
+    linear-gradient(180deg, #0A0B0E 0%, #0E1017 100%);
+}
+
+/* 2. 解謎檔案區：暖金古堡色調，微暖微暗 */
+.section-projects {
+  background: 
+    radial-gradient(circle at 80% 30%, rgba(212, 175, 55, 0.08), transparent 50%),
+    radial-gradient(circle at 10% 70%, rgba(158, 42, 43, 0.12), transparent 60%),
+    linear-gradient(180deg, #0E1017 0%, #12131C 100%);
+}
+
+/* 3. 解鎖試煉區：冷感墨藍，終端機神秘感 */
+.section-minigame {
+  background: 
+    radial-gradient(circle at 30% 40%, rgba(43, 62, 88, 0.25), transparent 55%),
+    linear-gradient(180deg, #12131C 0%, #0B0D14 100%);
+}
+
+/* 4. 幕後密室區：聚焦密室中心暖光 */
+.section-about {
+  background: 
+    radial-gradient(circle at 50% 50%, rgba(212, 175, 55, 0.09), transparent 65%),
+    radial-gradient(circle at 90% 85%, rgba(58, 80, 107, 0.15), transparent 50%),
+    linear-gradient(180deg, #0B0D14 0%, #131520 100%);
+}
+
+/* 5. 解謎維度區：柔和紫藍霧感光，擺脫純黑斷層 */
+.section-dimensions {
+  background: 
+    radial-gradient(circle at 20% 60%, rgba(68, 50, 95, 0.18), transparent 55%),
+    radial-gradient(circle at 80% 30%, rgba(43, 62, 88, 0.2), transparent 50%),
+    linear-gradient(180deg, #131520 0%, #0D0E15 100%);
+}
+
+/* 6. 發起通訊區：信件聚光 */
+.section-contact {
+  background: 
+    radial-gradient(circle at 50% 30%, rgba(212, 175, 55, 0.07), transparent 55%),
+    linear-gradient(180deg, #0D0E15 0%, #08090C 100%);
+}
+
+/* ================= SVG 線條動畫 ================= */
+.draw-path {
+  stroke-dasharray: 400;
+  stroke-dashoffset: 400;
+}
+
+.root-line {
+  animation: growRoots 0.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+.stem-line {
+  animation: growStem 0.6s cubic-bezier(0.25, 1, 0.5, 1) 0.3s forwards;
+}
+
+.leaf-line {
+  animation: growLeaves 0.6s cubic-bezier(0.25, 1, 0.5, 1) 0.7s forwards;
+}
+
+.logo-svg {
+  filter: drop-shadow(0 0 2px rgba(212, 175, 55, 0.3));
+  animation: logoGlow 0.8s ease-in-out 1.2s forwards;
+}
+
+@keyframes growRoots {
+  to { stroke-dashoffset: 0; }
+}
+@keyframes growStem {
+  to { stroke-dashoffset: 0; }
+}
+@keyframes growLeaves {
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes logoGlow {
+  0% {
+    filter: drop-shadow(0 0 2px rgba(212, 175, 55, 0.3));
+  }
+  50% {
+    filter: drop-shadow(0 0 16px rgba(212, 175, 55, 0.9)) drop-shadow(0 0 30px rgba(243, 229, 171, 0.6));
+  }
+  100% {
+    filter: drop-shadow(0 0 8px rgba(212, 175, 55, 0.6));
+  }
+}
+
+/* ================= 幕後密室手風琴面板 ================= */
+
+.about-panel {
+  transition: width 0.45s cubic-bezier(0.4, 0, 0.2, 1), 
+              background-color 0.4s ease, 
+              border-color 0.4s ease, 
+              box-shadow 0.4s ease;
+  height: 600px;
+  overflow: hidden;
+}
+
+@media (min-width: 1024px) {
+  .about-panel {
+    height: 590px;
+  }
+
+  .about-panel.is-expanded {
+    width: 80% !important;
+    flex-grow: 0;
+    flex-shrink: 0;
+  }
+
+  .about-panel.is-collapsed {
+    width: 18% !important;
+    flex-grow: 0;
+    flex-shrink: 0;
+  }
+}
+
+.about-panel.is-collapsed {
+  background-color: rgba(18, 20, 29, 0.6);
+  opacity: 0.85;
+}
+
+.about-panel.is-collapsed:hover {
+  opacity: 1;
+  border-color: rgba(212, 175, 55, 0.6);
+  transform: translateY(-2px);
+}
+
+.about-panel.is-collapsed .expanded-view {
+  display: none !important;
+}
+
+.about-panel.is-collapsed .collapsed-view {
+  display: flex !important;
+  animation: fadeInCollapse 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.about-panel.is-expanded {
+  border-color: var(--accent-gold);
+  box-shadow: 0 0 30px rgba(212, 175, 55, 0.18);
+  background-color: var(--bg-surface);
+  cursor: default;
+}
+
+.about-panel.is-expanded .collapsed-view {
+  display: none !important;
+}
+
+.about-panel.is-expanded .expanded-view {
+  display: block !important;
+  animation: fadeInExpand 0.45s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.about-panel.is-expanded .about-paragraphs,
+.about-panel.is-expanded .about-quote {
+  animation: slideInBody 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) 0.05s backwards;
+}
+
+@keyframes fadeInExpand {
+  0% { transform: scale(0.99); }
+  100% { transform: scale(1); }
+}
+
+@keyframes slideInBody {
+  0% { opacity: 0; transform: translateX(10px); }
+  100% { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes fadeInCollapse {
+  0% { opacity: 0; transform: scale(0.96); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+/* ================= 解鎖試煉右側卡片樣式 ================= */
+
+.mission-card {
+  transition: all 0.3s ease;
+}
+
+.mission-card.is-active {
+  border-color: var(--accent-gold);
+  background-color: var(--bg-surface);
+  box-shadow: 0 0 20px rgba(212, 175, 55, 0.1);
+}
+
+.mission-card:hover:not(.is-locked) {
+  border-color: rgba(212, 175, 55, 0.5);
+  transform: translateX(4px);
+}
