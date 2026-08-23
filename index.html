@@ -250,7 +250,10 @@
 
           <form id="puzzle-form" class="space-y-4">
             <div>
-              <label class="block text-xs font-mono text-text-muted mb-1.5">ENTER PASSCODE :</label>
+              <div class="flex items-center justify-between mb-1.5">
+                <label class="block text-xs font-mono text-text-muted">ENTER PASSCODE :</label>
+                <span class="text-[11px] font-sans text-accent-gold/80">（提示：可輸入右側進行中任務的任務標題以展開通訊）</span>
+              </div>
               <input type="text" id="puzzle-input" placeholder="請輸入解謎暗號..." 
                      class="w-full bg-[#090a0f] border border-border-subtle rounded px-4 py-3 text-text-headline font-mono text-base focus:outline-none focus:border-accent-gold transition" />
             </div>
@@ -523,11 +526,10 @@
     </div>
   </section>
 
-  <!-- ================= 9. 頁尾 FOOTER (手機版：垂直置頂 / 電腦版：水平在右) ================= -->
+  <!-- ================= 9. 頁尾 FOOTER ================= -->
   <footer class="py-10 bg-[#08090C] border-t border-border-subtle text-xs sm:text-sm text-text-muted font-serif">
     <div class="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row-reverse items-center justify-center gap-3.5 sm:gap-3.5">
       
-      <!-- IG 圖示 (手機端在上方，電腦端 sm 會水平反轉到版權文字右邊) -->
       <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" 
          title="追蹤木芽故事館 Instagram" 
          class="group flex-shrink-0 w-8 h-8 rounded-full border border-border-subtle bg-bg-surface flex items-center justify-center transition-all duration-300 hover:border-accent-gold hover:shadow-[0_0_12px_rgba(212,175,55,0.35)]">
@@ -536,7 +538,6 @@
         </svg>
       </a>
 
-      <!-- 版權文字 -->
       <p class="whitespace-nowrap text-center">© 2026 木芽故事館 Woodbud Story. All Rights Reserved.</p>
     </div>
   </footer>
