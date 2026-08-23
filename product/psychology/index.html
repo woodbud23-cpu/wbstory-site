@@ -53,7 +53,7 @@
 
   <!-- ================= 頂部導覽列 (NAVBAR) ================= -->
   <header class="fixed top-0 left-0 right-0 z-40 bg-[#0D0E13]/90 backdrop-blur-md border-b border-border-subtle">
-    <div class="max-w-6xl mx-auto px-6 h-20 flex items-center justify-between">
+    <div class="max-w-5xl mx-auto px-6 h-20 flex items-center justify-between">
       <a href="../../index.html" class="flex items-center gap-3 group">
         <div class="w-9 h-9 rounded-full border border-border-subtle flex items-center justify-center p-0.5 bg-black group-hover:border-accent-gold transition overflow-hidden">
           <img src="../../image/logo.jpg" alt="Woodbud Logo" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='../../image/logo.png';" />
@@ -74,7 +74,8 @@
 
   <!-- ================= 產品主要下單與預覽區塊 ================= -->
   <main class="pt-32 pb-24 px-6">
-    <div class="max-w-6xl mx-auto">
+    <!-- 縮小最大寬度為 max-w-5xl，增加兩側視窗留白 -->
+    <div class="max-w-5xl mx-auto">
       
       <!-- 麵包屑導航 -->
       <div class="flex items-center gap-2 text-xs font-mono text-text-muted mb-8">
@@ -85,12 +86,12 @@
         <span class="text-accent-gold">心理測驗殺人事件</span>
       </div>
 
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
         
         <!-- 左側：視覺媒體展示 (宣傳影音 / 實體內容物大圖) -->
         <div class="lg:col-span-7 space-y-6">
           
-          <!-- 1. 宣傳影片 Embed（請將【YOUR_TRAILER_VIDEO_ID】換成宣傳影片的 YouTube ID） -->
+          <!-- 1. 宣傳影片 Embed -->
           <div class="relative w-full aspect-video rounded-xl overflow-hidden border border-accent-gold/40 shadow-2xl bg-black">
             <iframe class="w-full h-full" 
                     src="https://www.youtube.com/embed/uvxkTrYSvis" 
@@ -101,7 +102,7 @@
             </iframe>
           </div>
 
-          <!-- 2. 實物開箱照 (向上跳兩層 ../../image/) -->
+          <!-- 2. 實物開箱照 -->
           <div class="rounded-xl overflow-hidden border border-border-subtle bg-bg-surface group">
             <img src="../../image/product_psychology_contents.jpg" alt="心理測驗殺人事件 完整解謎內容物" class="w-full h-auto object-cover transition duration-500 group-hover:scale-102" />
             <div class="p-3 bg-bg-surface text-xs font-mono text-text-muted text-center border-t border-border-subtle">
@@ -114,10 +115,10 @@
         <div class="lg:col-span-5 bg-bg-surface/90 border border-border-subtle rounded-xl p-6 sm:p-8 sticky top-28 glow-border">
           <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-accent-crimson/50 bg-accent-crimson/10 text-accent-crimson text-xs font-serif font-bold mb-4">
             <span class="w-1.5 h-1.5 rounded-full bg-accent-crimson animate-pulse"></span>
-            改版升級中 ｜ 暫無庫存
+            改版中 ｜ 暫無庫存
           </div>
 
-          <h1 class="text-3xl sm:text-4xl font-serif font-bold text-text-headline mb-3">
+          <h1 class="text-3xl font-serif font-bold text-text-headline mb-3">
             心理測驗殺人事件
           </h1>
           <p class="text-sm font-mono text-accent-gold tracking-wider mb-6">桌上實境解謎系列 ｜ 沉浸式盒裝作品</p>
@@ -142,16 +143,17 @@
             </div>
           </div>
 
-          <!-- 價格與狀態 -->
+          <!-- 價格與狀態（調整為 9 折 NT$ 720） -->
           <div class="flex items-baseline gap-3 mb-6">
-            <span class="text-3xl font-serif font-bold text-accent-gold">NT$ 600</span>
+            <span class="text-3xl font-serif font-bold text-accent-gold">NT$ 720</span>
+            <span class="text-xs px-2 py-0.5 rounded bg-accent-gold/10 text-accent-gold font-bold">9 折</span>
             <span class="text-sm text-text-muted line-through">原價 NT$ 800</span>
           </div>
 
           <!-- 預約/下單區 -->
           <div class="space-y-4">
             <button disabled class="w-full py-3.5 rounded bg-bg-surface-hover text-text-muted font-serif font-bold text-base cursor-not-allowed border border-border-subtle flex items-center justify-center gap-2">
-              <i data-lucide="package-x" class="w-5 h-5"></i> 繁中版本改版中，暫停下單
+              <i data-lucide="package-x" class="w-5 h-5"></i> 作品改版中，暫停下單
             </button>
 
             <!-- 補貨通知登記 -->
@@ -173,8 +175,8 @@
       <!-- ================= 產品詳細介紹區 ================= -->
 
       <!-- 1. 遊戲特色規格數據 -->
-      <section class="mt-24 pt-16 border-t border-border-subtle">
-        <div class="text-center max-w-2xl mx-auto mb-16">
+      <section class="mt-20 pt-14 border-t border-border-subtle">
+        <div class="text-center max-w-2xl mx-auto mb-14">
           <h2 class="text-2xl sm:text-3xl font-serif font-bold text-text-headline mb-4">
             跨越螢幕邊界，將密室濃縮於掌心
           </h2>
@@ -183,7 +185,7 @@
           </p>
         </div>
 
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-5">
           <div class="p-6 rounded-xl bg-bg-surface/60 border border-border-subtle text-center">
             <div class="text-3xl sm:text-4xl font-serif font-bold text-accent-gold mb-2">30+</div>
             <div class="text-sm text-text-muted font-serif">實體案件調查文件</div>
@@ -204,9 +206,9 @@
       </section>
 
       <!-- 2. 如何遊玩影片教學區 -->
-      <section class="mt-24">
-        <div class="bg-bg-surface/40 border border-border-subtle rounded-2xl p-8 sm:p-12">
-          <div class="max-w-3xl mx-auto text-center mb-8">
+      <section class="mt-20">
+        <div class="bg-bg-surface/40 border border-border-subtle rounded-2xl p-6 sm:p-10">
+          <div class="max-w-2xl mx-auto text-center mb-8">
             <h2 class="text-2xl sm:text-3xl font-serif font-bold text-text-headline mb-3">
               解謎包該如何遊玩？
             </h2>
@@ -215,8 +217,8 @@
             </p>
           </div>
 
-          <!-- 教學影片 Embed（請將【YOUR_TUTORIAL_VIDEO_ID】換成教學影片的 YouTube ID） -->
-          <div class="max-w-4xl mx-auto aspect-video rounded-xl overflow-hidden border border-border-subtle bg-black shadow-xl">
+          <!-- 教學影片 Embed -->
+          <div class="max-w-3xl mx-auto aspect-video rounded-xl overflow-hidden border border-border-subtle bg-black shadow-xl">
             <iframe class="w-full h-full" 
                     src="https://www.youtube.com/embed/0khE_ZLIrEo" 
                     title="解謎包遊玩方式介紹" 
@@ -229,7 +231,7 @@
       </section>
 
       <!-- 3. 桌上實境解謎 vs 傳統娛樂比較表 -->
-      <section class="mt-24">
+      <section class="mt-20">
         <h2 class="text-2xl sm:text-3xl font-serif font-bold text-text-headline text-center mb-10">
           為什麼選擇桌上實境解謎？
         </h2>
@@ -275,8 +277,8 @@
       </section>
 
       <!-- 4. 玩家與達人好評回饋 -->
-      <section class="mt-24">
-        <h2 class="text-2xl sm:text-3xl font-serif font-bold text-text-headline text-center mb-12">
+      <section class="mt-20">
+        <h2 class="text-2xl sm:text-3xl font-serif font-bold text-text-headline text-center mb-10">
           達人試玩推薦
         </h2>
 
@@ -316,7 +318,7 @@
 
   <!-- ================= 頁尾 FOOTER ================= -->
   <footer class="py-10 bg-[#08090C] border-t border-border-subtle text-xs sm:text-sm text-text-muted font-serif">
-    <div class="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+    <div class="max-w-5xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
       <p>© 2026 木芽故事館 Woodbud Story. All Rights Reserved.</p>
       <a href="../../index.html" class="text-accent-gold hover:underline">返回木芽故事館首頁</a>
     </div>
