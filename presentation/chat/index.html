@@ -1,0 +1,1160 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>對話紀錄 - 林翔宇 (Dev)</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang TC", "Microsoft JhengHei", Roboto, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+    html, body {
+      height: 100%;
+      background-color: #1a232a;
+    }
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    /* RWD 主容器：電腦端為居中視窗，手機端滿版 */
+    .app-frame {
+      width: 100%;
+      max-width: 480px;
+      height: 100vh;
+      background-color: #849EB5;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+    }
+    @media (min-width: 481px) {
+      .app-frame {
+        height: 92vh;
+        border-radius: 16px;
+      }
+    }
+    /* 頂部導航列 */
+    .chat-header {
+      background-color: #273A4B;
+      color: #FFFFFF;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+      z-index: 10;
+    }
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .back-btn {
+      font-size: 22px;
+      line-height: 1;
+      cursor: pointer;
+      color: #E2E8F0;
+    }
+    .user-info .user-name {
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+    }
+    .header-right {
+      display: flex;
+      gap: 16px;
+      color: #CBD5E1;
+      font-size: 16px;
+    }
+    /* 對話內容區 */
+    .chat-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px 12px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      scroll-behavior: smooth;
+    }
+    /* 日期分隔標籤 */
+    .date-divider {
+      align-self: center;
+      background-color: rgba(0, 0, 0, 0.22);
+      color: #FFFFFF;
+      font-size: 11px;
+      padding: 4px 14px;
+      border-radius: 12px;
+      margin: 12px 0 6px;
+      font-weight: 500;
+    }
+    /* 訊息行 */
+    .message-row {
+      display: flex;
+      gap: 8px;
+      max-width: 84%;
+    }
+    .message-row.other {
+      align-self: flex-start;
+    }
+    .message-row.me {
+      align-self: flex-end;
+      flex-direction: row-reverse;
+    }
+    /* 圓形頭像容器 */
+    .avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      overflow: hidden;
+      flex-shrink: 0;
+      user-select: none;
+      background-color: #4A6572;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .msg-content-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .sender-name {
+      font-size: 11px;
+      color: #2D3748;
+      margin-left: 2px;
+    }
+    .bubble-container {
+      display: flex;
+      align-items: flex-end;
+      gap: 5px;
+    }
+    .message-row.me .bubble-container {
+      flex-direction: row-reverse;
+    }
+    .bubble {
+      padding: 9px 13px;
+      border-radius: 16px;
+      font-size: 14px;
+      line-height: 1.45;
+      word-break: break-word;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+    }
+    .message-row.other .bubble {
+      background-color: #FFFFFF;
+      color: #1A202C;
+      border-top-left-radius: 2px;
+    }
+    .message-row.me .bubble {
+      background-color: #8DE45F;
+      color: #1A202C;
+      border-top-right-radius: 2px;
+    }
+    .msg-meta {
+      font-size: 10px;
+      color: #475569;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      min-width: 28px;
+      flex-shrink: 0;
+      user-select: none;
+    }
+    .read-status {
+      color: #1E3A8A;
+      font-size: 9px;
+    }
+    /* 通話提醒樣式 */
+    .call-bubble {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: #C53030 !important;
+      font-weight: 600;
+    }
+    /* 捲軸美化 */
+    .chat-body::-webkit-scrollbar {
+      width: 4px;
+    }
+    .chat-body::-webkit-scrollbar-thumb {
+      background: rgba(0,0,0,0.15);
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-frame">
+    <!-- Header -->
+    <div class="chat-header">
+      <div class="header-left">
+        <span class="back-btn">‹</span>
+        <div class="user-info">
+          <div class="user-name">林翔宇 (Dev)</div>
+        </div>
+      </div>
+      <div class="header-right">
+        <span>🔍</span>
+        <span>⋮</span>
+      </div>
+    </div>
+
+    <!-- Chat Body -->
+    <div class="chat-body">
+
+      <!-- 7月23日 -->
+      <div class="date-divider">2026年7月23日 星期四</div>
+
+      <div class="message-row other">
+        <div class="avatar"><img src="avatar.jpg" alt="翔宇"></div>
+        <div class="msg-content-wrap">
+          <span class="sender-name">翔宇</span>
+          <div class="bubble-container">
+            <div class="bubble">資安組今天又寄信催我們換儲存空間的密碼了...</div>
+            <div class="msg-meta"><span class="read-status">已讀</span><span>14:15</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="message-row other">
+        <div class="avatar"><img src="avatar.jpg" alt="翔宇"></div>
+        <div class="msg-content-wrap">
+          <span class="sender-name">翔宇</span>
+          <div class="bubble-container">
+            <div class="bubble">每90天強制換一次真的很煩</div>
+            <div class="msg-meta"><span class="read-status">已讀</span><span>14:15</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="message-row me">
+        <div class="msg-content-wrap">
+          <div class="bubble-container">
+            <div class="bubble">???</div>
+            <div class="msg-meta"><span>14:17</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="message-row me">
+        <div class="msg-content-wrap">
+          <div class="bubble-container">
+            <div class="bubble">為什麼我沒收到通知?</div>
+            <div class="msg-meta"><span>14:17</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="message-row other">
+        <div class="avatar"><img src="avatar.jpg" alt="翔宇"></div>
+        <div class="msg-content-wrap">
+          <span class="sender-name">翔宇</span>
+          <div class="bubble-container">
+            <div class="bubble">是我們開發組的儲存空間啦</div>
+            <div class="msg-meta"><span class="read-status">已讀</span><span>14:17</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="message-row other">
+        <div class="avatar"><img src="avatar.jpg" alt="翔宇"></div>
+        <div class="msg-content-wrap">
+          <span class="sender-name">翔宇</span>
+          <div class="bubble-container">
+            <div class="bubble">說什麼商業機密要特別小心之類的</div>
+            <div class="msg-meta"><span class="read-status">已讀</span><span>14:18</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="message-row other">
+        <div class="avatar"><img src="avatar.jpg" alt="翔宇"></div>
+        <div class="msg-content-wrap">
+          <span class="sender-name">翔宇</span>
+          <div class="bubble-container">
+            <div class="bubble">有夠麻煩</div>
+            <div class="msg-meta"><span class="read-status">已讀</span><span>14:18</span></div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="message-row me">
+        <div class="msg-content-wrap">
+          <div class="bubble-container">
+            <div class="bubble">哈哈 大家不都嘛改最後面的數字 不然就貼便條紙在螢幕下面😂</div>
+            <div class="msg-meta"><span>14:19</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="message-row other">
+        <div class="avatar"><img src="avatar.jpg" alt="翔宇"></div>
+        <div class="msg-content-wrap">
+          <span class="sender-name">翔宇</span>
+          <div class="bubble-container">
+            <div class="bubble">直接寫下來太廢了吧</div>
+            <div class="msg-meta"><span class="read-status">已讀</span><span>14:20</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="message-row me">
+        <div class="msg-content-wrap">
+          <div class="bubble-container">
+            <div class="bubble">那你都怎麼記?</div>
+            <div class="msg-meta"><span>14:22</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="message-row other">
+        <div class="avatar"><img src="avatar.jpg" alt="翔宇"></div>
+        <div class="msg-content-wrap">
+          <span class="sender-name">翔宇</span>
+          <div class="bubble-container">
+            <div class="bubble">當然是靠我的聰明才智啊</div>
+            <div class="msg-meta"><span class="read-status">已讀</span><span>14:23</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="message-row me">
+        <div class="msg-content-wrap">
+          <div class="bubble-container">
+            <div class="bubble">少騙 你連早餐吃什麼都會忘記😒</div>
+            <div class="msg-meta"><span>14:24</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="message-row other">
+        <div class="avatar"><img src="avatar.jpg" alt="翔宇"></div>
+        <div class="msg-content-wrap">
+          <span class="sender-name">翔宇</span>
+          <div class="bubble-container">
+            <div class="bubble">😒</div>
+            <div class="msg-meta"><span class="read-status">已讀</span><span>14:25</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="message-row other">
+        <div class="avatar"><img src="avatar.jpg" alt="翔宇"></div>
+        <div class="msg-content-wrap">
+          <span class="sender-name">翔宇</span>
+          <div class="bubble-container">
+            <div class="bubble">好啦我承認</div>
+            <div class="msg-meta"><span class="read-status">已讀</span><span>14:25</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="message-row other">
+        <div class="avatar"><img src="avatar.jpg" alt="翔宇"></div>
+        <div class="msg-content-wrap">
+          <span class="sender-name">翔宇</span>
+          <div class="bubble-container">
+            <div class="bubble">我也會想辦法記下來</div>
+            <div class="msg-meta"><span class="read-status">已讀</span><span>14:25</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="message-row other">
+        <div class="avatar"><img src="avatar.jpg" alt="翔宇"></div>
+        <div class="msg-content-wrap">
+          <span class="sender-name">翔宇</span>
+          <div class="bubble-container">
+            <div class="bubble">但好歹加密一下吧</div>
+            <div class="msg-meta"><span class="read-status">已讀</span><span>14:26</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="message-row other">
+        <div class="avatar"><img src="avatar.jpg" alt="翔宇"></div>
+        <div class="msg-content-wrap">
+          <span class="sender-name">翔宇</span>
+          <div class="bubble-container">
+            <div class="bubble">直接寫也太廢</div>
+            <div class="msg-meta"><span class="read-status">已讀</span><span>14:26</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="message-row me">
+        <div class="msg-content-wrap">
+          <div class="bubble-container">
+            <div class="bubble">好好好 你最厲害🤣</div>
+            <div class="msg-meta"><span>14:28</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="message-row me">
+        <div class="msg-content-wrap">
+          <div class="bubble-container">
+            <div class="bubble">話說</div>
+            <div class="msg-meta"><span>14:28</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="message-row me">
+        <div class="msg-content-wrap">
+          <div class="bubble-container">
+            <div class="bubble">下班要不要去吃邊新開的那家拉麵？聽說叉燒超厚</div>
+            <div class="msg-meta"><span>14:28</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="message-row other">
+        <div class="avatar"><img src="avatar.jpg" alt="翔宇"></div>
+        <div class="msg-content-wrap">
+          <span class="sender-name">翔宇</span>
+          <div class="bubble-container">
+            <div class="bubble">哪次不去</div>
+            <div class="msg-meta"><span class="read-status">已讀</span><span>14:30</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="message-row other">
+        <div class="avatar"><img src="avatar.jpg" alt="翔宇"></div>
+        <div class="msg-content-wrap">
+          <span class="sender-name">翔宇</span>
+          <div class="bubble-container">
+            <div class="bubble">下午血糖低到快昏倒</div>
+            <div class="msg-meta"><span class="read-status">已讀</span><span>14:30</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="message-row other">
+        <div class="avatar"><img src="avatar.jpg" alt="翔宇"></div>
+        <div class="msg-content-wrap">
+          <span class="sender-name">翔宇</span>
+          <div class="bubble-container">
+            <div class="bubble">我還不吃爆</div>
+            <div class="msg-meta"><span class="read-status">已讀</span><span>14:31</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 7月30日 -->
+      <div class="date-divider">2026年7月30日 星期四</div>
+
+      <div class="message-row other">
+        <div class="avatar"><img src="avatar.jpg" alt="翔宇"></div>
+        <div class="msg-content-wrap">
+          <span class="sender-name">翔宇</span>
+          <div class="bubble-container">
+            <div class="bubble">上次阿偉說那個動畫你有看嗎</div>
+            <div class="msg-meta"><span class="read-status">已讀</span><span>11:05</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="message-row other">
+        <div class="avatar"><img src="avatar.jpg" alt="翔宇"></div>
+        <div class="msg-content-wrap">
+          <span class="sender-name">翔宇</span>
+          <div class="bubble-container">
+            <div class="bubble">今年神作確定</div>
+            <div class="msg-meta"><span class="read-status">已讀</span><span>11:05</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="message-row other">
+        <div class="avatar"><img src="avatar.jpg" alt="翔宇"></div>
+        <div class="msg-content-wrap">
+          <span class="sender-name">翔宇</span>
+          <div class="bubble-container">
+            <div class="bubble">看到早上五點才睡</div>
+            <div class="msg-meta"><span class="read-status">已讀</span><span>11:06</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="message-row me">
+        <div class="msg-content-wrap">
+          <div class="bubble-container">
+            <div class="bubble">還沒看 別暴雷</div>
+            <div class="msg-meta"><span>11:10</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="message-row me">
+        <div class="msg-content-wrap">
+          <div class="bubble-container">
+            <div class="bubble">這週都在改8/21客戶簡報的企劃書 頭超痛</div>
+            <div class="msg-meta"><span>11:10</span></div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="message-row me">
+        <div class="msg-content-wrap">
+          <div class="bubble-container">
+            <div class="bubble">世說看到五點也太扯了 你有睡嗎?</div>
+            <div class="msg-meta"><span>11:11</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="message-row other">
+        <div class="avatar"><img src="avatar.jpg" alt="翔宇"></div>
+        <div class="msg-content-wrap">
+          <span class="sender-name">翔宇</span>
+          <div class="bubble-container">
+            <div class="bubble">一天不睡不會怎樣啦</div>
+            <div class="msg-meta"><span class="read-status">已讀</span><span>11:12</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="message-row other">
+        <div class="avatar"><img src="avatar.jpg" alt="翔宇"></div>
+        <div class="msg-content-wrap">
+          <span class="sender-name">翔宇</span>
+          <div class="bubble-container">
+            <div class="bubble">而且昨天想到一個超強的簡報</div>
+            <div class="msg-meta"><span class="read-status">已讀</span><span>11:12</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="message-row other">
+        <div class="avatar"><img src="avatar.jpg" alt="翔宇"></div>
+        <div class="msg-content-wrap">
+          <span class="sender-name">翔宇</span>
+          <div class="bubble-container">
+            <div class="bubble">趕工中 期待一下</div>
+            <div class="msg-meta"><span class="read-status">已讀</span><span>11:13</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 8月5日 -->
+      <div class="date-divider">2026年8月5日 星期三</div>
+
+      <div class="message-row me">
+        <div class="msg-content-wrap">
+          <div class="bubble-container">
+            <div class="bubble">你今天怎麼又遲到了？早上9點的會老大一直在問你人呢</div>
+            <div class="msg-meta"><span>09:40</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="message-row other">
+        <div class="avatar"><img src="avatar.jpg" alt="翔宇"></div>
+        <div class="msg-content-wrap">
+          <span class="sender-name">翔宇</span>
+          <div class="bubble-container">
+            <div class="bubble">抱歉抱歉...</div>
+            <div class="msg-meta"><span class="read-status">已讀</span><span>09:42</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="message-row other">
+        <div class="avatar"><img src="avatar.jpg" alt="翔宇"></div>
+        <div class="msg-content-wrap">
+          <span class="sender-name">翔宇</span>
+          <div class="bubble-container">
+            <div class="bubble">昨晚搞那個互動架構搞太嗨</div>
+            <div class="msg-meta"><span class="read-status">已讀</span><span>09:42</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="message-row other">
+        <div class="avatar"><img src="avatar.jpg" alt="翔宇"></div>
+        <div class="msg-content-wrap">
+          <span class="sender-name">翔宇</span>
+          <div class="bubble-container">
+            <div class="bubble">回過神來已經清晨四點了</div>
+            <div class="msg-meta"><span class="read-status">已讀</span><span>09:42</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="message-row other">
+        <div class="avatar"><img src="avatar.jpg" alt="翔宇"></div>
+        <div class="msg-content-wrap">
+          <span class="sender-name">翔宇</span>
+          <div class="bubble-container">
+            <div class="bubble">但做出來真的很爽</div>
+            <div class="msg-meta"><span class="read-status">已讀</span><span>09:45</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="message-row me">
+        <div class="msg-content-wrap">
+          <div class="bubble-container">
+            <div class="bubble">等你被老大約談就不爽了</div>
+            <div class="msg-meta"><span>09:46</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="message-row other">
+        <div class="avatar"><img src="avatar.jpg" alt="翔宇"></div>
+        <div class="msg-content-wrap">
+          <span class="sender-name">翔宇</span>
+          <div class="bubble-container">
+            <div class="bubble">😢</div>
+            <div class="msg-meta"><span class="read-status">已讀</span><span>09:47</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 8月10日 -->
+      <div class="date-divider">2026年8月10日 星期一</div>
+
+      <div class="message-row me">
+        <div class="msg-content-wrap">
+          <div class="bubble-container">
+            <div class="bubble">求救</div>
+            <div class="msg-meta"><span>16:20</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="message-row me">
+        <div class="msg-content-wrap">
+          <div class="bubble-container">
+            <div class="bubble">你們部門的密碼不是0514嗎?怎麼進不去?</div>
+            <div class="msg-meta"><span>16:21</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="message-row other">
+        <div class="avatar"><img src="avatar.jpg" alt="翔宇"></div>
+        <div class="msg-content-wrap">
+          <span class="sender-name">翔宇</span>
+          <div class="bubble-container">
+            <div class="bubble">現在改9137了啦</div>
+            <div class="msg-meta"><span class="read-status">已讀</span><span>16:25</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="message-row other">
+        <div class="avatar"><img src="avatar.jpg" alt="翔宇"></div>
+        <div class="msg-content-wrap">
+          <span class="sender-name">翔宇</span>
+          <div class="bubble-container">
+            <div class="bubble">上週不是老大有寄信嗎</div>
+            <div class="msg-meta"><span class="read-status">已讀</span><span>16:25</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="message-row me">
+        <div class="msg-content-wrap">
+          <div class="bubble-container">
+            <div class="bubble">誰記得啊</div>
+            <div class="msg-meta"><span>16:26</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="message-row me">
+        <div class="msg-content-wrap">
+          <div class="bubble-container">
+            <div class="bubble">好了 進去了</div>
+            <div class="msg-meta"><span>16:27</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 8月15日 - 關鍵線索日 -->
+      <div class="date-divider">2026年8月14日 星期五</div>
+
+      <div class="message-row other">
+        <div class="avatar"><img src="avatar.jpg" alt="翔宇"></div>
+        <div class="msg-content-wrap">
+          <span class="sender-name">翔宇</span>
+          <div class="bubble-container">
+            <div class="bubble">中午超熱去買飲料</div>
+            <div class="msg-meta"><span class="read-status">已讀</span><span>13:10</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="message-row other">
+        <div class="avatar"><img src="avatar.jpg" alt="翔宇"></div>
+        <div class="msg-content-wrap">
+          <span class="sender-name">翔宇</span>
+          <div class="bubble-container">
+            <div class="bubble">被我抽到買三送一折了40塊超划算</div>
+            <div class="msg-meta"><span class="read-status">已讀</span><span>13:10</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="message-row other">
+        <div class="avatar"><img src="avatar.jpg" alt="翔宇"></div>
+        <div class="msg-content-wrap">
+          <span class="sender-name">翔宇</span>
+          <div class="bubble-container">
+            <div class="bubble">潮爽德</div>
+            <div class="msg-meta"><span class="read-status">已讀</span><span>13:11</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="message-row me">
+        <div class="msg-content-wrap">
+          <div class="bubble-container">
+            <div class="bubble">哇 完蛋 運氣用光了</div>
+            <div class="msg-meta"><span>13:15</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="message-row other">
+        <div class="avatar"><img src="avatar.jpg" alt="翔宇"></div>
+        <div class="msg-content-wrap">
+          <span class="sender-name">翔宇</span>
+          <div class="bubble-container">
+            <div class="bubble">😒</div>
+            <div class="msg-meta"><span class="read-status">已讀</span><span>14:10</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="message-row other">
+        <div class="avatar"><img src="avatar.jpg" alt="翔宇"></div>
+        <div class="msg-content-wrap">
+          <span class="sender-name">翔宇</span>
+          <div class="bubble-container">
+            <div class="bubble">烏鴉嘴</div>
+            <div class="msg-meta"><span class="read-status">已讀</span><span>14:10</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="message-row other">
+        <div class="avatar"><img src="avatar.jpg" alt="翔宇"></div>
+        <div class="msg-content-wrap">
+          <span class="sender-name">翔宇</span>
+          <div class="bubble-container">
+            <div class="bubble">對了</div>
+            <div class="msg-meta"><span class="read-status">已讀</span><span>15:44</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="message-row other">
+        <div class="avatar"><img src="avatar.jpg" alt="翔宇"></div>
+        <div class="msg-content-wrap">
+          <span class="sender-name">翔宇</span>
+          <div class="bubble-container">
+            <div class="bubble">我早上把8/21的ppt做完了</div>
+            <div class="msg-meta"><span class="read-status">已讀</span><span>15:45</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="message-row me">
+        <div class="msg-content-wrap">
+          <div class="bubble-container">
+            <div class="bubble">水喔 那等等傳給我看一下</div>
+            <div class="msg-meta"><span>15:55</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="message-row other">
+        <div class="avatar"><img src="avatar.jpg" alt="翔宇"></div>
+        <div class="msg-content-wrap">
+          <span class="sender-name">翔宇</span>
+          <div class="bubble-container">
+            <div class="bubble">我想先給老大確認</div>
+            <div class="msg-meta"><span class="read-status">已讀</span><span>15:55</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="message-row other">
+        <div class="avatar"><img src="avatar.jpg" alt="翔宇"></div>
+        <div class="msg-content-wrap">
+          <span class="sender-name">翔宇</span>
+          <div class="bubble-container">
+            <div class="bubble">然後他叫我先丟我的儲存空間</div>
+            <div class="msg-meta"><span class="read-status">已讀</span><span>15:55</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="message-row me">
+        <div class="msg-content-wrap">
+          <div class="bubble-container">
+            <div class="bubble">那你要記得傳給我喔 不要又跟上次一樣</div>
+            <div class="msg-meta"><span>15:56</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="message-row other">
+        <div class="avatar"><img src="avatar.jpg" alt="翔宇"></div>
+        <div class="msg-content-wrap">
+          <span class="sender-name">翔宇</span>
+          <div class="bubble-container">
+            <div class="bubble">不會啦</div>
+            <div class="msg-meta"><span class="read-status">已讀</span><span>15:56</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="message-row me">
+        <div class="msg-content-wrap">
+          <div class="bubble-container">
+            <div class="bubble">你儲存空間的帳密先給我 我不相信你😑</div>
+            <div class="msg-meta"><span>15:56</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="message-row other">
+        <div class="avatar"><img src="avatar.jpg" alt="翔宇"></div>
+        <div class="msg-content-wrap">
+          <span class="sender-name">翔宇</span>
+          <div class="bubble-container">
+            <div class="bubble">😭</div>
+            <div class="msg-meta"><span class="read-status">已讀</span><span>15:58</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="message-row other">
+        <div class="avatar"><img src="avatar.jpg" alt="翔宇"></div>
+        <div class="msg-content-wrap">
+          <span class="sender-name">翔宇</span>
+          <div class="bubble-container">
+            <div class="bubble">好嘛</div>
+            <div class="msg-meta"><span class="read-status">已讀</span><span>15:58</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="message-row other">
+        <div class="avatar"><img src="avatar.jpg" alt="翔宇"></div>
+        <div class="msg-content-wrap">
+          <span class="sender-name">翔宇</span>
+          <div class="bubble-container">
+            <div class="bubble">我把帳密放我桌上</div>
+            <div class="msg-meta"><span class="read-status">已讀</span><span>15:59</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="message-row other">
+        <div class="avatar"><img src="avatar.jpg" alt="翔宇"></div>
+        <div class="msg-content-wrap">
+          <span class="sender-name">翔宇</span>
+          <div class="bubble-container">
+            <div class="bubble">剛做好 上面是帳號 下面是密碼 右邊是網址</div>
+            <div class="msg-meta"><span class="read-status">已讀</span><span>15:59</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="message-row me">
+        <div class="msg-content-wrap">
+          <div class="bubble-container">
+            <div class="bubble">工三小</div>
+            <div class="msg-meta"><span>16:00</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="message-row me">
+        <div class="msg-content-wrap">
+          <div class="bubble-container">
+            <div class="bubble">總之我們最晚8/20下班前要確認 ppt最好提前給我</div>
+            <div class="msg-meta"><span>16:00</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="message-row other">
+        <div class="avatar"><img src="avatar.jpg" alt="翔宇"></div>
+        <div class="msg-content-wrap">
+          <span class="sender-name">翔宇</span>
+          <div class="bubble-container">
+            <div class="bubble">安啦</div>
+            <div class="msg-meta"><span class="read-status">已讀</span><span>16:01</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 8月18日 -->
+      <div class="date-divider">2026年8月18日 星期二</div>
+
+      <div class="message-row other">
+        <div class="avatar"><img src="avatar.jpg" alt="翔宇"></div>
+        <div class="msg-content-wrap">
+          <span class="sender-name">翔宇</span>
+          <div class="bubble-container">
+            <div class="bubble">老大叫我再加一點東西</div>
+            <div class="msg-meta"><span class="read-status">已讀</span><span>12:30</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="message-row other">
+        <div class="avatar"><img src="avatar.jpg" alt="翔宇"></div>
+        <div class="msg-content-wrap">
+          <span class="sender-name">翔宇</span>
+          <div class="bubble-container">
+            <div class="bubble">可能真的週四才能給你完整版了</div>
+            <div class="msg-meta"><span class="read-status">已讀</span><span>12:31</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="message-row me">
+        <div class="msg-content-wrap">
+          <div class="bubble-container">
+            <div class="bubble">太緊急了吧</div>
+            <div class="msg-meta"><span>12:45</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="message-row other">
+        <div class="avatar"><img src="avatar.jpg" alt="翔宇"></div>
+        <div class="msg-content-wrap">
+          <span class="sender-name">翔宇</span>
+          <div class="bubble-container">
+            <div class="bubble">沒事</div>
+            <div class="msg-meta"><span class="read-status">已讀</span><span>13:16</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="message-row other">
+        <div class="avatar"><img src="avatar.jpg" alt="翔宇"></div>
+        <div class="msg-content-wrap">
+          <span class="sender-name">翔宇</span>
+          <div class="bubble-container">
+            <div class="bubble">剛剛想到一個厲害的</div>
+            <div class="msg-meta"><span class="read-status">已讀</span><span>13:16</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="message-row other">
+        <div class="avatar"><img src="avatar.jpg" alt="翔宇"></div>
+        <div class="msg-content-wrap">
+          <span class="sender-name">翔宇</span>
+          <div class="bubble-container">
+            <div class="bubble">加進去一定嚇死人</div>
+            <div class="msg-meta"><span class="read-status">已讀</span><span>13:16</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="message-row me">
+        <div class="msg-content-wrap">
+          <div class="bubble-container">
+            <div class="bubble">你只會嚇到我而已</div>
+            <div class="msg-meta"><span>13:32</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="message-row me">
+        <div class="msg-content-wrap">
+          <div class="bubble-container">
+            <div class="bubble">這次是大客戶 求你不要亂搞</div>
+            <div class="msg-meta"><span>13:32</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="message-row other">
+        <div class="avatar"><img src="avatar.jpg" alt="翔宇"></div>
+        <div class="msg-content-wrap">
+          <span class="sender-name">翔宇</span>
+          <div class="bubble-container">
+            <div class="bubble">😉</div>
+            <div class="msg-meta"><span class="read-status">已讀</span><span>14:35</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 8月20日 報告前夕 - 委託人加班發現失聯、焦急求助 -->
+      <div class="date-divider">2026年8月20日 星期四</div>
+
+      <div class="message-row me">
+        <div class="msg-content-wrap">
+          <div class="bubble-container">
+            <div class="bubble">你今天怎麼沒來上班?</div>
+            <div class="msg-meta"><span>09:30</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="message-row me">
+        <div class="msg-content-wrap">
+          <div class="bubble-container">
+            <div class="bubble">老哥 你沒事吧?</div>
+            <div class="msg-meta"><span>12:10</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="message-row me">
+        <div class="msg-content-wrap">
+          <div class="bubble-container">
+            <div class="bubble call-bubble">
+              <span>📞 未接來電 (無人接聽)</span>
+            </div>
+            <div class="msg-meta"><span>12:15</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="message-row me">
+        <div class="msg-content-wrap">
+          <div class="bubble-container">
+            <div class="bubble call-bubble">
+              <span>📞 未接來電 (無人接聽)</span>
+            </div>
+            <div class="msg-meta"><span>12:16</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="message-row me">
+        <div class="msg-content-wrap">
+          <div class="bubble-container">
+            <div class="bubble call-bubble">
+              <span>📞 未接來電 (無人接聽)</span>
+            </div>
+            <div class="msg-meta"><span>12:44</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="message-row me">
+        <div class="msg-content-wrap">
+          <div class="bubble-container">
+            <div class="bubble">你跑去哪了?電話響老半天沒人接??</div>
+            <div class="msg-meta"><span>12:45</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="message-row me">
+        <div class="msg-content-wrap">
+          <div class="bubble-container">
+            <div class="bubble">別嚇我啊</div>
+            <div class="msg-meta"><span>12:46</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="message-row me">
+        <div class="msg-content-wrap">
+          <div class="bubble-container">
+            <div class="bubble">你PPT在哪啊?人不見至少簡報要出現吧?</div>
+            <div class="msg-meta"><span>15:46</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="message-row me">
+        <div class="msg-content-wrap">
+          <div class="bubble-container">
+            <div class="bubble">完蛋了 根本來不及生出來</div>
+            <div class="msg-meta"><span>18:46</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="message-row me">
+        <div class="msg-content-wrap">
+          <div class="bubble-container">
+            <div class="bubble call-bubble">
+              <span>📞 未接來電 (無人接聽)</span>
+            </div>
+            <div class="msg-meta"><span>18:48</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="message-row me">
+        <div class="msg-content-wrap">
+          <div class="bubble-container">
+            <div class="bubble">看到訊息快點回!</div>
+            <div class="msg-meta"><span>19:22</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="message-row me">
+        <div class="msg-content-wrap">
+          <div class="bubble-container">
+            <div class="bubble">老大已經在問了 你要我怎麼回😭😭</div>
+            <div class="msg-meta"><span>19:22</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="message-row me">
+        <div class="msg-content-wrap">
+          <div class="bubble-container">
+            <div class="bubble call-bubble">
+              <span>📞 未接來電 (無人接聽)</span>
+            </div>
+            <div class="msg-meta"><span>19:23</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="message-row me">
+        <div class="msg-content-wrap">
+          <div class="bubble-container">
+            <div class="bubble">你說你把帳密放在桌上 哪有啊?</div>
+            <div class="msg-meta"><span>19:25</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="message-row me">
+        <div class="msg-content-wrap">
+          <div class="bubble-container">
+            <div class="bubble">拜託趕快回我啊!!!!!!!!要完蛋啦!!!!!!!!!!</div>
+            <div class="msg-meta"><span>19:25</span></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</body>
+</html>

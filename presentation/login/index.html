@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>木芽開發儲存空間 - 登入</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang TC", "Microsoft JhengHei", sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: #0f172a;
+      background-image: 
+        radial-gradient(at 0% 0%, rgba(56, 189, 248, 0.12) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(99, 102, 241, 0.12) 0px, transparent 50%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* 頂部 LINE 風格通知視窗（無法關閉） */
+    .line-notification {
+      position: fixed;
+      top: -160px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: calc(100% - 32px);
+      max-width: 440px;
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 14px 16px;
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(0, 0, 0, 0.06);
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      z-index: 100;
+      transition: top 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      user-select: none;
+    }
+
+    .line-notification.show {
+      top: 16px;
+    }
+
+    .line-icon-wrap {
+      width: 44px;
+      height: 44px;
+      background: #06c755;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      font-size: 24px;
+      flex-shrink: 0;
+    }
+
+    .line-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .line-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .line-sender {
+      font-size: 16px;
+      font-weight: 700;
+      color: #111827;
+    }
+
+    .line-time {
+      font-size: 12px;
+      color: #9ca3af;
+    }
+
+    .line-msg {
+      font-size: 15px;
+      color: #374151;
+      line-height: 1.45;
+      margin-top: 2px;
+      transition: opacity 0.2s ease;
+    }
+
+    /* 主登入卡片 */
+    .login-card {
+      background: rgba(30, 41, 59, 0.75);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 24px;
+      padding: 40px 32px;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.45);
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    /* 頂部微型系統標題 */
+    .system-title {
+      font-size: 14px;
+      color: #94a3b8;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      text-align: center;
+      font-weight: 600;
+    }
+
+    /* 表單欄位 */
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .form-label {
+      font-size: 15px;
+      font-weight: 600;
+      color: #e2e8f0;
+      margin-left: 2px;
+    }
+
+    .input-field {
+      width: 100%;
+      background: rgba(15, 23, 42, 0.6);
+      border: 1.5px solid rgba(255, 255, 255, 0.14);
+      border-radius: 14px;
+      padding: 14px 18px;
+      font-size: 18px;
+      color: #f8fafc;
+      outline: none;
+      transition: all 0.2s ease;
+      letter-spacing: 3px;
+    }
+
+    .input-field::placeholder {
+      color: #475569;
+      letter-spacing: 4px;
+    }
+
+    .input-field:focus {
+      border-color: #38bdf8;
+      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.18);
+      background: rgba(15, 23, 42, 0.85);
+    }
+
+    /* 輸入錯誤時的震動與紅框效果 */
+    .shake {
+      animation: shake-anim 0.3s ease-in-out;
+      border-color: #f43f5e !important;
+    }
+
+    @keyframes shake-anim {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-6px); }
+      40%, 80% { transform: translateX(6px); }
+    }
+
+    /* 登入按鈕 */
+    .submit-btn {
+      background: linear-gradient(135deg, #0284c7 0%, #2563eb 100%);
+      color: #ffffff;
+      border: none;
+      border-radius: 14px;
+      padding: 15px;
+      font-size: 17px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      cursor: pointer;
+      margin-top: 6px;
+      box-shadow: 0 4px 16px rgba(37, 99, 235, 0.4);
+      transition: all 0.2s ease;
+    }
+
+    .submit-btn:hover {
+      background: linear-gradient(135deg, #0369a1 0%, #1d4ed8 100%);
+      box-shadow: 0 6px 20px rgba(37, 99, 235, 0.5);
+    }
+
+    .submit-btn:active {
+      transform: scale(0.98);
+    }
+
+    .error-hint {
+      font-size: 14px;
+      color: #f43f5e;
+      text-align: center;
+      min-height: 18px;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      font-weight: 500;
+    }
+
+    .error-hint.show {
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- LINE 風格浮動通知（無法手動關閉） -->
+  <div class="line-notification" id="lineNotification">
+    <div class="line-icon-wrap">💬</div>
+    <div class="line-content">
+      <div class="line-header">
+        <span class="line-sender">委託人</span>
+        <span class="line-time" id="noticeTime">剛剛</span>
+      </div>
+      <div class="line-msg" id="noticeText">我之前跟同事聊天時 他說他會把帳號密碼都藏在同一個地方 要不要再觀察一下呢... 說不定直接看就能看出來了</div>
+    </div>
+  </div>
+
+  <!-- 登入卡片 -->
+  <div class="login-card">
+    <div class="system-title">木芽開發儲存空間</div>
+
+    <div class="form-group">
+      <label class="form-label">帳號</label>
+      <input type="text" id="accountInput" class="input-field" placeholder="••••••••" maxlength="8" autocomplete="off" />
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">密碼</label>
+      <input type="password" id="passwordInput" class="input-field" placeholder="••••" maxlength="4" autocomplete="off" />
+    </div>
+
+    <div class="error-hint" id="errorHint">帳號或密碼錯誤</div>
+
+    <button type="button" class="submit-btn" id="loginBtn">登入</button>
+  </div>
+
+  <script>
+    // ==========================================
+    // ⚙️ 串接接口設定區 (填入下一個網站網址)
+    // ==========================================
+    const TARGET_URL = "https://wbstory.site/harddrive/"; // 替換為你的 Google Slides 簡報或下一個關卡網址
+
+    // 帳密設定
+    const CORRECT_ACCOUNT = "20190706";
+    const CORRECT_PASSWORD = "2239";
+
+    // 提示內容常數
+    const HINT_1 = "我之前跟同事聊天時 他說他會把帳號密碼都藏在同一個地方 要不要再觀察一下呢... 說不定直接看就能看出來了";
+    const HINT_2 = "我記得他不擅長玩小遊戲 會不會密碼跟遊戲無關呢?";
+
+    // 狀態變數
+    let errorCount = 0;
+    let hintLevel = 0; // 0: 未顯示, 1: 顯示提示一, 2: 顯示提示二
+
+    // DOM 元素
+    const accountInput = document.getElementById("accountInput");
+    const passwordInput = document.getElementById("passwordInput");
+    const loginBtn = document.getElementById("loginBtn");
+    const errorHint = document.getElementById("errorHint");
+    const lineNotification = document.getElementById("lineNotification");
+    const noticeText = document.getElementById("noticeText");
+    const noticeTime = document.getElementById("noticeTime");
+
+    // 觸發指定等級的提示
+    function showHint(level) {
+      if (level <= hintLevel) return;
+      hintLevel = level;
+
+      if (level === 1) {
+        noticeText.textContent = HINT_1;
+        noticeTime.textContent = "剛剛";
+        lineNotification.classList.add("show");
+      } else if (level === 2) {
+        // 若已經顯示提示一，做個短暫淡出再替換為提示二
+        noticeText.style.opacity = "0";
+        setTimeout(() => {
+          noticeText.textContent = HINT_2;
+          noticeTime.textContent = "剛剛";
+          noticeText.style.opacity = "1";
+        }, 200);
+        lineNotification.classList.add("show");
+      }
+    }
+
+    // 閒置計時器 1：5 分鐘 (300,000 ms) 觸發第一提示
+    const idleTimer1 = setTimeout(() => {
+      showHint(1);
+    }, 5 * 60 * 1000);
+
+    // 閒置計時器 2：8 分鐘 (480,000 ms) 觸發第二提示
+    const idleTimer2 = setTimeout(() => {
+      showHint(2);
+    }, 8 * 60 * 1000);
+
+    // 登入驗證邏輯
+    function handleLogin() {
+      const inputAcc = accountInput.value.trim();
+      const inputPwd = passwordInput.value.trim();
+
+      if (inputAcc === CORRECT_ACCOUNT && inputPwd === CORRECT_PASSWORD) {
+        // 清除計時器並跳轉
+        clearTimeout(idleTimer1);
+        clearTimeout(idleTimer2);
+        errorHint.classList.remove("show");
+        window.location.href = TARGET_URL;
+      } else {
+        errorCount++;
+        
+        // 錯誤抖動動畫與紅字提示
+        accountInput.classList.add("shake");
+        passwordInput.classList.add("shake");
+        errorHint.classList.add("show");
+
+        setTimeout(() => {
+          accountInput.classList.remove("shake");
+          passwordInput.classList.remove("shake");
+        }, 300);
+
+        passwordInput.value = "";
+        passwordInput.focus();
+
+        // 錯誤累積觸發判斷
+        if (errorCount >= 6) {
+          showHint(2);
+        } else if (errorCount >= 3) {
+          showHint(1);
+        }
+      }
+    }
+
+    // 綁定點擊與 Enter 鍵事件
+    loginBtn.addEventListener("click", handleLogin);
+
+    [accountInput, passwordInput].forEach(input => {
+      input.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          handleLogin();
+        }
+      });
+    });
+  </script>
+</body>
+</html>

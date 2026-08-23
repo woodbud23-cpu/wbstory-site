@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>打地鼠</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    body {
+      background: linear-gradient(180deg, #70c5ce 0%, #a2e048 70%, #68a82b 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-family: 'Segoe UI', "PingFang TC", "Microsoft JhengHei", sans-serif;
+      overflow-x: hidden;
+      padding: 20px 10px;
+    }
+
+    /* 最上方計分/密碼區域 */
+    .score-board {
+      background: rgba(255, 255, 255, 0.92);
+      border: 4px solid #4a3728;
+      border-radius: 16px;
+      padding: 10px 24px;
+      margin-bottom: 20px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      font-weight: 800;
+      color: #3e2723;
+      min-width: 260px;
+      height: 60px;
+      transition: opacity 0.02s ease;
+    }
+
+    /* 冒號對齊佈局 */
+    .score-label {
+      width: 70px;
+      text-align: right;
+    }
+    .score-colon {
+      width: 20px;
+      text-align: center;
+    }
+    .score-val {
+      width: 100px;
+      text-align: left;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* 得分時消失 0.05 秒的閃爍類別 */
+    .score-flash {
+      opacity: 0 !important;
+    }
+
+    /* 遊戲主容器 */
+    .game-card {
+      background: #fdf8e2;
+      border: 6px solid #5c4033;
+      border-radius: 24px;
+      padding: 20px;
+      width: 100%;
+      max-width: 440px;
+      box-shadow: 0 12px 24px rgba(0,0,0,0.2);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+    }
+
+    .game-title {
+      font-size: 32px;
+      font-weight: 900;
+      color: #5c4033;
+      text-shadow: 2px 2px 0 #fff;
+      margin-bottom: 12px;
+      letter-spacing: 2px;
+    }
+
+    .start-btn {
+      background: linear-gradient(180deg, #ff9800 0%, #e65100 100%);
+      color: #fff;
+      border: 3px solid #fff;
+      outline: 3px solid #e65100;
+      padding: 10px 36px;
+      font-size: 22px;
+      font-weight: 800;
+      border-radius: 30px;
+      cursor: pointer;
+      box-shadow: 0 6px 12px rgba(230, 81, 0, 0.4);
+      transition: transform 0.1s ease, box-shadow 0.1s ease;
+      margin-bottom: 16px;
+    }
+    .start-btn:active {
+      transform: scale(0.96);
+      box-shadow: 0 2px 4px rgba(230, 81, 0, 0.4);
+    }
+    .start-btn:disabled {
+      background: #bdbdbd;
+      outline-color: #9e9e9e;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    /* 倒數計時提示 */
+    .timer-display {
+      font-size: 18px;
+      font-weight: 700;
+      color: #d84315;
+      height: 24px;
+      margin-bottom: 12px;
+    }
+
+    /* 九宮格草地區域 */
+    .grid-container {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      width: 100%;
+      background: #7cb342;
+      padding: 14px;
+      border-radius: 18px;
+      border: 4px solid #558b2f;
+    }
+
+    /* 地鼠洞 */
+    .hole {
+      position: relative;
+      width: 100%;
+      padding-top: 100%; /* 1:1 正方形 */
+      background: radial-gradient(ellipse at center, #2e1d11 40%, #4a3319 75%, #7cb342 76%);
+      border-radius: 50%;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    /* 地鼠 SVG 容器 */
+    .mole-wrapper {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.1s ease-in-out;
+    }
+
+    .mole-wrapper.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .mole-svg {
+      width: 90%;
+      height: 90%;
+      display: block;
+      pointer-events: none;
+    }
+
+    /* 全螢幕 3 秒開場倒數覆蓋層 */
+    .countdown-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.45);
+      border-radius: 18px;
+      display: none;
+      justify-content: center;
+      align-items: center;
+      font-size: 80px;
+      font-weight: 900;
+      color: #fff;
+      text-shadow: 0 4px 10px rgba(0,0,0,0.5);
+      z-index: 20;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 計分/密碼區 -->
+  <div class="score-board" id="scoreBoard">
+    <span class="score-label" id="scoreLabel">分數</span>
+    <span class="score-colon">:</span>
+    <span class="score-val" id="scoreVal">0000</span>
+  </div>
+
+  <!-- 遊戲主卡片 -->
+  <div class="game-card">
+    <div class="countdown-overlay" id="countdownOverlay">3</div>
+    
+    <div class="game-title">打地鼠</div>
+    <button class="start-btn" id="startBtn">START</button>
+    <div class="timer-display" id="timerDisplay">準備開始</div>
+
+    <!-- 九宮格 (0~2為最上一排) -->
+    <div class="grid-container" id="gridContainer">
+      <!-- 由 JS 動態生成 9 個洞與地鼠 -->
+    </div>
+  </div>
+
+  <!-- 地鼠向量 SVG 模板 -->
+  <template id="moleTemplate">
+    <div class="mole-wrapper">
+      <svg class="mole-svg" viewBox="0 0 200 160" xmlns="http://www.w3.org/2000/svg">
+        <!-- 身體/頭部 -->
+        <path d="M 30,150 C 25,60 60,10 100,10 C 140,10 175,60 170,150 Z" fill="#754c29" />
+        
+        <!-- 嘴鼻處淺色區塊 -->
+        <ellipse cx="100" cy="85" rx="38" ry="28" fill="#fbd59a" />
+        
+        <!-- 粉紅鼻子 -->
+        <ellipse cx="100" cy="72" rx="13" ry="10" fill="#f48fb1" />
+        
+        <!-- 眼睛 -->
+        <ellipse cx="74" cy="62" rx="7" ry="11" fill="#212121" />
+        <circle cx="76" cy="58" r="3" fill="#ffffff" />
+        
+        <ellipse cx="126" cy="62" rx="7" ry="11" fill="#212121" />
+        <circle cx="128" cy="58" r="3" fill="#ffffff" />
+
+        <!-- 鬍鬚 -->
+        <path d="M 50,78 L 22,74 M 50,86 L 20,88 M 50,94 L 24,102" stroke="#212121" stroke-width="3" stroke-linecap="round" />
+        <path d="M 150,78 L 178,74 M 150,86 L 180,88 M 150,94 L 176,102" stroke="#212121" stroke-width="3" stroke-linecap="round" />
+
+        <!-- 前爪 -->
+        <!-- 左手爪 -->
+        <ellipse cx="48" cy="115" rx="22" ry="18" fill="#6d4423" />
+        <path d="M 32,125 L 36,138 L 44,129 L 48,142 L 56,129 L 60,138 L 64,124" fill="#b0bec5" stroke="#78909c" stroke-width="1.5" />
+
+        <!-- 右手爪 -->
+        <ellipse cx="152" cy="115" rx="22" ry="18" fill="#6d4423" />
+        <path d="M 136,124 L 140,138 L 144,129 L 152,142 L 156,129 L 164,138 L 168,125" fill="#b0bec5" stroke="#78909c" stroke-width="1.5" />
+
+        <!-- 洞口前泥土堆 (遮擋下半部) -->
+        <path d="M 0,160 Q 20,135 50,140 Q 80,130 100,138 Q 130,130 160,140 Q 185,135 200,160 Z" fill="#3e2723" />
+      </svg>
+    </div>
+  </template>
+
+  <script>
+    const scoreBoard = document.getElementById('scoreBoard');
+    const scoreLabel = document.getElementById('scoreLabel');
+    const scoreVal = document.getElementById('scoreVal');
+    const startBtn = document.getElementById('startBtn');
+    const timerDisplay = document.getElementById('timerDisplay');
+    const countdownOverlay = document.getElementById('countdownOverlay');
+    const gridContainer = document.getElementById('gridContainer');
+    const moleTemplate = document.getElementById('moleTemplate');
+
+    let currentScore = 0;
+    let gameTimer = null;
+    let spawnTimer = null;
+    let remainingTime = 30;
+    let isPlaying = false;
+    let isPasswordMode = false;
+
+    // 初始化 9 個洞
+    for (let i = 0; i < 9; i++) {
+      const hole = document.createElement('div');
+      hole.className = 'hole';
+      hole.dataset.index = i;
+
+      const moleNode = moleTemplate.content.cloneNode(true);
+      const moleWrapper = moleNode.querySelector('.mole-wrapper');
+      
+      // 點擊地鼠事件
+      hole.appendChild(moleWrapper);
+      hole.addEventListener('click', () => handleWhack(hole));
+
+      gridContainer.appendChild(hole);
+    }
+
+    const holes = document.querySelectorAll('.hole');
+
+    // 格式化分數 (4位數，不足補零)
+    function formatScore(num) {
+      return num.toString().padStart(4, '0');
+    }
+
+    // 閃爍分數/密碼 (消失 0.05 秒)
+    function flashScoreBoard() {
+      scoreBoard.classList.add('score-flash');
+      setTimeout(() => {
+        scoreBoard.classList.remove('score-flash');
+      }, 50);
+    }
+
+    // 更新分數邏輯
+    function addScore(points) {
+      currentScore += points;
+      if (!isPasswordMode) {
+        scoreVal.textContent = formatScore(currentScore);
+      }
+      flashScoreBoard();
+    }
+
+    // 打擊判定
+    function handleWhack(hole) {
+      const mole = hole.querySelector('.mole-wrapper');
+      if (mole && mole.classList.contains('show')) {
+        mole.classList.remove('show');
+        const randomScore = Math.floor(Math.random() * 9) + 101; // 101~109
+        addScore(randomScore);
+      }
+    }
+
+    // 地鼠生成
+    function spawnMole() {
+      const activeMoles = document.querySelectorAll('.mole-wrapper.show');
+      if (activeMoles.length >= 5) return; // 畫面中不超過 5 隻
+
+      let availableHoles = [];
+      holes.forEach((hole, idx) => {
+        const mole = hole.querySelector('.mole-wrapper');
+        if (!mole.classList.contains('show')) {
+          // 密碼模式下 (18~12秒)，不能生成在最上面 3 格 (Index 0, 1, 2)
+          if (isPasswordMode && idx < 3) {
+            return;
+          }
+          availableHoles.push(hole);
+        }
+      });
+
+      if (availableHoles.length > 0) {
+        const randomHole = availableHoles[Math.floor(Math.random() * availableHoles.length)];
+        const mole = randomHole.querySelector('.mole-wrapper');
+        mole.classList.add('show');
+
+        // 地鼠在 1.5 ~ 2.5 秒後如果沒被打則自動縮回
+        setTimeout(() => {
+          if (mole.classList.contains('show')) {
+            mole.classList.remove('show');
+          }
+        }, 1800);
+      }
+    }
+
+    // 進入/退出 密碼模式控制
+    function setPasswordMode(active) {
+      isPasswordMode = active;
+      if (active) {
+        scoreLabel.textContent = "密碼";
+        scoreVal.textContent = "2239";
+      } else {
+        scoreLabel.textContent = "分數";
+        scoreVal.textContent = formatScore(currentScore);
+      }
+    }
+
+    // 開始遊戲流程 (含 3 秒倒數)
+    startBtn.addEventListener('click', () => {
+      startBtn.disabled = true;
+      currentScore = 0;
+      scoreLabel.textContent = "分數";
+      scoreVal.textContent = "0000";
+      setPasswordMode(false);
+
+      // 3 秒倒數
+      countdownOverlay.style.display = 'flex';
+      let countdown = 3;
+      countdownOverlay.textContent = countdown;
+
+      const cdInterval = setInterval(() => {
+        countdown--;
+        if (countdown > 0) {
+          countdownOverlay.textContent = countdown;
+        } else {
+          clearInterval(cdInterval);
+          countdownOverlay.style.display = 'none';
+          startGame();
+        }
+      }, 1000);
+    });
+
+    // 啟動 30 秒遊戲本體
+    function startGame() {
+      isPlaying = true;
+      remainingTime = 30;
+      timerDisplay.textContent = `剩餘時間：${remainingTime} 秒`;
+
+      // 生成計時器 (每 0.5 秒嘗試生成一隻)
+      spawnTimer = setInterval(spawnMole, 500);
+
+      // 主倒數計時器 (每秒遞減)
+      gameTimer = setInterval(() => {
+        remainingTime--;
+        timerDisplay.textContent = `剩餘時間：${remainingTime} 秒`;
+
+        // 倒數 18~12 秒判定
+        if (remainingTime <= 18 && remainingTime > 12) {
+          if (!isPasswordMode) {
+            setPasswordMode(true);
+          }
+        } else if (remainingTime <= 12) {
+          if (isPasswordMode) {
+            setPasswordMode(false);
+          }
+        }
+
+        // 遊戲結束
+        if (remainingTime <= 0) {
+          endGame();
+        }
+      }, 1000);
+    }
+
+    // 結束遊戲
+    function endGame() {
+      isPlaying = false;
+      clearInterval(gameTimer);
+      clearInterval(spawnTimer);
+
+      // 清除畫面上所有地鼠
+      document.querySelectorAll('.mole-wrapper.show').forEach(m => m.classList.remove('show'));
+
+      setPasswordMode(false);
+      timerDisplay.textContent = "遊戲結束！";
+      startBtn.disabled = false;
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>有名小站 - 職場工作板</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang TC", "Microsoft JhengHei", Roboto, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: #f0f2f5;
+      color: #1c1e21;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* 頂部導航列 */
+    header {
+      background-color: #ffffff;
+      height: 58px;
+      border-bottom: 1px solid #e4e6eb;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .forum-logo {
+      font-size: 20px;
+      font-weight: 800;
+      color: #0066cc;
+      letter-spacing: 0.5px;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+    }
+
+    .forum-logo span {
+      background: #0066cc;
+      color: #fff;
+      font-size: 11px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: 600;
+    }
+
+    .search-input-wrap {
+      background: #f0f2f5;
+      border-radius: 20px;
+      padding: 6px 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      width: 220px;
+      transition: background-color 0.2s ease, width 0.2s ease;
+      cursor: text;
+    }
+
+    .search-input-wrap:hover {
+      background: #e4e6eb;
+    }
+
+    .search-input-wrap input {
+      border: none;
+      background: transparent;
+      outline: none;
+      font-size: 13px;
+      color: #1c1e21;
+      width: 100%;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn-nav {
+      background: transparent;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 14px;
+      color: #65676b;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+
+    .btn-nav:hover {
+      background: #f2f2f2;
+      color: #1c1e21;
+    }
+
+    /* 已登入用戶狀態 */
+    .user-logged-in {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 10px;
+      border-radius: 20px;
+      background: #f0f2f5;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+
+    .user-logged-in:hover {
+      background: #e4e6eb;
+    }
+
+    .user-nav-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background-color: #27ae60;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .user-nav-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: #1c1e21;
+    }
+
+    /* 主體佈局 */
+    .container {
+      max-width: 960px;
+      margin: 20px auto;
+      padding: 0 16px;
+      display: grid;
+      grid-template-columns: 1fr 280px;
+      gap: 20px;
+      flex: 1;
+      width: 100%;
+    }
+
+    /* 貼文卡片主體 */
+    .post-card {
+      background: #ffffff;
+      border-radius: 12px;
+      border: 1px solid #e4e6eb;
+      padding: 24px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+    }
+
+    .post-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    /* 匿名 SVG 大頭貼通用樣式 */
+    .avatar-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .avatar-icon svg, .comment-avatar svg, .user-nav-avatar svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    /* 專屬固定頭像色系 */
+    .color-op { background-color: #0066cc; }      /* 原PO 委託人：藍色 */
+    .color-user1 { background-color: #e67e22; }   /* 網友A：珊瑚橘 */
+    .color-user2 { background-color: #8e44ad; }   /* 網友B：紫羅蘭 */
+    .color-player { background-color: #27ae60; }  /* 玩家 User：綠色 */
+
+    .post-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .author-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: #1c1e21;
+    }
+
+    .post-time {
+      font-size: 12px;
+      color: #8a8d91;
+    }
+
+    .board-tag {
+      display: inline-block;
+      background: #e7f3ff;
+      color: #0066cc;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 4px;
+      margin-bottom: 12px;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+
+    .board-tag:hover {
+      background: #d0e7ff;
+    }
+
+    .post-title {
+      font-size: 22px;
+      font-weight: 800;
+      color: #1c1e21;
+      line-height: 1.4;
+      margin-bottom: 16px;
+    }
+
+    .post-content {
+      font-size: 15px;
+      line-height: 1.8;
+      color: #2b2d30;
+      word-break: break-word;
+      white-space: pre-line;
+      margin-bottom: 20px;
+    }
+
+    /* 獨立線索附件區 */
+    .attachment-box {
+      background: #f7f8fa;
+      border: 1.5px dashed #cbd5e1;
+      border-radius: 10px;
+      padding: 14px 16px;
+      margin-bottom: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .attachment-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #475569;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .attachment-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .clue-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: #ffffff;
+      border: 1px solid #0066cc;
+      color: #0066cc;
+      font-weight: 600;
+      font-size: 13px;
+      text-decoration: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+      transition: all 0.15s ease;
+      cursor: pointer;
+    }
+
+    .clue-link:hover {
+      background: #0066cc;
+      color: #ffffff;
+    }
+
+    /* 貼文底部按讚分享互動列 */
+    .post-actions {
+      display: flex;
+      gap: 16px;
+      border-top: 1px solid #f0f2f5;
+      border-bottom: 1px solid #f0f2f5;
+      padding: 10px 0;
+      margin-bottom: 20px;
+    }
+
+    .action-btn {
+      background: transparent;
+      border: none;
+      color: #65676b;
+      font-size: 14px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+
+    .action-btn:hover {
+      background: #f0f2f5;
+      color: #1c1e21;
+    }
+
+    /* 留言區 */
+    .comments-section {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .comments-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #1c1e21;
+      margin-bottom: 4px;
+    }
+
+    .comment-item {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .comment-avatar {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .comment-bubble {
+      background: #f0f2f5;
+      border-radius: 14px;
+      padding: 10px 14px;
+      flex: 1;
+      max-width: 100%;
+    }
+
+    .comment-author-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 4px;
+    }
+
+    .comment-author {
+      font-size: 13px;
+      font-weight: 700;
+      color: #1c1e21;
+    }
+
+    .comment-time {
+      font-size: 11px;
+      color: #8a8d91;
+    }
+
+    .comment-text {
+      font-size: 14px;
+      line-height: 1.5;
+      color: #1c1e21;
+      word-break: break-all;
+      white-space: pre-line;
+    }
+
+    .op-tag {
+      background: #0066cc;
+      color: white;
+      font-size: 10px;
+      padding: 1px 4px;
+      border-radius: 3px;
+      margin-left: 4px;
+      font-weight: 500;
+    }
+
+    /* 留言輸入區 */
+    .comment-box-wrap {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+      align-items: flex-start;
+    }
+
+    .comment-input {
+      flex: 1;
+      background: #f0f2f5;
+      border: 1px solid #e4e6eb;
+      border-radius: 12px;
+      padding: 12px 14px;
+      font-size: 14px;
+      outline: none;
+      resize: none;
+      min-height: 44px;
+      line-height: 1.4;
+      color: #1c1e21;
+      transition: all 0.2s ease;
+    }
+
+    .comment-input:focus {
+      background: #ffffff;
+      border-color: #0066cc;
+      box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.15);
+    }
+
+    .btn-send {
+      background: #0066cc;
+      color: white;
+      border: none;
+      padding: 0 18px;
+      height: 44px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.15s ease, transform 0.1s ease;
+      flex-shrink: 0;
+    }
+
+    .btn-send:hover {
+      background: #0052a3;
+    }
+
+    .btn-send:active {
+      transform: scale(0.96);
+    }
+
+    /* 右側裝飾性看板資訊 */
+    .sidebar-widget {
+      background: #ffffff;
+      border-radius: 12px;
+      border: 1px solid #e4e6eb;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .widget-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #1c1e21;
+      border-bottom: 1px solid #f0f2f5;
+      padding-bottom: 8px;
+    }
+
+    .widget-item {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      color: #65676b;
+      cursor: pointer;
+      padding: 4px 0;
+      transition: color 0.15s ease;
+    }
+
+    .widget-item:hover {
+      color: #0066cc;
+    }
+
+    /* 手機版 RWD 適配 */
+    @media (max-width: 768px) {
+      .container {
+        grid-template-columns: 1fr;
+        margin: 10px auto;
+      }
+      .sidebar-widget {
+        display: none;
+      }
+      .search-input-wrap {
+        display: none;
+      }
+      .post-card {
+        padding: 16px;
+      }
+      .post-title {
+        font-size: 18px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 頂部 Header -->
+  <header>
+    <div class="header-left">
+      <div class="forum-logo">有名小站 <span>Beta</span></div>
+      <div class="search-input-wrap">
+        <span>🔍</span>
+        <input type="text" placeholder="搜尋文章、看板..." />
+      </div>
+    </div>
+    <div class="header-right">
+      <button class="btn-nav">發文</button>
+      
+      <!-- 已登入用戶 User -->
+      <div class="user-logged-in" title="目前登入身分：User">
+        <div class="user-nav-avatar">
+          <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="50" cy="38" r="17" fill="#ffffff"/>
+            <path d="M19 82 C19 63, 33 58, 50 58 C67 58, 81 63, 81 82 Z" fill="#ffffff"/>
+          </svg>
+        </div>
+        <span class="user-nav-name">User</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- 主畫面容器 -->
+  <div class="container">
+    
+    <!-- 左側貼文與留言主區 -->
+    <main class="post-card">
+      <div class="board-tag">職場工作板</div>
+
+      <div class="post-header">
+        <!-- 原PO專屬藍色頭像 -->
+        <div class="avatar-icon color-op">
+          <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="50" cy="38" r="17" fill="#ffffff"/>
+            <path d="M19 82 C19 63, 33 58, 50 58 C67 58, 81 63, 81 82 Z" fill="#ffffff"/>
+          </svg>
+        </div>
+        <div class="post-meta">
+          <span class="author-name">匿名</span>
+          <span class="post-time">2026年8月20日 19:31</span>
+        </div>
+      </div>
+
+      <h1 class="post-title">[求助] 明天要向大客戶報告了 負責做簡報的同事突然人間蒸發...</h1>
+
+      <!-- 純內文文字 -->
+      <div class="post-content">
+真的要瘋了 明天一早就要跟大客戶提案 投影片都在我同事那邊
+結果他今天整天都沒來上班 電話響老半天沒人接 賴也完全不讀不回
+老大已經在群組瘋狂問進度了 叫我們下班前一定要一起最後確認
+
+他平常很愛解謎 說什麼密碼絕對不直接寫下來
+我剛剛在他座位翻半天只找到他桌上留下來的東西
+求求各位柯南幫我把簡報找出來 只要在下面留言貼給我投影片的線上連結就可以了
+拜託大家救救社畜 感謝大家了 QAQ
+      </div>
+
+      <!-- 獨立線索附件區 -->
+      <div class="attachment-box">
+        <div class="attachment-title">📎 現場留下的線索附件：</div>
+        <div class="attachment-links">
+          <a class="clue-link" id="linkDesk" href="javascript:void(0);">📄 桌面照片(可下載列印)</a>
+          <a class="clue-link" id="linkChat" href="javascript:void(0);">💬 對話紀錄</a>
+        </div>
+      </div>
+
+      <div class="post-actions">
+        <button class="action-btn">👍 18 個讚</button>
+        <button class="action-btn">💬 留言</button>
+        <button class="action-btn">↗ 分享</button>
+      </div>
+
+      <!-- 留言列表區 -->
+      <div class="comments-section">
+        <div class="comments-title">所有留言</div>
+
+        <div id="commentList" style="display: flex; flex-direction: column; gap: 14px;">
+          
+          <!-- 預設留言 1 (19:32, 網友A: 珊瑚橘) -->
+          <div class="comment-item">
+            <div class="comment-avatar color-user1">
+              <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="50" cy="38" r="17" fill="#ffffff"/>
+                <path d="M19 82 C19 63, 33 58, 50 58 C67 58, 81 63, 81 82 Z" fill="#ffffff"/>
+              </svg>
+            </div>
+            <div class="comment-bubble">
+              <div class="comment-author-row">
+                <span class="comment-author">匿名</span>
+                <span class="comment-time">19:32</span>
+              </div>
+              <div class="comment-text">幫QQ 這種同事真的雷 連人都不出現是直接離職了嗎 XD</div>
+            </div>
+          </div>
+
+          <!-- 預設留言 2 (19:33, 網友B: 紫羅蘭) -->
+          <div class="comment-item">
+            <div class="comment-avatar color-user2">
+              <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="50" cy="38" r="17" fill="#ffffff"/>
+                <path d="M19 82 C19 63, 33 58, 50 58 C67 58, 81 63, 81 82 Z" fill="#ffffff"/>
+              </svg>
+            </div>
+            <div class="comment-bubble">
+              <div class="comment-author-row">
+                <span class="comment-author">匿名</span>
+                <span class="comment-time">19:33</span>
+              </div>
+              <div class="comment-text">明天要報現在才找 會不會太刺激了點 先準備好離職信比較快吧</div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- 玩家輸入留言區 -->
+        <div class="comment-box-wrap">
+          <textarea id="playerInput" class="comment-input" placeholder="留個言協助委託人..."></textarea>
+          <button id="sendBtn" class="btn-send">送出</button>
+        </div>
+      </div>
+
+    </main>
+
+    <!-- 右側側邊欄 (純裝飾，具 Hover 效果) -->
+    <aside class="sidebar-widget">
+      <div class="widget-title">📌 熱門討論</div>
+      <div class="widget-item"><span># 科技業加班日常</span><span style="color:#8a8d91;">2.4k</span></div>
+      <div class="widget-item"><span># 遇到雷包同事怎麼辦</span><span style="color:#8a8d91;">1.8k</span></div>
+      <div class="widget-item"><span># 實境解謎新手推薦</span><span style="color:#8a8d91;">950</span></div>
+      <div class="widget-item"><span># 2026 必看神作動畫</span><span style="color:#8a8d91;">820</span></div>
+    </aside>
+
+  </div>
+
+  <script>
+    // ==========================================
+    // ⚙️ 外部接口設定區 (依需求替換連結)
+    // ==========================================
+    const DESK_PHOTO_URL = "./table.pdf";            // 桌面照片路徑 (同一目錄下的 pdf)
+    const CHAT_LOG_URL   = "https://wbstory.site/chat/"; // 對話紀錄網頁路徑[cite: 10]
+
+    // Google Slides 核心識別碼（只要輸入內容包含此 ID 即判定為正確）
+    const CORRECT_SLIDES_ID = "1nSsnMsDrl-JtR_hPay0aNRBmBW7csybSb6SBFtRAh5s";
+
+    // 連結點擊事件
+    document.getElementById("linkDesk").addEventListener("click", () => {
+      window.open(DESK_PHOTO_URL, "_blank");
+    });
+    document.getElementById("linkChat").addEventListener("click", () => {
+      window.location.href = CHAT_LOG_URL; //[cite: 10]
+    });
+
+    // ==========================================
+    // 💬 留言與時間遞增控制邏輯
+    // ==========================================
+    let currentMinute = 34; // 玩家第一次發言從 19:34 開始[cite: 10]
+    let currentHour = 19; //[cite: 10]
+    let hasSolved = false; //[cite: 10]
+
+    const commentList = document.getElementById("commentList"); //[cite: 10]
+    const playerInput = document.getElementById("playerInput"); //[cite: 10]
+    const sendBtn = document.getElementById("sendBtn"); //[cite: 10]
+
+    function formatTime(h, m) {
+      const hh = h.toString().padStart(2, '0'); //[cite: 10]
+      const mm = m.toString().padStart(2, '0'); //[cite: 10]
+      return `${hh}:${mm}`; //[cite: 10]
+    }
+
+    function addMinute() {
+      currentMinute++; //[cite: 10]
+      if (currentMinute >= 60) { //[cite: 10]
+        currentHour += Math.floor(currentMinute / 60); //[cite: 10]
+        currentMinute %= 60; //[cite: 10]
+      }
+    }
+
+    // 建立留言 HTML
+    function createCommentElement(author, timeStr, text, isOP = false, colorClass = "color-player") {
+      const div = document.createElement("div"); //[cite: 10]
+      div.className = "comment-item"; //[cite: 10]
+      
+      const opBadge = isOP ? '<span class="op-tag">原PO</span>' : ''; //[cite: 10]
+
+      div.innerHTML = `
+        <div class="comment-avatar ${colorClass}">
+          <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="50" cy="38" r="17" fill="#ffffff"/>
+            <path d="M19 82 C19 63, 33 58, 50 58 C67 58, 81 63, 81 82 Z" fill="#ffffff"/>
+          </svg>
+        </div>
+        <div class="comment-bubble">
+          <div class="comment-author-row">
+            <span class="comment-author">${author} ${opBadge}</span>
+            <span class="comment-time">${timeStr}</span>
+          </div>
+          <div class="comment-text">${escapeHtml(text)}</div>
+        </div>
+      `; //[cite: 10]
+      return div; //[cite: 10]
+    }
+
+    function escapeHtml(str) {
+      return str
+        .replace(/&/g, "&amp;") //[cite: 10]
+        .replace(/</g, "&lt;") //[cite: 10]
+        .replace(/>/g, "&gt;") //[cite: 10]
+        .replace(/"/g, "&quot;") //[cite: 10]
+        .replace(/'/g, "&#039;"); //[cite: 10]
+    }
+
+    function handleSendComment() {
+      const content = playerInput.value.trim(); //[cite: 10]
+      if (!content) return; //[cite: 10]
+
+      // 1. 產生玩家 (User) 留言 (綠色頭像)
+      const playerTime = formatTime(currentHour, currentMinute); //[cite: 10]
+      const playerComment = createCommentElement("User", playerTime, content, false, "color-player"); //[cite: 10]
+      commentList.appendChild(playerComment); //[cite: 10]
+      
+      playerInput.value = ""; //[cite: 10]
+      playerComment.scrollIntoView({ behavior: 'smooth' }); //[cite: 10]
+
+      // 2. 判定答案是否包含簡報 ID
+      if (content.includes(CORRECT_SLIDES_ID) && !hasSolved) {
+        hasSolved = true; //[cite: 10]
+        
+        // 委託人回覆時間 = 玩家時間 + 1 分鐘
+        addMinute(); //[cite: 10]
+        const opTime = formatTime(currentHour, currentMinute); //[cite: 10]
+
+        // 模擬 1 秒後委託人 (原PO: 藍色頭像) 回覆
+        setTimeout(() => {
+          const opText = "太好了!這下明天就有救了!\n真的非常感謝你!\n不過 投影片標題說的小驚喜到底是什麼呢..."; //[cite: 10]
+          const opComment = createCommentElement("匿名", opTime, opText, true, "color-op"); //[cite: 10]
+          commentList.appendChild(opComment); //[cite: 10]
+          opComment.scrollIntoView({ behavior: 'smooth' }); //[cite: 10]
+        }, 1000); //[cite: 10]
+      } else {
+        // 若不是正確答案，時間往後推進 1 分鐘，等待下一次玩家嘗試
+        addMinute(); //[cite: 10]
+      }
+    }
+
+    sendBtn.addEventListener("click", handleSendComment); //[cite: 10]
+    playerInput.addEventListener("keydown", (e) => { //[cite: 10]
+      if (e.key === "Enter" && !e.shiftKey) { //[cite: 10]
+        e.preventDefault(); //[cite: 10]
+        handleSendComment(); //[cite: 10]
+      }
+    }); //[cite: 10]
+  </script>
+</body>
+</html>
