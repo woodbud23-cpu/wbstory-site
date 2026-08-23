@@ -729,7 +729,7 @@
 
       // 1. 產生玩家 (User) 留言 (綠色頭像)
       const playerTime = formatTime(currentHour, currentMinute); //[cite: 10]
-      const playerComment = createCommentElement("User", playerTime, content, false, "color-player"); //[cite: 10]
+      const playerComment = createCommentElement("匿名", playerTime, content, false, "color-player"); //[cite: 10]
       commentList.appendChild(playerComment); //[cite: 10]
       
       playerInput.value = ""; //[cite: 10]
