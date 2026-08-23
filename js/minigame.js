@@ -1,3 +1,5 @@
+import { playTransitionAnimation } from './intro.js';
+
 /**
  * 解鎖試煉互動與右側任務卡片控制模組
  */
@@ -30,8 +32,10 @@ export function initMinigame() {
       ];
 
       if (triggerKeywords.includes(normalizedVal)) {
-        // 驗證通過，直接跳轉到有名小站論壇頁面
-        window.location.href = FORUM_TARGET_URL;
+        // 播放過場發芽讀取動畫後跳轉
+        playTransitionAnimation('[ ESTABLISHING FORUM CONNECTION... ]', () => {
+          window.location.href = FORUM_TARGET_URL;
+        });
         return;
       }
 

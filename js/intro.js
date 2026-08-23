@@ -1,5 +1,5 @@
 /**
- * 開場發芽動畫控制模組 (提速版)
+ * 開場發芽動畫控制與轉跳過場模組
  */
 export function initIntro() {
   const introOverlay = document.getElementById('intro-overlay');
@@ -61,4 +61,52 @@ export function initIntro() {
     
     playAnimationSequence();
   });
+}
+
+/**
+ * 專供跳轉時調用的過場讀取動畫
+ */
+export function playTransitionAnimation(customStatus = '[ CONNECTING PROTOCOL... ]', onComplete) {
+  const introOverlay = document.getElementById('intro-overlay');
+  const title = document.getElementById('intro-title');
+  const subtitle = document.getElementById('intro-subtitle');
+  const status = document.getElementById('intro-status');
+  const skipBtn = document.getElementById('skip-intro-btn');
+
+  if (!introOverlay) {
+    if (onComplete) onComplete();
+    return;
+  }
+
+  if (skipBtn) skipBtn.style.display = 'none'; // 跳轉時隱藏略過按鈕
+  if (status) status.textContent = customStatus;
+
+  // 重設透明度與 SVG 動畫
+  title?.classList.add('opacity-0');
+  subtitle?.classList.add('opacity-0');
+  status?.classList.add('opacity-0');
+
+  const svg = introOverlay.querySelector('.logo-svg');
+  if (svg) {
+    svg.style.animation = 'none';
+    svg.offsetHeight; /* trigger reflow */
+    svg.style.animation = '';
+  }
+
+  introOverlay.style.display = 'flex';
+  introOverlay.classList.remove('opacity-0', 'pointer-events-none');
+
+  setTimeout(() => {
+    if (title) title.classList.remove('opacity-0');
+  }, 600);
+
+  setTimeout(() => {
+    if (subtitle) subtitle.classList.remove('opacity-0');
+    if (status) status.classList.remove('opacity-0');
+  }, 1000);
+
+  // 2 秒後執行跳轉回呼
+  setTimeout(() => {
+    if (onComplete) onComplete();
+  }, 2000);
 }
