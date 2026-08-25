@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>來自翔宇的訊息 - 木芽故事館</title>
+  
+  <!-- 引入 Cinzel 與 Noto Serif TC 字體 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Noto+Serif+TC:wght@500;700&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: #0A0B0E;
+      color: #E8DCCA;
+      font-family: "Noto Serif TC", "Cinzel", Georgia, serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 24px;
+      overflow: hidden;
+      position: relative;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    /* 背景柔和光暈節奏 */
+    .bg-glow {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 50% 50%, rgba(212, 175, 55, 0.06), transparent 70%);
+      pointer-events: none;
+    }
+
+    /* 訊息卡片容器 */
+    .message-container {
+      max-width: 620px;
+      width: 100%;
+      background: rgba(21, 24, 34, 0.7);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(212, 175, 55, 0.2);
+      border-radius: 16px;
+      padding: 48px 36px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), 0 0 30px rgba(212, 175, 55, 0.05);
+      position: relative;
+      z-index: 1;
+    }
+
+    /* 頂部標記 */
+    .message-header {
+      font-size: 13px;
+      color: #D4AF37;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-bottom: 28px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: "Cinzel", serif;
+    }
+
+    .message-header::before {
+      content: "";
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      background-color: #D4AF37;
+      border-radius: 50%;
+      box-shadow: 0 0 8px #D4AF37;
+    }
+
+    /* 打字文字本體 */
+    .typewriter-text {
+      font-size: 20px;
+      line-height: 2.2;
+      color: #E8DCCA;
+      letter-spacing: 1.5px;
+      white-space: pre-line;
+      min-height: 240px;
+      word-break: break-word;
+    }
+
+    /* 閃爍游標 */
+    .cursor {
+      display: inline-block;
+      width: 2.5px;
+      height: 1.1em;
+      background-color: #D4AF37;
+      vertical-align: -0.15em;
+      margin-left: 4px;
+      animation: blink 0.9s infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    /* 跳轉倒數進度條提示 */
+    .redirect-status {
+      margin-top: 32px;
+      font-size: 13px;
+      color: #7D828A;
+      letter-spacing: 2px;
+      text-align: right;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    .redirect-status.show {
+      opacity: 1;
+    }
+
+    /* 略過按鈕 */
+    .skip-btn {
+      position: absolute;
+      bottom: 24px;
+      right: 24px;
+      background: transparent;
+      border: 1px solid rgba(125, 130, 138, 0.3);
+      color: #7D828A;
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-family: monospace;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      z-index: 10;
+    }
+
+    .skip-btn:hover {
+      border-color: #D4AF37;
+      color: #D4AF37;
+      background: rgba(212, 175, 55, 0.05);
+    }
+
+    /* 手機版適配 */
+    @media (max-width: 640px) {
+      .message-container {
+        padding: 32px 24px;
+      }
+      .typewriter-text {
+        font-size: 17px;
+        line-height: 2;
+        min-height: 220px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="bg-glow"></div>
+
+  <main class="message-container">
+    <div class="message-header">Incoming Message //</div>
+    <div class="typewriter-text" id="typewriterText"><span class="cursor" id="cursor"></span></div>
+    <div class="redirect-status" id="redirectStatus">即將前往木芽故事館首頁...</div>
+  </main>
+
+  <button class="skip-btn" id="skipBtn">略過 [SKIP] ➔</button>
+
+  <script>
+    // ==========================================
+    // ⚙️ 串接接口設定區 (填入工作室首頁網址)
+    // ==========================================
+    const HOME_URL = "https://wbstory.site/"; // 替換為你的首頁網址
+
+    // 要打出來的訊息全文
+    const MESSAGE = 
+`花了一整個晚上，
+總算是把工作室的官方網站趕出來了。
+你先看看滿不滿意，
+有什麼問題上班核對的時候再跟我說吧！
+我先睡了，
+明天...不對，應該說，晚點見囉！`;
+
+    const textElement = document.getElementById("typewriterText");
+    const cursorElement = document.getElementById("cursor");
+    const redirectStatus = document.getElementById("redirectStatus");
+    const skipBtn = document.getElementById("skipBtn");
+
+    let currentIndex = 0;
+
+    // 執行直接跳轉
+    function redirectToHome() {
+      window.location.href = HOME_URL;
+    }
+
+    // 逐字打字函式
+    function typeNextCharacter() {
+      if (currentIndex < MESSAGE.length) {
+        const char = MESSAGE[currentIndex];
+        
+        // 游標前插入字元
+        const textNode = document.createTextNode(char);
+        textElement.insertBefore(textNode, cursorElement);
+        currentIndex++;
+
+        // 計算下一個字的延遲（在標點與換行處給予自然停頓）
+        let delay = 75; // 基礎打字速度 (毫秒)
+
+        if (char === "，" || char === "、") {
+          delay = 320;
+        } else if (char === "。" || char === "！" || char === "!") {
+          delay = 500;
+        } else if (char === "\n") {
+          delay = 450;
+        } else if (char === ".") {
+          delay = 180;
+        }
+
+        setTimeout(typeNextCharacter, delay);
+      } else {
+        // 打字結束：顯示即將跳轉提示，並於 5 秒 (5000ms) 後跳轉
+        redirectStatus.classList.add("show");
+        setTimeout(redirectToHome, 5000);
+      }
+    }
+
+    // 點擊略過按鈕直接跳轉
+    skipBtn.addEventListener("click", redirectToHome);
+
+    // 頁面加載後延遲 0.6 秒開始打字
+    window.addEventListener("DOMContentLoaded", () => {
+      setTimeout(typeNextCharacter, 600);
+    });
+  </script>
+</body>
+</html>
