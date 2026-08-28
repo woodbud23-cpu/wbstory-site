@@ -25,6 +25,7 @@
       padding: 0;
       user-select: none;
       -webkit-user-select: none;
+      -webkit-touch-callout: none;
     }
 
     body {
@@ -485,7 +486,7 @@
       justify-content: center;
     }
 
-    /* 狀態長按/點擊 Tooltip 彈窗 */
+    /* 狀態 Tooltip 彈窗 */
     #status-tooltip {
       display: none;
       position: fixed;
@@ -512,11 +513,11 @@
       transition: opacity 1.5s ease, background 1.5s ease;
     }
 
-    /* ========== 手機直向：向上平移、字體微縮、緊貼式佈局 ========== */
+    /* ========== 手機直向：上方留 2/5 舞台高度空隙 (22.5vw) ========== */
     @media screen and (max-aspect-ratio: 16/10) {
       body {
-        align-items: flex-start; /* 消除頂部大黑邊，整體向上靠攏 */
-        padding-top: 15px;
+        align-items: flex-start;
+        padding-top: 22.5vw; /* 恰好保留 2/5 舞台高度 (56.25vw * 0.4) 的留白空間 */
       }
       #game-container {
         width: 100vw;
@@ -1045,7 +1046,7 @@
       renderHeroPanel(activeChar);
     }
 
-    /* ================= 狀態長按/點擊 Tooltip (手機端完美相容) ================= */
+    /* ================= 狀態長按/點擊 Tooltip (手機端無延遲無閃爍) ================= */
     let currentTooltipBadge = null;
     function bindTooltipEvents(elem, descText) {
       const tooltip = document.getElementById('status-tooltip');
@@ -1057,8 +1058,8 @@
         const rect = elem.getBoundingClientRect();
         
         let topPos = rect.bottom + 6;
-        if (topPos + 40 > window.innerHeight) {
-          topPos = rect.top - 40; // 避免超出螢幕底部
+        if (topPos + 50 > window.innerHeight) {
+          topPos = rect.top - 46;
         }
         
         let leftPos = rect.left + rect.width / 2 - 120;
@@ -1073,10 +1074,23 @@
         currentTooltipBadge = null;
       }
 
+      // 電腦滑鼠懸停
       elem.addEventListener('mouseenter', showTip);
       elem.addEventListener('mouseleave', hideTip);
-      
-      // 手機端點擊切換
+
+      // 手機觸控專用邏輯
+      let touchTimer = null;
+      elem.addEventListener('touchstart', (e) => {
+        e.stopPropagation();
+        showTip();
+        touchTimer = setTimeout(showTip, 100);
+      }, { passive: true });
+
+      elem.addEventListener('touchend', (e) => {
+        e.stopPropagation();
+        if (touchTimer) clearTimeout(touchTimer);
+      }, { passive: true });
+
       elem.addEventListener('click', (e) => {
         e.stopPropagation();
         if (currentTooltipBadge === elem && tooltip.style.display === 'block') {
@@ -1091,6 +1105,9 @@
     document.addEventListener('click', () => {
       document.getElementById('status-tooltip').style.display = 'none';
     });
+    document.addEventListener('touchstart', () => {
+      document.getElementById('status-tooltip').style.display = 'none';
+    }, { passive: true });
 
     /* ================= 時間流動確認與結算 ================= */
     function askStartFlow() {
