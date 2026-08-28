@@ -1,0 +1,1442 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>達邦卡洞窟</title>
+  <style>
+    :root {
+      --ui-bg: rgba(18, 22, 34, 0.96);
+      --ui-border: #d4af37;
+      --ui-border-inner: #3a4560;
+      --text-main: #f0f3f8;
+      --text-dim: #9aa5b8;
+      --hp-bg: #404552;
+      --hp-fill: #e63946;
+      --btn-bg: #23293a;
+      --btn-hover: #353e57;
+      --btn-selected: #5a4920;
+      --btn-border-sel: #ffd166;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    body {
+      background-color: #050608;
+      color: var(--text-main);
+      font-family: "PingFang TC", "Microsoft JhengHei", "Noto Sans TC", sans-serif;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      width: 100vw;
+    }
+
+    /* 遊戲 16:9 核心容器 */
+    #game-container {
+      position: relative;
+      width: 100vw;
+      height: 56.25vw;
+      max-height: 100vh;
+      max-width: 177.78vh;
+      background: #000;
+      overflow: hidden;
+      box-shadow: 0 0 45px rgba(0, 0, 0, 0.9);
+    }
+
+    /* ========== 戰鬥舞台背景 ========== */
+    #stage {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('background.jpg') no-repeat center center;
+      background-size: 100% 100%;
+      overflow: hidden;
+    }
+
+    /* 洞穴崩塌搖晃動畫 */
+    .shake-anim {
+      animation: caveShake 1s infinite ease-in-out;
+    }
+    @keyframes caveShake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-6px) translateY(2px); }
+      75% { transform: translateX(6px) translateY(-2px); }
+    }
+
+    /* 鐘乳石 (游標維持箭頭) */
+    #stalactite-obj {
+      position: absolute;
+      top: 13.5%;
+      left: 76.5%;
+      width: 4.8%;
+      height: 25%;
+      z-index: 15;
+      transition: top 0.8s cubic-bezier(0.55, 0.085, 0.68, 0.53), opacity 0.3s ease;
+      pointer-events: none;
+      cursor: default;
+    }
+    #stalactite-obj img {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    /* 鐘乳石點擊擴大區 (維持箭頭游標) */
+    #stalactite-click-zone {
+      position: absolute;
+      top: 0;
+      right: 12%;
+      width: 25%;
+      height: 48%;
+      z-index: 16;
+      cursor: default;
+    }
+
+    /* 巨龍 BOSS */
+    #dragon-unit {
+      position: absolute;
+      bottom: 25%;
+      right: 6%;
+      width: 34%;
+      height: 50%;
+      z-index: 12;
+      cursor: pointer;
+      transform: none;
+      transition: opacity 1s ease, filter 0.2s ease;
+    }
+    #dragon-unit img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+    #dragon-unit.selected img {
+      filter: drop-shadow(0 0 12px var(--ui-border));
+    }
+
+    /* 逃脫大門 (下移至 bottom: 18%) */
+    #door-unit {
+      position: absolute;
+      bottom: 18%;
+      right: 11%;
+      width: 23%;
+      height: 50%;
+      z-index: 11;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 1s ease;
+    }
+    .door-layer {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      transition: opacity 1s ease;
+    }
+
+    /* 冒險者隊伍 */
+    #party-container {
+      position: absolute;
+      bottom: 24%;
+      left: 5%;
+      width: 48%;
+      height: 44%;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      z-index: 14;
+    }
+
+    .hero-unit {
+      position: relative;
+      width: 23%;
+      height: 90%;
+      cursor: pointer;
+      transition: transform 0.25s ease, opacity 1s ease, filter 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+    }
+    .hero-unit img {
+      width: 100%;
+      height: 85%;
+      object-fit: contain;
+    }
+    .hero-unit.selected img {
+      filter: drop-shadow(0 0 10px var(--btn-border-sel));
+    }
+
+    /* 血條組件 */
+    .hp-bar-container {
+      position: absolute;
+      top: -8px;
+      width: 86%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+    }
+    .hp-num-text {
+      font-size: 15px;
+      font-weight: bold;
+      color: #fff;
+      text-shadow: 1px 1px 2px #000, -1px -1px 2px #000;
+      line-height: 1;
+    }
+    .hp-bar-wrap {
+      width: 100%;
+      height: 7px;
+      background: var(--hp-bg);
+      border: 1px solid #1a1c23;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .hp-bar-fill {
+      height: 100%;
+      background: var(--hp-fill);
+      width: 100%;
+      transition: width 0.3s ease;
+    }
+
+    /* 巨龍血條與數值 */
+    #dragon-hp-container {
+      position: absolute;
+      top: 15%;
+      right: 10%;
+      width: 25%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      z-index: 17;
+    }
+    #dragon-hp-wrap {
+      width: 100%;
+      height: 9px;
+      background: var(--hp-bg);
+      border: 1.5px solid #1a1c23;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    #dragon-hp-fill {
+      height: 100%;
+      background: var(--hp-fill);
+      width: 5%;
+      transition: width 0.3s ease;
+    }
+
+    /* 傷害飄字 */
+    .damage-popup {
+      position: absolute;
+      font-size: 24px;
+      font-weight: 900;
+      color: #ff3333;
+      text-shadow: 2px 2px 0 #000, -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000;
+      pointer-events: none;
+      z-index: 999;
+      animation: dmgFloat 0.9s forwards ease-out;
+    }
+    @keyframes dmgFloat {
+      0% { transform: translateY(0) scale(1); opacity: 1; }
+      100% { transform: translateY(-35px) scale(1.2); opacity: 0; }
+    }
+
+    /* 遠程光束 */
+    .magic-beam {
+      position: absolute;
+      height: 6px;
+      border-radius: 3px;
+      z-index: 200;
+      transform-origin: 0 50%;
+      pointer-events: none;
+      box-shadow: 0 0 12px currentColor;
+    }
+
+    /* ========== 時間暫停標題 ========== */
+    #time-stop-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(160, 140, 70, 0.28);
+      backdrop-filter: sepia(0.35) contrast(1.05);
+      z-index: 50;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: opacity 1s ease;
+      pointer-events: none;
+    }
+    .time-stop-title-wrap {
+      position: absolute;
+      top: 24%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 46px;
+      font-weight: 900;
+      color: #fff8db;
+      text-shadow: 0 0 20px rgba(0,0,0,0.85), 3px 3px 0 #3a2e12;
+      letter-spacing: 6px;
+      pointer-events: none;
+    }
+    #hourglass-btn {
+      width: 72px;
+      height: 72px;
+      background: radial-gradient(circle, #ffeaa7 0%, #d4af37 100%);
+      border: 3.5px solid #fff;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 0 25px rgba(255, 234, 167, 0.85);
+      transition: transform 0.2s ease;
+      animation: pulseBtn 2s infinite ease-in-out;
+      pointer-events: auto;
+    }
+    #hourglass-btn:hover {
+      transform: scale(1.12);
+    }
+    @keyframes pulseBtn {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.06); }
+    }
+
+    /* 崩塌倒數條 */
+    #escape-timer-bar {
+      display: none;
+      position: absolute;
+      top: 3%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(180, 20, 20, 0.9);
+      border: 2px solid #ff4d4d;
+      border-radius: 8px;
+      padding: 6px 24px;
+      font-size: 24px;
+      font-weight: bold;
+      color: #fff;
+      z-index: 60;
+      box-shadow: 0 0 15px rgba(255, 0, 0, 0.6);
+    }
+
+    /* ========== 底部懸浮對話框 ========== */
+    #dialogue-window {
+      position: absolute;
+      bottom: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 46%;
+      height: 20%;
+      background: var(--ui-bg);
+      border: 2.5px solid var(--ui-border);
+      border-radius: 12px;
+      z-index: 100;
+      padding: 8px 14px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 0 30px rgba(0,0,0,0.85);
+    }
+
+    /* 置中訊息展示區 */
+    #dialogue-content {
+      font-size: 18px;
+      line-height: 1.5;
+      color: var(--text-main);
+      white-space: pre-wrap;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* 冒險者操作面板 */
+    #char-control-panel {
+      display: none;
+      width: 100%;
+      height: 100%;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .panel-row-1 {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+    }
+    .panel-char-name {
+      font-size: 24px;
+      font-weight: 900;
+      color: var(--ui-border);
+      text-align: center;
+      text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
+    }
+    .status-badge {
+      background: #242a3a;
+      border: 1.5px solid var(--ui-border-inner);
+      padding: 2px 10px;
+      border-radius: 5px;
+      font-size: 14px;
+      color: #70d6ff;
+      cursor: help;
+    }
+
+    .skills-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px 14px;
+      width: 100%;
+    }
+    .skill-btn {
+      background: var(--btn-bg);
+      border: 1.5px solid var(--ui-border-inner);
+      color: var(--text-main);
+      padding: 6px 10px;
+      font-size: 15px;
+      border-radius: 5px;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.15s ease;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .skill-btn:hover:not(:disabled) {
+      background: var(--btn-hover);
+      border-color: #7b88a8;
+    }
+    .skill-btn.selected {
+      background: var(--btn-selected);
+      border-color: var(--btn-border-sel);
+      box-shadow: 0 0 8px rgba(255, 209, 102, 0.4);
+      font-weight: bold;
+    }
+    .skill-btn:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+
+    /* 巨龍專屬 4 列狀態面板 */
+    #dragon-status-panel {
+      display: none;
+      width: 100%;
+      height: 100%;
+      overflow-y: auto;
+      font-size: 14px;
+    }
+    .dragon-status-row {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 3px;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* 狀態長按說明 Tooltip */
+    #status-tooltip {
+      display: none;
+      position: absolute;
+      background: #0b0d14;
+      border: 1.5px solid var(--ui-border);
+      border-radius: 6px;
+      padding: 6px 10px;
+      font-size: 14px;
+      color: #ffd166;
+      box-shadow: 0 4px 18px rgba(0,0,0,0.9);
+      z-index: 300;
+      pointer-events: none;
+      max-width: 300px;
+    }
+
+    /* 全螢幕轉場層 */
+    #screen-flash-overlay {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 500;
+      opacity: 0;
+      transition: opacity 1.5s ease, background 1.5s ease;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="game-container">
+    
+    <!-- 戰鬥舞台 -->
+    <div id="stage">
+      
+      <!-- 逃脫計時器 -->
+      <div id="escape-timer-bar">崩塌倒數：<span id="timer-sec">30</span> 秒</div>
+
+      <!-- 鐘乳石 -->
+      <div id="stalactite-click-zone" onclick="handleStalactiteClick()"></div>
+      <div id="stalactite-obj">
+        <img src="stone.png" alt="鐘乳石">
+      </div>
+
+      <!-- 巨龍血條與數值 -->
+      <div id="dragon-hp-container">
+        <span class="hp-num-text" id="hp-num-dragon">50/999</span>
+        <div id="dragon-hp-wrap"><div id="dragon-hp-fill"></div></div>
+      </div>
+
+      <!-- 邪惡巨龍 -->
+      <div id="dragon-unit" onclick="handleUnitClick('dragon')">
+        <img src="dragon.png" alt="邪惡巨龍">
+      </div>
+
+      <!-- 逃脫大門 -->
+      <div id="door-unit">
+        <img id="doorlock-img" class="door-layer" src="doorlock.png" alt="鎖住的大門" style="opacity: 1;">
+        <img id="door-img" class="door-layer" src="door.png" alt="開啟的大門" style="opacity: 0;">
+      </div>
+
+      <!-- 冒險者隊伍 -->
+      <div id="party-container">
+        
+        <!-- 魔法師 -->
+        <div class="hero-unit" id="unit-wizard" onclick="handleUnitClick('wizard')">
+          <div class="hp-bar-container">
+            <span class="hp-num-text" id="hp-num-wizard">7/33</span>
+            <div class="hp-bar-wrap"><div class="hp-bar-fill" id="hp-wizard" style="width: 21.2%;"></div></div>
+          </div>
+          <img src="wizard.png" alt="魔法師">
+        </div>
+
+        <!-- 弓箭手 -->
+        <div class="hero-unit" id="unit-archer" onclick="handleUnitClick('archer')">
+          <div class="hp-bar-container">
+            <span class="hp-num-text" id="hp-num-archer">5/47</span>
+            <div class="hp-bar-wrap"><div class="hp-bar-fill" id="hp-archer" style="width: 10.6%;"></div></div>
+          </div>
+          <img src="archer.png" alt="弓箭手">
+        </div>
+
+        <!-- 盜賊 -->
+        <div class="hero-unit" id="unit-thief" onclick="handleUnitClick('thief')">
+          <div class="hp-bar-container">
+            <span class="hp-num-text" id="hp-num-thief">8/32</span>
+            <div class="hp-bar-wrap"><div class="hp-bar-fill" id="hp-thief" style="width: 25%;"></div></div>
+          </div>
+          <img src="thief.png" alt="盜賊">
+        </div>
+
+        <!-- 勇者 -->
+        <div class="hero-unit" id="unit-swordman" onclick="handleUnitClick('swordman')">
+          <div class="hp-bar-container">
+            <span class="hp-num-text" id="hp-num-swordman">3/55</span>
+            <div class="hp-bar-wrap"><div class="hp-bar-fill" id="hp-swordman" style="width: 5.5%;"></div></div>
+          </div>
+          <img src="swordman.png" alt="勇者">
+        </div>
+
+      </div>
+
+      <!-- 時間暫停標題 -->
+      <div id="time-stop-overlay">
+        <div class="time-stop-title-wrap">
+          <span>時</span><span>間</span>
+          <div id="hourglass-btn" onclick="askStartFlow()">
+            <svg viewBox="0 0 24 24" width="38" height="38" fill="#222">
+              <path d="M6 2v6h.01L6 8.01 10 12l-4 4 .01.01H6V22h12v-5.99h-.01L18 16l-4-4 4-3.99-.01-.01H18V2H6zm10 14.5V20H8v-3.5l4-4 4 4zM12 11.5L8 7.5V4h8v3.5l-4 4z"/>
+            </svg>
+          </div>
+          <span>暫</span><span>停</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- 底部懸浮戰術對話框 -->
+    <div id="dialogue-window">
+      
+      <!-- 訊息展示區 -->
+      <div id="dialogue-content">再這樣下去，英雄隊伍會全滅的！<br>異世界的英雄啊，<br>請點擊冒險者，決定冒險者們的行動，<br>幫助我們打倒邪惡巨龍吧！</div>
+
+      <!-- 冒險者操作面板 -->
+      <div id="char-control-panel">
+        <div class="panel-row-1">
+          <div class="panel-char-name" id="panel-name">勇者</div>
+          <div id="panel-statuses" style="display:flex; justify-content:center; gap:8px;"></div>
+        </div>
+        <div class="skills-grid" id="panel-skills"></div>
+      </div>
+
+      <!-- 巨龍專屬 4 列狀態面板 -->
+      <div id="dragon-status-panel"></div>
+
+    </div>
+
+    <!-- 狀態長按說明 Tooltip -->
+    <div id="status-tooltip"></div>
+
+    <!-- 全螢幕轉場層 -->
+    <div id="screen-flash-overlay"></div>
+
+  </div>
+
+  <script>
+    /* ================= 音訊管理 ================= */
+    const audioBgm = new Audio('bgm.mp3');
+    audioBgm.loop = true;
+    audioBgm.volume = 0.3;
+    audioBgm.addEventListener('ended', function() {
+      this.currentTime = 0;
+      this.play().catch(() => {});
+    }, false);
+
+    const audioHit = new Audio('hit.mp3');
+    audioHit.volume = 0.9;
+
+    const audioWarning = new Audio('warning.mp3');
+    audioWarning.loop = true;
+    audioWarning.volume = 0.7;
+    audioWarning.addEventListener('ended', function() {
+      this.currentTime = 0;
+      this.play().catch(() => {});
+    }, false);
+
+    const audioOver = new Audio('over.mp3');
+    audioOver.volume = 1.0;
+
+    function attemptPlayBgm() {
+      audioBgm.play().catch(() => {});
+    }
+
+    attemptPlayBgm();
+    ['click', 'touchstart', 'mousemove', 'keydown'].forEach(evt => {
+      window.addEventListener(evt, attemptPlayBgm, { once: true });
+    });
+
+    function playSound(sound) {
+      sound.currentTime = 0;
+      sound.play().catch(() => {});
+    }
+
+    function stopAllAudios() {
+      audioBgm.pause();
+      audioWarning.pause();
+      audioHit.pause();
+    }
+
+    /* ================= 角色與技能數據 ================= */
+    const chars = {
+      swordman: {
+        id: 'swordman', name: '勇者', hp: 3, maxHp: 55, dead: false,
+        statuses: [{ name: '流血', desc: '移動時，會損失5HP' }],
+        skills: [
+          { id: 1, name: '奮力一擊', type: 'melee', needTarget: true, target: 'dragon' },
+          { id: 2, name: '輕巧刺擊', type: 'melee', needTarget: true, target: 'dragon' },
+          { id: 3, name: '神聖劈砍', type: 'melee', needTarget: true, target: 'dragon' },
+          { id: 4, name: '什麼都不做', type: 'none', needTarget: false }
+        ],
+        selectedSkill: 4,
+        wail: '勇者：可惡……就差一步了嗎……'
+      },
+      thief: {
+        id: 'thief', name: '盜賊', hp: 8, maxHp: 32, dead: false,
+        statuses: [],
+        skills: [
+          { id: 1, name: '偷竊', type: 'steal', needTarget: true, target: 'dragon' },
+          { id: 2, name: '開鎖', type: 'unlock_melee', needTarget: false, disabled: true },
+          { id: 3, name: '寒冰飛刀', type: 'ranged', elem: 'ice', needTarget: true, target: 'stalactite' },
+          { id: 4, name: '什麼都不做', type: 'none', needTarget: false }
+        ],
+        selectedSkill: 3,
+        wail: '盜賊：可惡啊……失手了……'
+      },
+      archer: {
+        id: 'archer', name: '弓箭手', hp: 5, maxHp: 47, dead: false,
+        statuses: [{ name: '中毒', desc: '每次攻擊-1HP' }],
+        skills: [
+          { id: 1, name: '烈火箭', type: 'ranged', elem: 'fire', needTarget: true, target: 'stalactite' },
+          { id: 2, name: '寒冰箭', type: 'ranged', elem: 'ice', needTarget: true, target: 'dragon' },
+          { id: 3, name: '穿心箭', type: 'ranged', elem: 'none', needTarget: true, target: 'dragon' },
+          { id: 4, name: '什麼都不做', type: 'none', needTarget: false }
+        ],
+        selectedSkill: 1,
+        wail: '弓箭手：我的箭……已經射不出了嗎……'
+      },
+      wizard: {
+        id: 'wizard', name: '魔法師', hp: 7, maxHp: 33, dead: false,
+        statuses: [{ name: '魔法束縛', desc: '只能再施放一次法術' }],
+        skills: [
+          { id: 1, name: '聖癒術', type: 'heal', needTarget: false },
+          { id: 2, name: '開鎖術', type: 'unlock_magic', needTarget: false, disabled: true },
+          { id: 3, name: '淨化術', type: 'cleanse', needTarget: true, target: 'archer' },
+          { id: 4, name: '什麼都不做', type: 'none', needTarget: false }
+        ],
+        selectedSkill: 4,
+        wail: '魔法師：魔力……燃燒殆盡了……'
+      },
+      dragon: {
+        id: 'dragon', name: '邪惡巨龍', hp: 50, maxHp: 999, dead: false,
+        hasPoison: true,
+        wail: '邪惡巨龍：吼喔喔喔喔喔——！（發出震耳欲聾的悲鳴）',
+        statuses: [
+          { name: '神聖守護', desc: '受到攻擊後，驅散所有負面狀態' },
+          { name: '鋼鱗', desc: '傷害減免95%' },
+          { name: '狂怒', desc: '屬性傷害提升100%' },
+          { name: '怪力', desc: '物理傷害提升200%' },
+          { name: '銳利目光', desc: '敏捷提升50%' },
+          { name: '赤焰衝能', desc: '下次行動可以使出「熾熱吐息」' },
+          { name: '火焰抗性', desc: '免疫燃燒狀態' },
+          { name: '寒冰抗性', desc: '免疫冰凍狀態' },
+          { name: '世界之力', desc: '具有暫停時間的能力' },
+          { name: '空間扭曲', desc: '具有穿梭到異世界的能力' },
+          { name: '暴食', desc: '可以在3秒內吃掉一個便當' },
+          { name: '鋒利尖牙', desc: '傷害附帶流血狀態' },
+          { name: '飛翔精通', desc: '移動速度提升300%' },
+          { name: '致命劇毒', desc: '每回合受到最大生命3%的傷害' },
+          { name: '無限魔力', desc: '可以無限發動魔法攻擊' },
+          { name: '擬態', desc: '可以聽懂並說出其他物種的語言' },
+          { name: '快速復原', desc: '每3回合回復生命20%' }
+        ]
+      }
+    };
+
+    let gameState = 'PLANNING';
+    let activeChar = null;
+    let pendingSkill = null;
+    let stalactiteIceHit = false;
+    let stalactiteFell = false;
+    let escapeTimer = 30;
+    let escapeInterval = null;
+
+    /* ================= 打字機與視圖切換 ================= */
+    let typewriterTimeout = null;
+    function typeText(text, callback) {
+      const container = document.getElementById('dialogue-content');
+      container.innerHTML = '';
+      showDialogueView();
+      let index = 0;
+      if (typewriterTimeout) clearTimeout(typewriterTimeout);
+
+      function nextChar() {
+        if (index < text.length) {
+          container.innerHTML += text[index] === '\n' ? '<br>' : text[index];
+          index++;
+          typewriterTimeout = setTimeout(nextChar, 25);
+        } else {
+          if (callback) callback();
+        }
+      }
+      nextChar();
+    }
+
+    function showDialogueView() {
+      document.getElementById('dialogue-content').style.display = 'flex';
+      document.getElementById('char-control-panel').style.display = 'none';
+      document.getElementById('dragon-status-panel').style.display = 'none';
+    }
+
+    function showControlPanel() {
+      document.getElementById('dialogue-content').style.display = 'none';
+      document.getElementById('char-control-panel').style.display = 'flex';
+      document.getElementById('dragon-status-panel').style.display = 'none';
+    }
+
+    function showDragonPanel() {
+      document.getElementById('dialogue-content').style.display = 'none';
+      document.getElementById('char-control-panel').style.display = 'none';
+      document.getElementById('dragon-status-panel').style.display = 'block';
+    }
+
+    /* ================= 角色點擊與面板渲染 ================= */
+    function handleUnitClick(unitId) {
+      if (gameState === 'EXECUTING' || gameState === 'END') return;
+
+      if (gameState === 'SELECTING_TARGET') {
+        applyTargetSelection(unitId);
+        return;
+      }
+
+      if (gameState === 'ESCAPE_PHASE1' || gameState === 'ESCAPE_PHASE2') {
+        renderEscapeControl(unitId);
+        return;
+      }
+
+      document.querySelectorAll('.hero-unit, #dragon-unit').forEach(u => u.classList.remove('selected'));
+      const elem = unitId === 'dragon' ? document.getElementById('dragon-unit') : document.getElementById('unit-' + unitId);
+      if (elem) elem.classList.add('selected');
+
+      if (unitId === 'dragon') {
+        renderDragonPanel();
+      } else {
+        renderHeroPanel(chars[unitId]);
+      }
+    }
+
+    function handleStalactiteClick() {
+      if (gameState === 'SELECTING_TARGET') {
+        applyTargetSelection('stalactite');
+      }
+    }
+
+    function renderHeroPanel(char) {
+      activeChar = char;
+      showControlPanel();
+
+      document.getElementById('panel-name').innerText = char.name;
+      
+      const statusWrap = document.getElementById('panel-statuses');
+      statusWrap.innerHTML = char.statuses.length === 0 ? '<span style="color:var(--text-dim); font-size:14px;">無狀態</span>' : '';
+      char.statuses.forEach(st => {
+        const badge = document.createElement('div');
+        badge.className = 'status-badge';
+        badge.innerText = st.name;
+        bindTooltipEvents(badge, st.desc);
+        statusWrap.appendChild(badge);
+      });
+
+      const skillWrap = document.getElementById('panel-skills');
+      skillWrap.innerHTML = '';
+      char.skills.forEach(sk => {
+        const btn = document.createElement('button');
+        btn.className = 'skill-btn' + (char.selectedSkill === sk.id ? ' selected' : '');
+        btn.innerText = sk.name;
+        if (sk.disabled) btn.disabled = true;
+
+        btn.onclick = () => {
+          if (sk.needTarget) {
+            startTargetSelection(char, sk);
+          } else {
+            char.selectedSkill = sk.id;
+            renderHeroPanel(char);
+          }
+        };
+        skillWrap.appendChild(btn);
+      });
+    }
+
+    function renderDragonPanel() {
+      showDragonPanel();
+      const panel = document.getElementById('dragon-status-panel');
+      panel.innerHTML = '';
+
+      let row1 = document.createElement('div');
+      row1.className = 'dragon-status-row';
+      row1.innerHTML = `<span style="font-size:20px; font-weight:bold; color:var(--ui-border); margin-right:10px;">巨龍</span>`;
+      appendDragonStatusBadge(row1, chars.dragon.statuses[0]);
+      appendDragonStatusBadge(row1, chars.dragon.statuses[1]);
+      panel.appendChild(row1);
+
+      let idx = 2;
+      for (let r = 0; r < 3; r++) {
+        let row = document.createElement('div');
+        row.className = 'dragon-status-row';
+        for (let c = 0; c < 5; c++) {
+          if (idx < chars.dragon.statuses.length) {
+            appendDragonStatusBadge(row, chars.dragon.statuses[idx++]);
+          }
+        }
+        panel.appendChild(row);
+      }
+    }
+
+    function appendDragonStatusBadge(container, st) {
+      const b = document.createElement('div');
+      b.className = 'status-badge';
+      b.innerText = st.name;
+      bindTooltipEvents(b, st.desc);
+      container.appendChild(b);
+    }
+
+    /* ================= 目標選擇機制 ================= */
+    function startTargetSelection(char, skill) {
+      gameState = 'SELECTING_TARGET';
+      activeChar = char;
+      pendingSkill = skill;
+      typeText(`請選取【${skill.name}】對象\n\n[點選目標，或點擊下方取消]`, () => {
+        const btnCancel = document.createElement('button');
+        btnCancel.className = 'skill-btn';
+        btnCancel.style.marginTop = '6px';
+        btnCancel.style.width = '90px';
+        btnCancel.innerText = '取消';
+        btnCancel.onclick = () => {
+          gameState = 'PLANNING';
+          renderHeroPanel(char);
+        };
+        document.getElementById('dialogue-content').appendChild(btnCancel);
+      });
+    }
+
+    function applyTargetSelection(targetId) {
+      if (pendingSkill.type === 'cleanse') {
+        if (targetId !== 'archer' && targetId !== 'swordman') return;
+      }
+      if (pendingSkill.type === 'melee' && targetId === 'stalactite') return;
+
+      pendingSkill.target = targetId;
+      activeChar.selectedSkill = pendingSkill.id;
+      gameState = 'PLANNING';
+      renderHeroPanel(activeChar);
+    }
+
+    /* ================= 長按說明 Tooltip ================= */
+    function bindTooltipEvents(elem, descText) {
+      const tooltip = document.getElementById('status-tooltip');
+      function showTip(e) {
+        tooltip.innerText = descText;
+        tooltip.style.display = 'block';
+        const rect = elem.getBoundingClientRect();
+        tooltip.style.left = `${rect.left + rect.width / 2 - 80}px`;
+        tooltip.style.top = `${rect.bottom + 6}px`;
+      }
+      function hideTip() {
+        tooltip.style.display = 'none';
+      }
+
+      elem.addEventListener('mousedown', showTip);
+      elem.addEventListener('mouseup', hideTip);
+      elem.addEventListener('mouseleave', hideTip);
+      elem.addEventListener('touchstart', (e) => { e.preventDefault(); showTip(e); });
+      elem.addEventListener('touchend', hideTip);
+    }
+
+    /* ================= 時間流動確認與結算 ================= */
+    function askStartFlow() {
+      typeText("確定要讓時間開始流動嗎？", () => {
+        const wrap = document.createElement('div');
+        wrap.style.display = 'flex';
+        wrap.style.gap = '14px';
+        wrap.style.marginTop = '8px';
+
+        const btnOk = document.createElement('button');
+        btnOk.className = 'skill-btn selected';
+        btnOk.style.width = '80px';
+        btnOk.innerText = '確定';
+        btnOk.onclick = startTimeFlow;
+
+        const btnNo = document.createElement('button');
+        btnNo.className = 'skill-btn';
+        btnNo.style.width = '80px';
+        btnNo.innerText = '取消';
+        btnNo.onclick = () => {
+          typeText("請決定冒險者們的行動，打倒邪惡巨龍吧！");
+        };
+
+        wrap.appendChild(btnOk);
+        wrap.appendChild(btnNo);
+        document.getElementById('dialogue-content').appendChild(wrap);
+      });
+    }
+
+    function startTimeFlow() {
+      gameState = 'EXECUTING';
+      document.querySelectorAll('.hero-unit, #dragon-unit').forEach(u => u.classList.remove('selected'));
+      
+      const overlay = document.getElementById('time-stop-overlay');
+      overlay.style.opacity = '0';
+      setTimeout(() => {
+        overlay.style.display = 'none';
+        executeActionPhase();
+      }, 1000);
+    }
+
+    async function executeActionPhase() {
+      const turnOrder = ['swordman', 'thief', 'archer', 'wizard'];
+
+      for (let charId of turnOrder) {
+        const c = chars[charId];
+        if (c.dead) continue;
+
+        const sk = c.skills.find(s => s.id === c.selectedSkill);
+        await executeSingleTurn(c, sk);
+        await waitTime(1500);
+      }
+
+      await checkDragonPoisonAndBreath();
+    }
+
+    function executeSingleTurn(char, skill) {
+      return new Promise(async (resolve) => {
+        if (skill.type === 'none') {
+          typeText(`${char.name} 選擇了什麼都不做。`, resolve);
+          return;
+        }
+
+        if (skill.needTarget && skill.target !== 'stalactite') {
+          const tgt = chars[skill.target];
+          if (tgt && tgt.dead) {
+            typeText(`${char.name}使出了${skill.name}！\n但是行動失敗了...`, resolve);
+            return;
+          }
+        }
+
+        // 聖癒術
+        if (skill.type === 'heal') {
+          typeText(`${char.name}使出了${skill.name}！`, async () => {
+            await flashHealEffect();
+            typeText(`${char.name}使出了${skill.name}！\n但是效果似乎不太好...`, resolve);
+          });
+          return;
+        }
+
+        // 淨化術
+        if (skill.type === 'cleanse') {
+          typeText(`${char.name}使出了${skill.name}！`, async () => {
+            const tgt = chars[skill.target];
+            await shootBeam(char.id, skill.target, '#ffffff');
+            let removedName = '負面狀態';
+            if (tgt.statuses.length > 0) {
+              removedName = tgt.statuses[0].name;
+              tgt.statuses = [];
+            }
+            typeText(`${char.name}使出了${skill.name}！\n成功淨化了【${removedName}】！`, resolve);
+          });
+          return;
+        }
+
+        // 偷竊
+        if (skill.type === 'steal') {
+          typeText(`${char.name}使出了${skill.name}！`, async () => {
+            await animateMelee(char.id, skill.target);
+            let stealMsg = "";
+            if (skill.target === 'dragon') stealMsg = "巨龍身上沒有可以偷的東西";
+            else if (skill.target === 'swordman') stealMsg = "得到了一個用過的毒藥瓶";
+            else if (skill.target === 'archer') stealMsg = "被發現了，偷竊失敗";
+            else if (skill.target === 'wizard') stealMsg = "得到了初級魔法檢定課本";
+            typeText(`${char.name}使出了${skill.name}！\n${stealMsg}`, resolve);
+          });
+          return;
+        }
+
+        // 近戰攻擊
+        if (skill.type === 'melee') {
+          typeText(`${char.name}使出了${skill.name}！`, async () => {
+            await animateMelee(char.id, skill.target);
+            applyDamage(skill.target, skill.target === 'dragon' ? 1 : 10);
+            
+            // 1. 先處理被攻擊目標的反饋與死亡哀號
+            if (skill.target === 'dragon') {
+              await new Promise(r => typeText(`${char.name}使出了${skill.name}！\n但是好像沒什麼效果...`, r));
+              await waitTime(1500);
+            } else {
+              const tgt = chars[skill.target];
+              if (tgt.dead) {
+                await new Promise(r => typeText(`${char.name}使出了${skill.name}！\n${tgt.wail}\n${tgt.name}死亡了！`, r));
+                await waitTime(1500);
+              }
+            }
+
+            // 2. 再結算勇者流血效果與死亡哀號
+            if (char.id === 'swordman' && char.statuses.some(s => s.name === '流血')) {
+              applyDamage('swordman', 5);
+              await new Promise(r => typeText("勇者因為流血-5HP", r));
+              await waitTime(1500);
+              if (char.dead) {
+                await new Promise(r => typeText(`勇者死亡了！\n${char.wail}`, r));
+                await waitTime(1500);
+              }
+            }
+
+            resolve();
+          });
+          return;
+        }
+
+        // 遠程攻擊
+        if (skill.type === 'ranged') {
+          typeText(`${char.name}使出了${skill.name}！`, async () => {
+            const beamColor = skill.elem === 'fire' ? '#ff7700' : (skill.elem === 'ice' ? '#00e5ff' : '#ffffff');
+            await shootBeam(char.id, skill.target, beamColor);
+
+            if (char.id === 'archer' && char.statuses.some(s => s.name === '中毒')) {
+              applyDamage('archer', 1);
+              if (char.dead) {
+                await waitTime(400);
+                await new Promise(r => typeText(`弓箭手毒發倒地！\n${char.wail}\n弓箭手死亡了！`, r));
+                await waitTime(1500);
+                resolve();
+                return;
+              }
+            }
+
+            if (skill.target === 'stalactite') {
+              if (char.id === 'thief' && skill.elem === 'ice') {
+                stalactiteIceHit = true;
+              }
+              if (char.id === 'archer' && skill.elem === 'fire' && stalactiteIceHit && !stalactiteFell) {
+                stalactiteFell = true;
+                await dropStalactite();
+                typeText(`石柱掉下來了！\n石柱砸中了邪惡巨龍，造成了些許傷害`, resolve);
+                return;
+              }
+              typeText(`${char.name}使出了${skill.name}！\n擊中了洞穴上方的石柱！`, resolve);
+            } else {
+              applyDamage(skill.target, skill.target === 'dragon' ? 1 : 10);
+              if (skill.target === 'dragon') {
+                typeText(`${char.name}使出了${skill.name}！\n但是好像沒什麼效果...`, resolve);
+              } else {
+                const tgt = chars[skill.target];
+                if (tgt.dead) {
+                  typeText(`${char.name}使出了${skill.name}！\n${tgt.wail}\n${tgt.name}死亡了！`, resolve);
+                } else {
+                  resolve();
+                }
+              }
+            }
+          });
+          return;
+        }
+
+        resolve();
+      });
+    }
+
+    /* ================= 傷害與動畫處理 ================= */
+    function applyDamage(targetId, dmg) {
+      playSound(audioHit);
+      if (targetId === 'dragon') {
+        chars.dragon.hp = Math.max(0, chars.dragon.hp - dmg);
+        updateHpBar('dragon', chars.dragon.hp, chars.dragon.maxHp);
+        showDamageNum('dragon-unit', dmg);
+        if (dmg !== 25) {
+          chars.dragon.hasPoison = false;
+        }
+      } else {
+        const c = chars[targetId];
+        c.hp = Math.max(0, c.hp - dmg);
+        updateHpBar(targetId, c.hp, c.maxHp);
+        showDamageNum('unit-' + targetId, dmg);
+        if (c.hp === 0 && !c.dead) {
+          c.dead = true;
+          const uElem = document.getElementById('unit-' + targetId);
+          setTimeout(() => { uElem.style.opacity = '0'; }, 500);
+        }
+      }
+    }
+
+    function updateHpBar(id, cur, max) {
+      const pct = Math.max(0, (cur / max) * 100);
+      if (id === 'dragon') {
+        document.getElementById('dragon-hp-fill').style.width = pct + '%';
+        document.getElementById('hp-num-dragon').innerText = `${cur}/${max}`;
+      } else {
+        document.getElementById('hp-' + id).style.width = pct + '%';
+        document.getElementById('hp-num-' + id).innerText = `${cur}/${max}`;
+      }
+    }
+
+    function showDamageNum(elemId, num) {
+      const targetElem = document.getElementById(elemId);
+      const rect = targetElem.getBoundingClientRect();
+      const popup = document.createElement('div');
+      popup.className = 'damage-popup';
+      popup.innerText = `-${num}`;
+      popup.style.left = `${rect.left + rect.width / 2 - 15}px`;
+      popup.style.top = `${rect.top}px`;
+      document.body.appendChild(popup);
+      setTimeout(() => popup.remove(), 900);
+    }
+
+    function animateMelee(attackerId, targetId) {
+      return new Promise((resolve) => {
+        const atk = document.getElementById('unit-' + attackerId);
+        const tgt = targetId === 'dragon' ? document.getElementById('dragon-unit') : (targetId === 'door' ? document.getElementById('door-unit') : document.getElementById('unit-' + targetId));
+        
+        const rAtk = atk.getBoundingClientRect();
+        const rTgt = tgt.getBoundingClientRect();
+        const deltaX = rTgt.left - rAtk.left;
+        const deltaY = rTgt.top - rAtk.top;
+
+        atk.style.transform = `translate(${deltaX * 0.8}px, ${deltaY * 0.8}px)`;
+        setTimeout(() => {
+          atk.style.filter = 'brightness(2.2)';
+          setTimeout(() => {
+            atk.style.filter = 'none';
+            atk.style.transform = 'translate(0, 0)';
+            setTimeout(resolve, 250);
+          }, 150);
+        }, 300);
+      });
+    }
+
+    function shootBeam(fromId, toId, color) {
+      return new Promise((resolve) => {
+        const fromElem = document.getElementById('unit-' + fromId);
+        const toElem = toId === 'stalactite' ? document.getElementById('stalactite-obj') : (toId === 'dragon' ? document.getElementById('dragon-unit') : (toId === 'door' ? document.getElementById('door-unit') : document.getElementById('unit-' + toId)));
+        
+        const rFrom = fromElem.getBoundingClientRect();
+        const rTo = toElem.getBoundingClientRect();
+
+        const startX = rFrom.left + rFrom.width / 2;
+        const startY = rFrom.top + rFrom.height / 3;
+        const endX = rTo.left + rTo.width / 2;
+        const endY = rTo.top + rTo.height / 2;
+
+        const distance = Math.hypot(endX - startX, endY - startY);
+        const angle = Math.atan2(endY - startY, endX - startX) * (180 / Math.PI);
+
+        const beam = document.createElement('div');
+        beam.className = 'magic-beam';
+        beam.style.backgroundColor = color;
+        beam.style.color = color;
+        beam.style.width = '0px';
+        beam.style.left = `${startX}px`;
+        beam.style.top = `${startY}px`;
+        beam.style.transform = `rotate(${angle}deg)`;
+        document.body.appendChild(beam);
+
+        setTimeout(() => {
+          beam.style.transition = 'width 0.25s linear';
+          beam.style.width = `${distance}px`;
+          setTimeout(() => {
+            playSound(audioHit);
+            beam.remove();
+            resolve();
+          }, 260);
+        }, 20);
+      });
+    }
+
+    function flashHealEffect() {
+      return new Promise((resolve) => {
+        ['swordman', 'thief', 'archer', 'wizard'].forEach(id => {
+          const u = chars[id];
+          if (!u.dead) {
+            u.hp = Math.min(u.maxHp, u.hp + 1);
+            updateHpBar(id, u.hp, u.maxHp);
+            const el = document.getElementById('unit-' + id);
+            el.style.filter = 'drop-shadow(0 0 12px #2ecc71) brightness(1.3)';
+            setTimeout(() => { el.style.filter = 'none'; }, 600);
+          }
+        });
+        setTimeout(resolve, 700);
+      });
+    }
+
+    function dropStalactite() {
+      return new Promise((resolve) => {
+        const stone = document.getElementById('stalactite-obj');
+        stone.style.top = '48%';
+        setTimeout(() => {
+          applyDamage('dragon', 25);
+          setTimeout(() => {
+            stone.style.opacity = '0';
+            resolve();
+          }, 300);
+        }, 800);
+      });
+    }
+
+    /* ================= 巨龍劇毒與吐息結算 ================= */
+    async function checkDragonPoisonAndBreath() {
+      const anyHeroAlive = Object.values(chars).some(c => c.id !== 'dragon' && !c.dead);
+      if (!anyHeroAlive) {
+        triggerBreathDefeat();
+        return;
+      }
+
+      if (chars.dragon.hasPoison) {
+        await waitTime(400);
+        applyDamage('dragon', 30);
+        await new Promise(r => typeText("邪惡巨龍身上的劇毒發作了！", r));
+        await waitTime(1500);
+      }
+
+      if (chars.dragon.hp <= 0) {
+        chars.dragon.dead = true;
+        await new Promise(r => typeText(`邪惡巨龍死亡了！\n${chars.dragon.wail}`, r));
+        document.getElementById('dragon-unit').style.opacity = '0';
+        document.getElementById('dragon-hp-container').style.display = 'none';
+        await waitTime(1500);
+        startEscapePhase();
+      } else {
+        await waitTime(500);
+        triggerBreathDefeat();
+      }
+    }
+
+    function triggerBreathDefeat() {
+      stopAllAudios();
+      playSound(audioOver);
+      typeText("巨龍使出了熾熱吐息！", () => {
+        const flash = document.getElementById('screen-flash-overlay');
+        flash.style.background = 'rgba(255, 60, 0, 0.8)';
+        flash.style.opacity = '1';
+        setTimeout(() => {
+          flash.style.background = '#ffffff';
+          setTimeout(() => {
+            window.location.href = 'bad1.html';
+          }, 1500);
+        }, 1000);
+      });
+    }
+
+    /* ================= 第二階段：地城崩塌與開門 ================= */
+    async function startEscapePhase() {
+      if (!chars.swordman.dead && chars.swordman.statuses.some(s => s.name === '流血')) {
+        applyDamage('swordman', 5);
+        await new Promise(r => typeText("勇者因為流血-5HP", r));
+        await waitTime(1500);
+        if (chars.swordman.dead) {
+          await new Promise(r => typeText(`勇者死亡了！\n${chars.swordman.wail}`, r));
+          await waitTime(1500);
+        }
+      }
+
+      const door = document.getElementById('door-unit');
+      door.style.opacity = '1';
+      await waitTime(1000);
+
+      audioBgm.pause();
+      playSound(audioWarning);
+      document.getElementById('stage').classList.add('shake-anim');
+      document.getElementById('escape-timer-bar').style.display = 'block';
+
+      startTimer();
+      gameState = 'ESCAPE_PHASE1';
+      typeText("糟糕！洞穴快要崩塌了！\n請盡快破解大門機關逃離！");
+    }
+
+    function startTimer() {
+      escapeInterval = setInterval(() => {
+        escapeTimer--;
+        document.getElementById('timer-sec').innerText = escapeTimer;
+        if (escapeTimer <= 0) {
+          clearInterval(escapeInterval);
+          handleEscapeTimeout();
+        }
+      }, 1000);
+    }
+
+    function handleEscapeTimeout() {
+      gameState = 'END';
+      stopAllAudios();
+      playSound(audioOver);
+      typeText("洞穴崩塌了！", () => {
+        const flash = document.getElementById('screen-flash-overlay');
+        flash.style.background = '#000000';
+        flash.style.opacity = '1';
+        setTimeout(() => {
+          window.location.href = 'bad2.html';
+        }, 1500);
+      });
+    }
+
+    /* 逃脫階段：顯示原始完整技能清單與真實狀態 */
+    function renderEscapeControl(unitId) {
+      if (unitId === 'dragon') return;
+      const char = chars[unitId];
+      if (char.dead) return;
+
+      activeChar = char;
+      showControlPanel();
+
+      document.getElementById('panel-name').innerText = char.name;
+
+      // 保留角色原始狀態（無狀態則顯示無狀態）
+      const statusWrap = document.getElementById('panel-statuses');
+      statusWrap.innerHTML = char.statuses.length === 0 ? '<span style="color:var(--text-dim); font-size:14px;">無狀態</span>' : '';
+      char.statuses.forEach(st => {
+        const badge = document.createElement('div');
+        badge.className = 'status-badge';
+        badge.innerText = st.name;
+        bindTooltipEvents(badge, st.desc);
+        statusWrap.appendChild(badge);
+      });
+
+      // 呈現完整 4 個技能，依階段設定可用性
+      const skillWrap = document.getElementById('panel-skills');
+      skillWrap.innerHTML = '';
+
+      char.skills.forEach(sk => {
+        const btn = document.createElement('button');
+        btn.className = 'skill-btn';
+        btn.innerText = sk.name;
+        let isEnabled = false;
+
+        if (gameState === 'ESCAPE_PHASE1') {
+          if (char.id === 'thief' && sk.id === 2) { // 盜賊：開鎖
+            isEnabled = true;
+            btn.onclick = async () => {
+              gameState = 'EXECUTING';
+              await animateMelee('thief', 'door');
+              playSound(audioHit);
+              await unlockDoorTransition();
+            };
+          } else if (char.id === 'wizard' && sk.id === 2 && chars.wizard.selectedSkill === 4) { // 魔法師：開鎖術 (未耗盡魔力)
+            isEnabled = true;
+            btn.onclick = async () => {
+              gameState = 'EXECUTING';
+              await shootBeam('wizard', 'door', '#ffd166');
+              playSound(audioHit);
+              await unlockDoorTransition();
+            };
+          }
+        } else if (gameState === 'ESCAPE_PHASE2') {
+          if (char.id === 'swordman' && sk.id === 1) { // 勇者：奮力一擊
+            isEnabled = true;
+            btn.onclick = async () => {
+              clearInterval(escapeInterval);
+              gameState = 'END';
+              typeText("勇者使出了奮力一擊！", async () => {
+                await animateMelee('swordman', 'door');
+                playSound(audioHit);
+                const flash = document.getElementById('screen-flash-overlay');
+                flash.style.background = '#ffffff';
+                flash.style.opacity = '1';
+                setTimeout(() => {
+                  window.location.href = 'win.html';
+                }, 1500);
+              });
+            };
+          }
+        }
+
+        if (isEnabled) {
+          btn.classList.add('selected');
+        } else {
+          btn.disabled = true;
+        }
+
+        skillWrap.appendChild(btn);
+      });
+    }
+
+    async function unlockDoorTransition() {
+      typeText("門上的鎖開了！\n但門好像卡住了！\n需要有人全力撞擊才能打開...");
+      const lockImg = document.getElementById('doorlock-img');
+      const doorImg = document.getElementById('door-img');
+      
+      lockImg.style.opacity = '0';
+      doorImg.style.opacity = '1';
+      await waitTime(1000);
+
+      gameState = 'ESCAPE_PHASE2';
+    }
+
+    function waitTime(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>洞穴坍塌</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    body {
+      background-color: #070b14; /* 深至近黑的藍色基底 */
+      color: #e2eafc;
+      font-family: "PingFang TC", "Microsoft JhengHei", "Noto Sans TC", sans-serif;
+      min-height: 100vh;
+      width: 100vw;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 24px;
+    }
+
+    .result-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      max-width: 600px;
+      width: 100%;
+    }
+
+    .result-img {
+      max-width: 360px;
+      width: 85%;
+      height: auto;
+      object-fit: contain;
+      margin-bottom: 20px;
+      filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.6));
+    }
+
+    .result-title {
+      font-size: 34px;
+      font-weight: 900;
+      color: #d4af37;
+      margin-bottom: 16px;
+      letter-spacing: 2px;
+    }
+
+    .result-text {
+      font-size: 18px;
+      line-height: 1.8;
+      color: #a4b3d6;
+      margin-bottom: 28px;
+      font-weight: 500;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      width: 100%;
+    }
+
+    .action-btn {
+      display: inline-block;
+      text-decoration: none;
+      background-color: #192238;
+      color: #e2eafc;
+      padding: 12px 28px;
+      font-size: 16px;
+      font-weight: bold;
+      border-radius: 6px;
+      border: 1.5px solid #3d4f7c;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+
+    .action-btn:hover {
+      background-color: #263559;
+      border-color: #d4af37;
+      color: #fff;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 14px rgba(212, 175, 55, 0.25);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="result-container">
+    <img src="bad2.png" alt="洞穴坍塌" class="result-img">
+    <h1 class="result-title">洞穴坍塌</h1>
+    <p class="result-text">
+      明明都已經打倒巨龍，<br>
+      距離成功就只差一步了！<br>
+      但總覺得哪裡怪怪的...
+    </p>
+    <div class="btn-group">
+      <a href="index.html" class="action-btn">重新開始</a>
+      <a href="https://wbstory.site/dragon/forum/" class="action-btn">回到現實</a>
+    </div>
+  </div>
+
+</body>
+</html>
