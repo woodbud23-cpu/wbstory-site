@@ -48,8 +48,8 @@
       background: rgba(20, 24, 36, 0.85);
       border: 1.5px solid var(--ui-border);
       border-radius: 50%;
-      width: 42px;
-      height: 42px;
+      width: 40px;
+      height: 40px;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -65,7 +65,7 @@
       font-size: 18px;
     }
 
-    /* 遊戲主容器 */
+    /* 電腦版主容器 (16:9 比例) */
     #game-container {
       position: relative;
       width: 100vw;
@@ -79,11 +79,21 @@
       flex-direction: column;
     }
 
-    /* ========== 戰鬥舞台背景 ========== */
+    /* 頂部手機專用外置時間區 (電腦版隱藏) */
+    #mobile-top-bar {
+      display: none;
+      width: 100%;
+      height: 15vh;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      z-index: 60;
+    }
+
+    /* ========== 戰鬥舞台背景 (嚴格 16:9 不變形) ========== */
     #stage {
-      position: absolute;
-      top: 0;
-      left: 0;
+      position: relative;
       width: 100%;
       height: 100%;
       background: url('background.jpg') no-repeat center center;
@@ -236,7 +246,7 @@
       transition: width 0.3s ease;
     }
 
-    /* 巨龍血條 (保留佈局位置防跳動) */
+    /* 巨龍血條 */
     #dragon-hp-container {
       position: absolute;
       top: 15%;
@@ -362,19 +372,19 @@
       box-shadow: 0 0 15px rgba(255, 0, 0, 0.6);
     }
 
-    /* ========== 底部懸浮對話框 ========== */
+    /* ========== 底部對話框 (緊湊無多餘空白) ========== */
     #dialogue-window {
       position: absolute;
       bottom: 12px;
       left: 50%;
       transform: translateX(-50%);
       width: 46%;
-      height: 20%;
+      height: 22%;
       background: var(--ui-bg);
       border: 2.5px solid var(--ui-border);
       border-radius: 12px;
       z-index: 100;
-      padding: 8px 14px;
+      padding: 10px 16px;
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -396,20 +406,22 @@
       height: 100%;
     }
 
+    /* 操作面板：去除大片空白，緊密排列 */
     #char-control-panel {
       display: none;
       width: 100%;
       height: 100%;
       flex-direction: column;
-      justify-content: space-between;
+      justify-content: center;
       align-items: center;
+      gap: 8px; /* 縮減至原本的 1/5 間距 */
     }
 
     .panel-row-1 {
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 10px;
+      gap: 12px;
       width: 100%;
     }
     .panel-char-name {
@@ -464,6 +476,7 @@
       cursor: not-allowed;
     }
 
+    /* 巨龍 4 列狀態面板 (第一行只有名稱) */
     #dragon-status-panel {
       display: none;
       width: 100%;
@@ -471,10 +484,16 @@
       overflow-y: auto;
       font-size: 14px;
     }
+    .dragon-name-row {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 6px;
+    }
     .dragon-status-row {
       display: flex;
       gap: 6px;
-      margin-bottom: 3px;
+      margin-bottom: 4px;
       align-items: center;
       justify-content: center;
     }
@@ -504,10 +523,10 @@
       transition: opacity 1.5s ease, background 1.5s ease;
     }
 
-    /* ========== 手機與窄螢幕完整 RWD 重構 (無黑邊死區) ========== */
+    /* ========== 手機直向三段式獨立佈局 (不變形、不拉伸) ========== */
     @media screen and (max-aspect-ratio: 16/10) {
       body {
-        align-items: stretch;
+        align-items: center;
       }
       #game-container {
         width: 100vw;
@@ -519,77 +538,93 @@
         display: flex;
         flex-direction: column;
         justify-content: space-between;
+        align-items: center;
+        padding: env(safe-area-inset-top, 10px) 0 env(safe-area-inset-bottom, 16px) 0;
       }
 
-      /* 舞台填滿可視中央區間 */
-      #stage {
-        position: relative;
-        flex: 1;
-        width: 100%;
-        height: auto;
-        min-height: 48vh;
+      /* 1. 頂部區域 */
+      #mobile-top-bar {
+        display: flex;
       }
-
-      /* 上方時間暫停與倒數計時置頂 */
-      .time-stop-title-wrap {
-        position: absolute;
-        top: 15%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        font-size: 34px;
-        gap: 10px;
+      #time-stop-overlay {
+        display: none; /* 手機版使用外部頂部時間區 */
       }
-      #hourglass-btn {
-        width: 54px;
-        height: 54px;
+      .mobile-title-wrap {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 38px;
+        font-weight: 900;
+        color: #fff8db;
+        text-shadow: 0 0 15px rgba(0,0,0,0.85);
+        letter-spacing: 4px;
+      }
+      .mobile-title-wrap #hourglass-btn {
+        width: 58px;
+        height: 58px;
       }
       #escape-timer-bar {
-        top: 12px;
+        top: 20px;
         font-size: 18px;
         padding: 4px 16px;
       }
 
-      /* 下方對話框置底，不遮擋舞台角色 */
+      /* 2. 中央區域：純粹 16:9 戰鬥舞台 */
+      #stage {
+        width: 100vw;
+        height: 56.25vw; /* 嚴格鎖定 16:9 比例 */
+        flex-shrink: 0;
+      }
+
+      /* 3. 底部區域：對話與操作面板 */
       #dialogue-window {
         position: relative;
         bottom: auto;
         left: auto;
         transform: none;
-        width: 100%;
-        height: 28vh;
-        min-height: 160px;
-        border-radius: 12px 12px 0 0;
-        border-bottom: none;
+        width: 92%;
+        height: 24vh;
+        min-height: 150px;
         padding: 10px 14px;
+        margin-bottom: 8px;
       }
 
       #dialogue-content {
         font-size: 15px;
       }
       .panel-char-name {
-        font-size: 18px;
+        font-size: 20px;
       }
       .skill-btn {
-        padding: 6px 8px;
-        font-size: 13px;
-      }
-      .status-badge {
-        font-size: 12px;
-        padding: 2px 6px;
+        padding: 8px 10px;
+        font-size: 14px;
       }
     }
   </style>
 </head>
 <body>
 
-  <!-- 全域靜音切換按鈕 -->
+  <!-- 全域靜音按鈕 -->
   <div id="mute-btn" onclick="toggleMute()" title="靜音/取消靜音">
     <span id="mute-icon">🔊</span>
   </div>
 
   <div id="game-container">
     
-    <!-- 戰鬥舞台 -->
+    <!-- 1. 手機專用頂部區域 (時間暫停 / 倒數計時) -->
+    <div id="mobile-top-bar">
+      <div class="mobile-title-wrap" id="mobile-time-stop">
+        <span>時</span><span>間</span>
+        <div id="hourglass-btn" onclick="askStartFlow()">
+          <svg viewBox="0 0 24 24" width="34" height="34" fill="#222">
+            <path d="M6 2v6h.01L6 8.01 10 12l-4 4 .01.01H6V22h12v-5.99h-.01L18 16l-4-4 4-3.99-.01-.01H18V2H6zm10 14.5V20H8v-3.5l4-4 4 4zM12 11.5L8 7.5V4h8v3.5l-4 4z"/>
+          </svg>
+        </div>
+        <span>暫</span><span>停</span>
+      </div>
+    </div>
+
+    <!-- 2. 中央區域：16:9 戰鬥舞台 -->
     <div id="stage">
       
       <!-- 逃脫計時器 -->
@@ -659,7 +694,7 @@
 
       </div>
 
-      <!-- 時間暫停標題 -->
+      <!-- 電腦版時間暫停標題 -->
       <div id="time-stop-overlay">
         <div class="time-stop-title-wrap">
           <span>時</span><span>間</span>
@@ -674,7 +709,7 @@
 
     </div>
 
-    <!-- 底部懸浮戰術對話框 -->
+    <!-- 3. 底部區域：懸浮戰術對話框 -->
     <div id="dialogue-window">
       
       <!-- 訊息展示區 -->
@@ -689,7 +724,7 @@
         <div class="skills-grid" id="panel-skills"></div>
       </div>
 
-      <!-- 巨龍專屬 4 列狀態面板 -->
+      <!-- 邪惡巨龍 4 列狀態面板 (第一行僅有名稱) -->
       <div id="dragon-status-panel"></div>
 
     </div>
@@ -744,7 +779,6 @@
       }
     }
 
-    // 解鎖 Safari 音訊池並在首次互動時立即啟動 BGM
     let audioUnlocked = false;
     function unlockAndStartAudio() {
       if (audioUnlocked) return;
@@ -769,7 +803,6 @@
     window.addEventListener('click', unlockAndStartAudio, { once: true });
     window.addEventListener('touchstart', unlockAndStartAudio, { once: true });
 
-    // 頁面載入時嘗試直接播放
     audioBgm.play().then(() => { audioUnlocked = true; }).catch(() => {});
 
     function playSound(sound) {
@@ -974,23 +1007,25 @@
       });
     }
 
+    /* 邪惡巨龍狀態面板 (第一行僅有名稱，字體大小一致) */
     function renderDragonPanel() {
       showDragonPanel();
       const panel = document.getElementById('dragon-status-panel');
       panel.innerHTML = '';
 
-      let row1 = document.createElement('div');
-      row1.className = 'dragon-status-row';
-      row1.innerHTML = `<span style="font-size:20px; font-weight:bold; color:var(--ui-border); margin-right:10px;">巨龍</span>`;
-      appendDragonStatusBadge(row1, chars.dragon.statuses[0]);
-      appendDragonStatusBadge(row1, chars.dragon.statuses[1]);
-      panel.appendChild(row1);
+      // 第一行：僅有名稱「邪惡巨龍」
+      let rowName = document.createElement('div');
+      rowName.className = 'dragon-name-row';
+      rowName.innerHTML = `<span class="panel-char-name">邪惡巨龍</span>`;
+      panel.appendChild(rowName);
 
-      let idx = 2;
-      for (let r = 0; r < 3; r++) {
+      // 後續 4 列呈現 17 個狀態
+      let idx = 0;
+      const counts = [5, 4, 4, 4]; // 5 + 4 + 4 + 4 = 17
+      for (let r = 0; r < counts.length; r++) {
         let row = document.createElement('div');
         row.className = 'dragon-status-row';
-        for (let c = 0; c < 5; c++) {
+        for (let c = 0; c < counts[r]; c++) {
           if (idx < chars.dragon.statuses.length) {
             appendDragonStatusBadge(row, chars.dragon.statuses[idx++]);
           }
@@ -1092,9 +1127,13 @@
       document.querySelectorAll('.hero-unit, #dragon-unit').forEach(u => u.classList.remove('selected'));
       
       const overlay = document.getElementById('time-stop-overlay');
-      overlay.style.opacity = '0';
+      const mobileTop = document.getElementById('mobile-time-stop');
+      if (overlay) overlay.style.opacity = '0';
+      if (mobileTop) mobileTop.style.opacity = '0';
+
       setTimeout(() => {
-        overlay.style.display = 'none';
+        if (overlay) overlay.style.display = 'none';
+        if (mobileTop) mobileTop.style.display = 'none';
         executeActionPhase();
       }, 1000);
     }
@@ -1129,7 +1168,6 @@
           }
         }
 
-        // 聖癒術
         if (skill.type === 'heal') {
           typeText(`${char.name}使出了${skill.name}！`, async () => {
             await flashHealEffect();
@@ -1138,7 +1176,6 @@
           return;
         }
 
-        // 淨化術
         if (skill.type === 'cleanse') {
           typeText(`${char.name}使出了${skill.name}！`, async () => {
             const tgt = chars[skill.target];
@@ -1153,7 +1190,6 @@
           return;
         }
 
-        // 偷竊
         if (skill.type === 'steal') {
           typeText(`${char.name}使出了${skill.name}！`, async () => {
             await animateMelee(char.id, skill.target);
@@ -1167,7 +1203,6 @@
           return;
         }
 
-        // 近戰攻擊
         if (skill.type === 'melee') {
           typeText(`${char.name}使出了${skill.name}！`, async () => {
             await animateMelee(char.id, skill.target);
@@ -1199,7 +1234,6 @@
           return;
         }
 
-        // 遠程攻擊 (新增中毒扣血敘述)
         if (skill.type === 'ranged') {
           typeText(`${char.name}使出了${skill.name}！`, async () => {
             const beamColor = skill.elem === 'fire' ? '#ff7700' : (skill.elem === 'ice' ? '#00e5ff' : '#ffffff');
@@ -1407,7 +1441,6 @@
         await new Promise(r => typeText(`邪惡巨龍死亡了！\n${chars.dragon.wail}`, r));
         document.getElementById('dragon-unit').style.opacity = '0';
         
-        // 使用 visibility 保留幾何結構，防止頁面突然下移
         const hpBox = document.getElementById('dragon-hp-container');
         hpBox.style.opacity = '0';
         hpBox.style.visibility = 'hidden';
