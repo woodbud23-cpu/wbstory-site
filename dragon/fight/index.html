@@ -65,7 +65,7 @@
       font-size: 18px;
     }
 
-    /* 主遊戲包裝容器 (支援電腦 16:9 與手機緊湊直向) */
+    /* 主遊戲包裝容器 */
     #game-container {
       position: relative;
       width: 100vw;
@@ -79,7 +79,7 @@
       flex-direction: column;
     }
 
-    /* ========== 戰鬥舞台 (鎖定 16:9 背景) ========== */
+    /* ========== 戰鬥舞台 (16:9 背景) ========== */
     #stage {
       position: relative;
       width: 100%;
@@ -302,7 +302,7 @@
       transition: opacity 1s ease;
       pointer-events: none;
     }
-    /* 時間暫停標題：對齊崩塌倒數之相同高度 */
+
     .time-stop-title-wrap {
       position: absolute;
       top: 15%;
@@ -341,7 +341,7 @@
       50% { transform: scale(1.06); }
     }
 
-    /* 崩塌倒數條 (位置固定) */
+    /* 崩塌倒數條 */
     #escape-timer-bar {
       display: none;
       position: absolute;
@@ -420,11 +420,12 @@
     .status-badge {
       background: #242a3a;
       border: 1.5px solid var(--ui-border-inner);
-      padding: 2px 10px;
+      padding: 3px 10px;
       border-radius: 5px;
       font-size: 14px;
       color: #70d6ff;
-      cursor: help;
+      cursor: pointer;
+      position: relative;
     }
 
     .skills-grid {
@@ -484,19 +485,21 @@
       justify-content: center;
     }
 
+    /* 狀態長按/點擊 Tooltip 彈窗 */
     #status-tooltip {
       display: none;
-      position: absolute;
+      position: fixed;
       background: #0b0d14;
       border: 1.5px solid var(--ui-border);
       border-radius: 6px;
-      padding: 6px 10px;
+      padding: 8px 12px;
       font-size: 14px;
       color: #ffd166;
-      box-shadow: 0 4px 18px rgba(0,0,0,0.9);
-      z-index: 300;
+      box-shadow: 0 4px 18px rgba(0,0,0,0.95);
+      z-index: 2000;
+      max-width: 280px;
+      text-align: center;
       pointer-events: none;
-      max-width: 300px;
     }
 
     #screen-flash-overlay {
@@ -509,10 +512,11 @@
       transition: opacity 1.5s ease, background 1.5s ease;
     }
 
-    /* ========== 手機直向螢幕：緊湊緊貼式佈局 ========== */
+    /* ========== 手機直向：向上平移、字體微縮、緊貼式佈局 ========== */
     @media screen and (max-aspect-ratio: 16/10) {
       body {
-        align-items: center;
+        align-items: flex-start; /* 消除頂部大黑邊，整體向上靠攏 */
+        padding-top: 15px;
       }
       #game-container {
         width: 100vw;
@@ -524,7 +528,7 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        justify-content: center;
+        justify-content: flex-start;
       }
 
       /* 16:9 舞台完全保持比例 */
@@ -533,22 +537,28 @@
         height: 56.25vw;
       }
 
-      /* 手機版時間暫停與倒數：對齊冒險者上方 (偏左微調，不擋龍) */
+      /* 手機版時間暫停：字體微縮 (26px) + 偏左微調，完全不擋龍血量 */
       .time-stop-title-wrap {
         top: 15%;
-        left: 42%;
-        font-size: 32px;
-        gap: 10px;
+        left: 40%;
+        font-size: 26px;
+        gap: 8px;
+        letter-spacing: 3px;
       }
       #hourglass-btn {
-        width: 52px;
-        height: 52px;
+        width: 44px;
+        height: 44px;
       }
+      #hourglass-btn svg {
+        width: 24px;
+        height: 24px;
+      }
+
       #escape-timer-bar {
         top: 15%;
-        left: 42%;
-        font-size: 18px;
-        padding: 4px 16px;
+        left: 40%;
+        font-size: 17px;
+        padding: 4px 14px;
       }
 
       /* 對話框直接緊貼舞台下方，消除空隙 */
@@ -557,21 +567,25 @@
         bottom: auto;
         left: auto;
         transform: none;
-        width: 92%;
-        height: 155px;
+        width: 94%;
+        height: 165px;
         margin-top: 10px;
         padding: 8px 12px;
       }
 
       #dialogue-content {
-        font-size: 15px;
+        font-size: 14.5px;
       }
       .panel-char-name {
-        font-size: 20px;
+        font-size: 19px;
       }
       .skill-btn {
-        padding: 7px 8px;
-        font-size: 13.5px;
+        padding: 7px 6px;
+        font-size: 13px;
+      }
+      .status-badge {
+        font-size: 12px;
+        padding: 2px 6px;
       }
     }
   </style>
@@ -655,12 +669,12 @@
 
       </div>
 
-      <!-- 時間暫停濾鏡層與標題 (完整保留淡黃灰濾鏡) -->
+      <!-- 時間暫停濾鏡層與標題 (完整保留淡黃灰濾鏡與小沙漏) -->
       <div id="time-stop-overlay">
         <div class="time-stop-title-wrap">
           <span>時</span><span>間</span>
           <div id="hourglass-btn" onclick="askStartFlow()">
-            <svg viewBox="0 0 24 24" width="34" height="34" fill="#222">
+            <svg viewBox="0 0 24 24" width="30" height="30" fill="#222">
               <path d="M6 2v6h.01L6 8.01 10 12l-4 4 .01.01H6V22h12v-5.99h-.01L18 16l-4-4 4-3.99-.01-.01H18V2H6zm10 14.5V20H8v-3.5l4-4 4 4zM12 11.5L8 7.5V4h8v3.5l-4 4z"/>
             </svg>
           </div>
@@ -690,7 +704,7 @@
 
     </div>
 
-    <!-- 狀態說明 Tooltip -->
+    <!-- 狀態說明 Tooltip 彈窗 -->
     <div id="status-tooltip"></div>
 
     <!-- 全螢幕轉場層 -->
@@ -973,13 +987,11 @@
       const panel = document.getElementById('dragon-status-panel');
       panel.innerHTML = '';
 
-      // 第一行僅有名稱「邪惡巨龍」
       let rowName = document.createElement('div');
       rowName.className = 'dragon-name-row';
       rowName.innerHTML = `<span class="panel-char-name">邪惡巨龍</span>`;
       panel.appendChild(rowName);
 
-      // 後續 4 列呈現 17 個狀態
       let idx = 0;
       const counts = [5, 4, 4, 4];
       for (let r = 0; r < counts.length; r++) {
@@ -1033,26 +1045,52 @@
       renderHeroPanel(activeChar);
     }
 
-    /* ================= 長按說明 Tooltip ================= */
+    /* ================= 狀態長按/點擊 Tooltip (手機端完美相容) ================= */
+    let currentTooltipBadge = null;
     function bindTooltipEvents(elem, descText) {
       const tooltip = document.getElementById('status-tooltip');
-      function showTip(e) {
+      
+      function showTip() {
+        currentTooltipBadge = elem;
         tooltip.innerText = descText;
         tooltip.style.display = 'block';
         const rect = elem.getBoundingClientRect();
-        tooltip.style.left = `${rect.left + rect.width / 2 - 80}px`;
-        tooltip.style.top = `${rect.bottom + 6}px`;
-      }
-      function hideTip() {
-        tooltip.style.display = 'none';
+        
+        let topPos = rect.bottom + 6;
+        if (topPos + 40 > window.innerHeight) {
+          topPos = rect.top - 40; // 避免超出螢幕底部
+        }
+        
+        let leftPos = rect.left + rect.width / 2 - 120;
+        leftPos = Math.max(10, Math.min(leftPos, window.innerWidth - 250));
+
+        tooltip.style.top = `${topPos}px`;
+        tooltip.style.left = `${leftPos}px`;
       }
 
-      elem.addEventListener('mousedown', showTip);
-      elem.addEventListener('mouseup', hideTip);
+      function hideTip() {
+        tooltip.style.display = 'none';
+        currentTooltipBadge = null;
+      }
+
+      elem.addEventListener('mouseenter', showTip);
       elem.addEventListener('mouseleave', hideTip);
-      elem.addEventListener('touchstart', (e) => { e.preventDefault(); showTip(e); });
-      elem.addEventListener('touchend', hideTip);
+      
+      // 手機端點擊切換
+      elem.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (currentTooltipBadge === elem && tooltip.style.display === 'block') {
+          hideTip();
+        } else {
+          showTip();
+        }
+      });
     }
+
+    // 點擊空白處關閉 Tooltip
+    document.addEventListener('click', () => {
+      document.getElementById('status-tooltip').style.display = 'none';
+    });
 
     /* ================= 時間流動確認與結算 ================= */
     function askStartFlow() {
