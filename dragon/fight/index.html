@@ -42,14 +42,14 @@
     /* 右上角靜音按鈕 */
     #mute-btn {
       position: fixed;
-      top: 12px;
-      right: 12px;
+      top: 14px;
+      right: 14px;
       z-index: 1000;
       background: rgba(20, 24, 36, 0.85);
       border: 1.5px solid var(--ui-border);
       border-radius: 50%;
-      width: 40px;
-      height: 40px;
+      width: 42px;
+      height: 42px;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -65,7 +65,7 @@
       font-size: 18px;
     }
 
-    /* 電腦版主容器 (16:9 比例) */
+    /* 主遊戲包裝容器 (支援電腦 16:9 與手機緊湊直向) */
     #game-container {
       position: relative;
       width: 100vw;
@@ -79,19 +79,7 @@
       flex-direction: column;
     }
 
-    /* 頂部手機專用外置時間區 (電腦版隱藏) */
-    #mobile-top-bar {
-      display: none;
-      width: 100%;
-      height: 15vh;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      position: relative;
-      z-index: 60;
-    }
-
-    /* ========== 戰鬥舞台背景 (嚴格 16:9 不變形) ========== */
+    /* ========== 戰鬥舞台 (鎖定 16:9 背景) ========== */
     #stage {
       position: relative;
       width: 100%;
@@ -99,6 +87,7 @@
       background: url('background.jpg') no-repeat center center;
       background-size: 100% 100%;
       overflow: hidden;
+      flex-shrink: 0;
     }
 
     .shake-anim {
@@ -300,31 +289,29 @@
       box-shadow: 0 0 12px currentColor;
     }
 
-    /* ========== 時間暫停標題 ========== */
+    /* ========== 時間暫停淡黃灰濾鏡層 ========== */
     #time-stop-overlay {
       position: absolute;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(160, 140, 70, 0.28);
+      background: rgba(160, 140, 70, 0.32);
       backdrop-filter: sepia(0.35) contrast(1.05);
       z-index: 50;
-      display: flex;
-      justify-content: center;
-      align-items: center;
       transition: opacity 1s ease;
       pointer-events: none;
     }
+    /* 時間暫停標題：對齊崩塌倒數之相同高度 */
     .time-stop-title-wrap {
       position: absolute;
-      top: 24%;
+      top: 15%;
       left: 50%;
       transform: translate(-50%, -50%);
       display: flex;
       align-items: center;
       gap: 16px;
-      font-size: 46px;
+      font-size: 42px;
       font-weight: 900;
       color: #fff8db;
       text-shadow: 0 0 20px rgba(0,0,0,0.85), 3px 3px 0 #3a2e12;
@@ -332,8 +319,8 @@
       pointer-events: none;
     }
     #hourglass-btn {
-      width: 72px;
-      height: 72px;
+      width: 68px;
+      height: 68px;
       background: radial-gradient(circle, #ffeaa7 0%, #d4af37 100%);
       border: 3.5px solid #fff;
       border-radius: 50%;
@@ -354,25 +341,25 @@
       50% { transform: scale(1.06); }
     }
 
-    /* 崩塌倒數條 */
+    /* 崩塌倒數條 (位置固定) */
     #escape-timer-bar {
       display: none;
       position: absolute;
-      top: 3%;
+      top: 15%;
       left: 50%;
-      transform: translateX(-50%);
+      transform: translate(-50%, -50%);
       background: rgba(180, 20, 20, 0.9);
       border: 2px solid #ff4d4d;
       border-radius: 8px;
       padding: 6px 24px;
-      font-size: 24px;
+      font-size: 22px;
       font-weight: bold;
       color: #fff;
       z-index: 60;
       box-shadow: 0 0 15px rgba(255, 0, 0, 0.6);
     }
 
-    /* ========== 底部對話框 (緊湊無多餘空白) ========== */
+    /* ========== 底部對話框 (電腦版) ========== */
     #dialogue-window {
       position: absolute;
       bottom: 12px;
@@ -406,7 +393,6 @@
       height: 100%;
     }
 
-    /* 操作面板：去除大片空白，緊密排列 */
     #char-control-panel {
       display: none;
       width: 100%;
@@ -414,7 +400,7 @@
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      gap: 8px; /* 縮減至原本的 1/5 間距 */
+      gap: 8px;
     }
 
     .panel-row-1 {
@@ -476,7 +462,7 @@
       cursor: not-allowed;
     }
 
-    /* 巨龍 4 列狀態面板 (第一行只有名稱) */
+    /* 邪惡巨龍狀態面板 */
     #dragon-status-panel {
       display: none;
       width: 100%;
@@ -523,70 +509,58 @@
       transition: opacity 1.5s ease, background 1.5s ease;
     }
 
-    /* ========== 手機直向三段式獨立佈局 (不變形、不拉伸) ========== */
+    /* ========== 手機直向螢幕：緊湊緊貼式佈局 ========== */
     @media screen and (max-aspect-ratio: 16/10) {
       body {
         align-items: center;
       }
       #game-container {
         width: 100vw;
-        height: 100vh;
+        height: auto;
         max-width: none;
         max-height: none;
         box-shadow: none;
         border: none;
         display: flex;
         flex-direction: column;
-        justify-content: space-between;
         align-items: center;
-        padding: env(safe-area-inset-top, 10px) 0 env(safe-area-inset-bottom, 16px) 0;
+        justify-content: center;
       }
 
-      /* 1. 頂部區域 */
-      #mobile-top-bar {
-        display: flex;
+      /* 16:9 舞台完全保持比例 */
+      #stage {
+        width: 100vw;
+        height: 56.25vw;
       }
-      #time-stop-overlay {
-        display: none; /* 手機版使用外部頂部時間區 */
+
+      /* 手機版時間暫停與倒數：對齊冒險者上方 (偏左微調，不擋龍) */
+      .time-stop-title-wrap {
+        top: 15%;
+        left: 42%;
+        font-size: 32px;
+        gap: 10px;
       }
-      .mobile-title-wrap {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        font-size: 38px;
-        font-weight: 900;
-        color: #fff8db;
-        text-shadow: 0 0 15px rgba(0,0,0,0.85);
-        letter-spacing: 4px;
-      }
-      .mobile-title-wrap #hourglass-btn {
-        width: 58px;
-        height: 58px;
+      #hourglass-btn {
+        width: 52px;
+        height: 52px;
       }
       #escape-timer-bar {
-        top: 20px;
+        top: 15%;
+        left: 42%;
         font-size: 18px;
         padding: 4px 16px;
       }
 
-      /* 2. 中央區域：純粹 16:9 戰鬥舞台 */
-      #stage {
-        width: 100vw;
-        height: 56.25vw; /* 嚴格鎖定 16:9 比例 */
-        flex-shrink: 0;
-      }
-
-      /* 3. 底部區域：對話與操作面板 */
+      /* 對話框直接緊貼舞台下方，消除空隙 */
       #dialogue-window {
         position: relative;
         bottom: auto;
         left: auto;
         transform: none;
         width: 92%;
-        height: 24vh;
-        min-height: 150px;
-        padding: 10px 14px;
-        margin-bottom: 8px;
+        height: 155px;
+        margin-top: 10px;
+        padding: 8px 12px;
       }
 
       #dialogue-content {
@@ -596,8 +570,8 @@
         font-size: 20px;
       }
       .skill-btn {
-        padding: 8px 10px;
-        font-size: 14px;
+        padding: 7px 8px;
+        font-size: 13.5px;
       }
     }
   </style>
@@ -611,20 +585,7 @@
 
   <div id="game-container">
     
-    <!-- 1. 手機專用頂部區域 (時間暫停 / 倒數計時) -->
-    <div id="mobile-top-bar">
-      <div class="mobile-title-wrap" id="mobile-time-stop">
-        <span>時</span><span>間</span>
-        <div id="hourglass-btn" onclick="askStartFlow()">
-          <svg viewBox="0 0 24 24" width="34" height="34" fill="#222">
-            <path d="M6 2v6h.01L6 8.01 10 12l-4 4 .01.01H6V22h12v-5.99h-.01L18 16l-4-4 4-3.99-.01-.01H18V2H6zm10 14.5V20H8v-3.5l4-4 4 4zM12 11.5L8 7.5V4h8v3.5l-4 4z"/>
-          </svg>
-        </div>
-        <span>暫</span><span>停</span>
-      </div>
-    </div>
-
-    <!-- 2. 中央區域：16:9 戰鬥舞台 -->
+    <!-- 戰鬥舞台 (16:9 比例) -->
     <div id="stage">
       
       <!-- 逃脫計時器 -->
@@ -694,12 +655,12 @@
 
       </div>
 
-      <!-- 電腦版時間暫停標題 -->
+      <!-- 時間暫停濾鏡層與標題 (完整保留淡黃灰濾鏡) -->
       <div id="time-stop-overlay">
         <div class="time-stop-title-wrap">
           <span>時</span><span>間</span>
           <div id="hourglass-btn" onclick="askStartFlow()">
-            <svg viewBox="0 0 24 24" width="38" height="38" fill="#222">
+            <svg viewBox="0 0 24 24" width="34" height="34" fill="#222">
               <path d="M6 2v6h.01L6 8.01 10 12l-4 4 .01.01H6V22h12v-5.99h-.01L18 16l-4-4 4-3.99-.01-.01H18V2H6zm10 14.5V20H8v-3.5l4-4 4 4zM12 11.5L8 7.5V4h8v3.5l-4 4z"/>
             </svg>
           </div>
@@ -709,7 +670,7 @@
 
     </div>
 
-    <!-- 3. 底部區域：懸浮戰術對話框 -->
+    <!-- 底部懸浮戰術對話框 (緊貼舞台下方) -->
     <div id="dialogue-window">
       
       <!-- 訊息展示區 -->
@@ -724,12 +685,12 @@
         <div class="skills-grid" id="panel-skills"></div>
       </div>
 
-      <!-- 邪惡巨龍 4 列狀態面板 (第一行僅有名稱) -->
+      <!-- 邪惡巨龍 4 列狀態面板 -->
       <div id="dragon-status-panel"></div>
 
     </div>
 
-    <!-- 狀態長按說明 Tooltip -->
+    <!-- 狀態說明 Tooltip -->
     <div id="status-tooltip"></div>
 
     <!-- 全螢幕轉場層 -->
@@ -1007,13 +968,12 @@
       });
     }
 
-    /* 邪惡巨龍狀態面板 (第一行僅有名稱，字體大小一致) */
     function renderDragonPanel() {
       showDragonPanel();
       const panel = document.getElementById('dragon-status-panel');
       panel.innerHTML = '';
 
-      // 第一行：僅有名稱「邪惡巨龍」
+      // 第一行僅有名稱「邪惡巨龍」
       let rowName = document.createElement('div');
       rowName.className = 'dragon-name-row';
       rowName.innerHTML = `<span class="panel-char-name">邪惡巨龍</span>`;
@@ -1021,7 +981,7 @@
 
       // 後續 4 列呈現 17 個狀態
       let idx = 0;
-      const counts = [5, 4, 4, 4]; // 5 + 4 + 4 + 4 = 17
+      const counts = [5, 4, 4, 4];
       for (let r = 0; r < counts.length; r++) {
         let row = document.createElement('div');
         row.className = 'dragon-status-row';
@@ -1127,13 +1087,10 @@
       document.querySelectorAll('.hero-unit, #dragon-unit').forEach(u => u.classList.remove('selected'));
       
       const overlay = document.getElementById('time-stop-overlay');
-      const mobileTop = document.getElementById('mobile-time-stop');
       if (overlay) overlay.style.opacity = '0';
-      if (mobileTop) mobileTop.style.opacity = '0';
 
       setTimeout(() => {
         if (overlay) overlay.style.display = 'none';
-        if (mobileTop) mobileTop.style.display = 'none';
         executeActionPhase();
       }, 1000);
     }
@@ -1168,6 +1125,7 @@
           }
         }
 
+        // 聖癒術
         if (skill.type === 'heal') {
           typeText(`${char.name}使出了${skill.name}！`, async () => {
             await flashHealEffect();
@@ -1176,6 +1134,7 @@
           return;
         }
 
+        // 淨化術
         if (skill.type === 'cleanse') {
           typeText(`${char.name}使出了${skill.name}！`, async () => {
             const tgt = chars[skill.target];
@@ -1190,6 +1149,7 @@
           return;
         }
 
+        // 偷竊
         if (skill.type === 'steal') {
           typeText(`${char.name}使出了${skill.name}！`, async () => {
             await animateMelee(char.id, skill.target);
@@ -1203,6 +1163,7 @@
           return;
         }
 
+        // 近戰攻擊
         if (skill.type === 'melee') {
           typeText(`${char.name}使出了${skill.name}！`, async () => {
             await animateMelee(char.id, skill.target);
@@ -1234,6 +1195,7 @@
           return;
         }
 
+        // 遠程攻擊 (附帶中毒提示)
         if (skill.type === 'ranged') {
           typeText(`${char.name}使出了${skill.name}！`, async () => {
             const beamColor = skill.elem === 'fire' ? '#ff7700' : (skill.elem === 'ice' ? '#00e5ff' : '#ffffff');
