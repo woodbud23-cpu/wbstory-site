@@ -21,7 +21,6 @@
       flex-direction: column;
     }
 
-    /* 頂部導航列 */
     header {
       background-color: #ffffff;
       height: 58px;
@@ -32,14 +31,14 @@
       padding: 0 20px;
       position: sticky;
       top: 0;
-      z-index: 50;
+      z-index: 100;
       box-shadow: 0 1px 2px rgba(0,0,0,0.04);
     }
 
     .header-left {
       display: flex;
       align-items: center;
-      gap: 16px;
+      gap: 12px;
     }
 
     .forum-logo {
@@ -63,6 +62,20 @@
       font-weight: 600;
     }
 
+    .btn-mobile-sidebar {
+      display: none;
+      background: #f0f2f5;
+      border: 1px solid #e4e6eb;
+      color: #0066cc;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 5px 10px;
+      border-radius: 14px;
+      cursor: pointer;
+      align-items: center;
+      gap: 4px;
+    }
+
     .search-input-wrap {
       background: #f0f2f5;
       border-radius: 20px;
@@ -71,12 +84,7 @@
       align-items: center;
       gap: 8px;
       width: 220px;
-      transition: background-color 0.2s ease, width 0.2s ease;
       cursor: text;
-    }
-
-    .search-input-wrap:hover {
-      background: #e4e6eb;
     }
 
     .search-input-wrap input {
@@ -103,15 +111,8 @@
       color: #65676b;
       font-weight: 600;
       cursor: pointer;
-      transition: background 0.15s ease;
     }
 
-    .btn-nav:hover {
-      background: #f2f2f2;
-      color: #1c1e21;
-    }
-
-    /* 已登入用戶狀態 */
     .user-logged-in {
       display: flex;
       align-items: center;
@@ -120,11 +121,6 @@
       border-radius: 20px;
       background: #f0f2f5;
       cursor: pointer;
-      transition: background 0.15s ease;
-    }
-
-    .user-logged-in:hover {
-      background: #e4e6eb;
     }
 
     .user-nav-avatar {
@@ -143,7 +139,6 @@
       color: #1c1e21;
     }
 
-    /* 主體佈局 */
     .container {
       max-width: 960px;
       margin: 20px auto;
@@ -155,7 +150,6 @@
       width: 100%;
     }
 
-    /* 貼文卡片主體 */
     .post-card {
       background: #ffffff;
       border-radius: 12px;
@@ -195,12 +189,12 @@
       height: 100%;
     }
 
-    /* 固定頭像色系 */
-    .color-colleague { background-color: #e74c3c; } /* 江子涵：亮紅色 */
-    .color-user1 { background-color: #e67e22; }     /* 網友A：珊瑚橘 */
-    .color-user2 { background-color: #8e44ad; }     /* 網友B：紫羅蘭 */
-    .color-user3 { background-color: #3498db; }     /* 網友C：天藍色 */
-    .color-player { background-color: #27ae60; }    /* 玩家 User：綠色 */
+    /* 調整後色系：江子涵為藍色，阿凱為墨綠色 */
+    .color-op { background-color: #0066cc; }      /* 江子涵：藍色 */
+    .color-user1 { background-color: #e67e22; }   /* 陳小豪：珊瑚橘 */
+    .color-user2 { background-color: #8e44ad; }   /* 匿名：紫羅蘭 */
+    .color-user3 { background-color: #16a085; }   /* 阿凱：墨綠色 */
+    .color-player { background-color: #27ae60; }  /* 玩家 User：綠色 */
 
     .post-meta {
       display: flex;
@@ -229,11 +223,6 @@
       border-radius: 4px;
       margin-bottom: 12px;
       cursor: pointer;
-      transition: background 0.15s ease;
-    }
-
-    .board-tag:hover {
-      background: #d0e7ff;
     }
 
     .post-title {
@@ -274,12 +263,6 @@
       padding: 6px 12px;
       border-radius: 6px;
       cursor: pointer;
-      transition: background 0.15s ease;
-    }
-
-    .action-btn:hover {
-      background: #f0f2f5;
-      color: #1c1e21;
     }
 
     /* 留言區 */
@@ -313,7 +296,6 @@
       border-radius: 14px;
       padding: 10px 14px;
       flex: 1;
-      max-width: 100%;
     }
 
     .comment-author-row {
@@ -342,7 +324,6 @@
       white-space: pre-line;
     }
 
-    /* 留言輸入區 */
     .comment-box-wrap {
       display: flex;
       gap: 10px;
@@ -362,7 +343,6 @@
       min-height: 44px;
       line-height: 1.4;
       color: #1c1e21;
-      transition: all 0.2s ease;
     }
 
     .comment-input:focus {
@@ -381,19 +361,9 @@
       font-size: 14px;
       font-weight: 700;
       cursor: pointer;
-      transition: background 0.15s ease, transform 0.1s ease;
-      flex-shrink: 0;
     }
 
-    .btn-send:hover {
-      background: #0052a3;
-    }
-
-    .btn-send:active {
-      transform: scale(0.96);
-    }
-
-    /* 右側看板資訊 */
+    /* 側邊欄偽裝樣式 */
     .sidebar-widget {
       background: #ffffff;
       border-radius: 12px;
@@ -402,6 +372,7 @@
       display: flex;
       flex-direction: column;
       gap: 14px;
+      height: fit-content;
     }
 
     .widget-title {
@@ -410,6 +381,9 @@
       color: #1c1e21;
       border-bottom: 1px solid #f0f2f5;
       padding-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
 
     .widget-item {
@@ -427,13 +401,15 @@
       color: #0066cc;
     }
 
-    .widget-item.active-link {
-      color: #0066cc;
-      font-weight: 600;
-    }
-
-    .widget-item.active-link:hover {
-      text-decoration: underline;
+    .mobile-drawer-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.4);
+      z-index: 200;
     }
 
     @media (max-width: 768px) {
@@ -441,8 +417,8 @@
         grid-template-columns: 1fr;
         margin: 10px auto;
       }
-      .sidebar-widget {
-        display: none;
+      .btn-mobile-sidebar {
+        display: inline-flex;
       }
       .search-input-wrap {
         display: none;
@@ -451,6 +427,26 @@
         padding: 16px;
       }
       .post-title {
+        font-size: 18px;
+      }
+
+      .sidebar-widget {
+        position: fixed;
+        top: 0;
+        right: -300px;
+        width: 260px;
+        height: 100vh;
+        z-index: 300;
+        border-radius: 0;
+        box-shadow: -4px 0 20px rgba(0,0,0,0.2);
+        transition: right 0.3s ease;
+      }
+      .sidebar-widget.open {
+        right: 0;
+      }
+      .close-drawer-btn {
+        display: block;
+        cursor: pointer;
         font-size: 18px;
       }
     }
@@ -462,6 +458,7 @@
   <header>
     <div class="header-left">
       <div class="forum-logo">有名小站 <span>Beta</span></div>
+      <button class="btn-mobile-sidebar" onclick="toggleMobileSidebar()">☰ 熱門看板</button>
       <div class="search-input-wrap">
         <span>🔍</span>
         <input type="text" placeholder="搜尋文章、看板..." />
@@ -469,11 +466,9 @@
     </div>
     <div class="header-right">
       <button class="btn-nav">發文</button>
-      
-      <!-- 已登入用戶 User -->
-      <div class="user-logged-in" title="目前登入身分：User">
+      <div class="user-logged-in">
         <div class="user-nav-avatar">
-          <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <svg viewBox="0 0 100 100" fill="none">
             <circle cx="50" cy="38" r="17" fill="#ffffff"/>
             <path d="M19 82 C19 63, 33 58, 50 58 C67 58, 81 63, 81 82 Z" fill="#ffffff"/>
           </svg>
@@ -486,7 +481,7 @@
   <!-- 主畫面容器 -->
   <div class="container">
     
-    <!-- 左側貼文與留言主區 -->
+    <!-- 左側貼文與留言 -->
     <main class="post-card">
       <div class="board-tag">旅遊心得板</div>
 
@@ -500,7 +495,6 @@
 
       <h1 class="post-title">[心得] 歐洲達邦卡洞窟觀光 鐘乳石真的超壯觀</h1>
 
-      <!-- 貼文內文 (現代人無標點 空格換行風格) -->
       <div class="post-content">
 終於忙完公司的提案大專案了
 直接跟主管請了一週特休飛歐洲放鬆
@@ -527,16 +521,15 @@
         <button class="action-btn">↗ 分享</button>
       </div>
 
-      <!-- 留言列表區 -->
       <div class="comments-section">
         <div class="comments-title">所有留言</div>
 
         <div id="commentList" style="display: flex; flex-direction: column; gap: 14px;">
           
-          <!-- 留言 1：同事 江子涵 -->
+          <!-- 留言 1：江子涵 (藍色頭像) -->
           <div class="comment-item">
-            <div class="comment-avatar color-colleague">
-              <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <div class="comment-avatar color-op">
+              <svg viewBox="0 0 100 100" fill="none">
                 <circle cx="50" cy="38" r="17" fill="#ffffff"/>
                 <path d="M19 82 C19 63, 33 58, 50 58 C67 58, 81 63, 81 82 Z" fill="#ffffff"/>
               </svg>
@@ -550,10 +543,10 @@
             </div>
           </div>
 
-          <!-- 留言 2：網友A -->
+          <!-- 留言 2：陳小豪 (珊瑚橘頭像) -->
           <div class="comment-item">
             <div class="comment-avatar color-user1">
-              <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <svg viewBox="0 0 100 100" fill="none">
                 <circle cx="50" cy="38" r="17" fill="#ffffff"/>
                 <path d="M19 82 C19 63, 33 58, 50 58 C67 58, 81 63, 81 82 Z" fill="#ffffff"/>
               </svg>
@@ -567,10 +560,10 @@
             </div>
           </div>
 
-          <!-- 留言 3：網友B (匿名) -->
+          <!-- 留言 3：匿名 (紫羅蘭頭像) -->
           <div class="comment-item">
             <div class="comment-avatar color-user2">
-              <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <svg viewBox="0 0 100 100" fill="none">
                 <circle cx="50" cy="38" r="17" fill="#ffffff"/>
                 <path d="M19 82 C19 63, 33 58, 50 58 C67 58, 81 63, 81 82 Z" fill="#ffffff"/>
               </svg>
@@ -584,10 +577,10 @@
             </div>
           </div>
 
-          <!-- 留言 4：網友C -->
+          <!-- 留言 4：阿凱 (墨綠色頭像) -->
           <div class="comment-item">
             <div class="comment-avatar color-user3">
-              <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <svg viewBox="0 0 100 100" fill="none">
                 <circle cx="50" cy="38" r="17" fill="#ffffff"/>
                 <path d="M19 82 C19 63, 33 58, 50 58 C67 58, 81 63, 81 82 Z" fill="#ffffff"/>
               </svg>
@@ -603,7 +596,6 @@
 
         </div>
 
-        <!-- 玩家輸入留言區 -->
         <div class="comment-box-wrap">
           <textarea id="playerInput" class="comment-input" placeholder="留個言參與討論..."></textarea>
           <button id="sendBtn" class="btn-send">送出</button>
@@ -612,11 +604,14 @@
 
     </main>
 
-    <!-- 右側側邊欄 (真實按鈕連回論壇主求助頁) -->
-    <aside class="sidebar-widget">
-      <div class="widget-title">📌 熱門看板</div>
-      <!-- 真實跳轉按鈕：連回求助論壇主頁 -->
-      <a class="widget-item active-link" href="https://wbstory.site/dragon/forum/"><span># 日常求助板</span><span style="color:#0066cc;">熱門</span></a>
+    <!-- 右側側邊欄 (真連結樣式完全隱蔽同化) -->
+    <aside class="sidebar-widget" id="sidebarWidget">
+      <div class="widget-title">
+        <span>📌 熱門看板</span>
+        <span class="close-drawer-btn" style="display:none;" onclick="toggleMobileSidebar()">✕</span>
+      </div>
+      <!-- 真實跳轉按鈕：連回求助主頁，外觀完全融入 -->
+      <a class="widget-item" href="https://wbstory.site/dragon/forum/"><span># 日常求助板</span><span style="color:#8a8d91;">3.4k</span></a>
       <div class="widget-item"><span># 歐洲自駕旅遊推薦</span><span style="color:#8a8d91;">4.2k</span></div>
       <div class="widget-item"><span># 職場社畜求生指南</span><span style="color:#8a8d91;">3.5k</span></div>
       <div class="widget-item"><span># 全球奇特地質景觀</span><span style="color:#8a8d91;">1.9k</span></div>
@@ -625,8 +620,20 @@
 
   </div>
 
+  <!-- 手機抽屜半透明遮罩 -->
+  <div class="mobile-drawer-overlay" id="drawerOverlay" onclick="toggleMobileSidebar()"></div>
+
   <script>
-    // 留言時間遞增控制邏輯
+    function toggleMobileSidebar() {
+      const sb = document.getElementById("sidebarWidget");
+      const ol = document.getElementById("drawerOverlay");
+      const closeBtn = document.querySelector(".close-drawer-btn");
+      
+      const isOpen = sb.classList.toggle("open");
+      ol.style.display = isOpen ? "block" : "none";
+      if (closeBtn) closeBtn.style.display = isOpen ? "block" : "none";
+    }
+
     let currentMinute = 55;
     let currentHour = 15;
 
@@ -654,7 +661,7 @@
       
       div.innerHTML = `
         <div class="comment-avatar color-player">
-          <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <svg viewBox="0 0 100 100" fill="none">
             <circle cx="50" cy="38" r="17" fill="#ffffff"/>
             <path d="M19 82 C19 63, 33 58, 50 58 C67 58, 81 63, 81 82 Z" fill="#ffffff"/>
           </svg>

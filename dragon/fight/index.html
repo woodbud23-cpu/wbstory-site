@@ -2,7 +2,7 @@
 <html lang="zh-TW">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>達邦卡洞窟</title>
   <style>
     :root {
@@ -39,6 +39,32 @@
       width: 100vw;
     }
 
+    /* 右上角全域靜音按鈕 */
+    #mute-btn {
+      position: fixed;
+      top: 14px;
+      right: 14px;
+      z-index: 1000;
+      background: rgba(20, 24, 36, 0.85);
+      border: 1.5px solid var(--ui-border);
+      border-radius: 50%;
+      width: 44px;
+      height: 44px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+      transition: all 0.2s ease;
+    }
+    #mute-btn:hover {
+      transform: scale(1.08);
+      border-color: #fff;
+    }
+    #mute-icon {
+      font-size: 20px;
+    }
+
     /* 遊戲 16:9 核心容器 */
     #game-container {
       position: relative;
@@ -49,6 +75,8 @@
       background: #000;
       overflow: hidden;
       box-shadow: 0 0 45px rgba(0, 0, 0, 0.9);
+      display: flex;
+      flex-direction: column;
     }
 
     /* ========== 戰鬥舞台背景 ========== */
@@ -73,7 +101,7 @@
       75% { transform: translateX(6px) translateY(-2px); }
     }
 
-    /* 鐘乳石 (游標維持箭頭) */
+    /* 鐘乳石 */
     #stalactite-obj {
       position: absolute;
       top: 13.5%;
@@ -91,7 +119,6 @@
       display: block;
     }
 
-    /* 鐘乳石點擊擴大區 (維持箭頭游標) */
     #stalactite-click-zone {
       position: absolute;
       top: 0;
@@ -123,7 +150,7 @@
       filter: drop-shadow(0 0 12px var(--ui-border));
     }
 
-    /* 逃脫大門 (下移至 bottom: 18%) */
+    /* 逃脫大門 */
     #door-unit {
       position: absolute;
       bottom: 18%;
@@ -253,7 +280,6 @@
       100% { transform: translateY(-35px) scale(1.2); opacity: 0; }
     }
 
-    /* 遠程光束 */
     .magic-beam {
       position: absolute;
       height: 6px;
@@ -356,7 +382,6 @@
       box-shadow: 0 0 30px rgba(0,0,0,0.85);
     }
 
-    /* 置中訊息展示區 */
     #dialogue-content {
       font-size: 18px;
       line-height: 1.5;
@@ -371,7 +396,6 @@
       height: 100%;
     }
 
-    /* 冒險者操作面板 */
     #char-control-panel {
       display: none;
       width: 100%;
@@ -440,7 +464,6 @@
       cursor: not-allowed;
     }
 
-    /* 巨龍專屬 4 列狀態面板 */
     #dragon-status-panel {
       display: none;
       width: 100%;
@@ -456,7 +479,6 @@
       justify-content: center;
     }
 
-    /* 狀態長按說明 Tooltip */
     #status-tooltip {
       display: none;
       position: absolute;
@@ -472,7 +494,6 @@
       max-width: 300px;
     }
 
-    /* 全螢幕轉場層 */
     #screen-flash-overlay {
       position: absolute;
       top: 0; left: 0;
@@ -482,9 +503,87 @@
       opacity: 0;
       transition: opacity 1.5s ease, background 1.5s ease;
     }
+
+    /* ========== 手機直向與窄螢幕 RWD 空間自適應 ========== */
+    @media screen and (max-aspect-ratio: 16/10) {
+      body {
+        align-items: stretch;
+      }
+      #game-container {
+        width: 100vw;
+        height: 100vh;
+        max-width: none;
+        max-height: none;
+        border: none;
+        box-shadow: none;
+      }
+
+      /* 舞台置中展示 */
+      #stage {
+        top: 50%;
+        left: 0;
+        transform: translateY(-50%);
+        height: 56.25vw;
+        max-height: 50vh;
+      }
+
+      /* 上方藍色區域：時間暫停與倒數計時置頂 */
+      .time-stop-title-wrap {
+        position: fixed;
+        top: calc(25vh - 28.12vw / 2);
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 36px;
+        gap: 12px;
+      }
+      #hourglass-btn {
+        width: 58px;
+        height: 58px;
+      }
+      #escape-timer-bar {
+        position: fixed;
+        top: 24px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 20px;
+        padding: 5px 18px;
+      }
+
+      /* 下方紅色區域：對話框置底展開 */
+      #dialogue-window {
+        position: fixed;
+        bottom: 16px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 92%;
+        height: 24vh;
+        min-height: 140px;
+        padding: 10px 14px;
+      }
+
+      #dialogue-content {
+        font-size: 16px;
+      }
+      .panel-char-name {
+        font-size: 20px;
+      }
+      .skill-btn {
+        padding: 8px;
+        font-size: 14px;
+      }
+      .status-badge {
+        font-size: 13px;
+        padding: 2px 6px;
+      }
+    }
   </style>
 </head>
 <body>
+
+  <!-- 全域靜音按鈕 -->
+  <div id="mute-btn" onclick="toggleMute()" title="靜音/取消靜音">
+    <span id="mute-icon">🔊</span>
+  </div>
 
   <div id="game-container">
     
@@ -602,13 +701,15 @@
   </div>
 
   <script>
-    /* ================= 音訊管理 ================= */
+    /* ================= 音訊管理與 Safari 解鎖池 ================= */
+    let isMuted = localStorage.getItem('dungeon_muted') === 'true';
+
     const audioBgm = new Audio('bgm.mp3');
     audioBgm.loop = true;
     audioBgm.volume = 0.3;
     audioBgm.addEventListener('ended', function() {
       this.currentTime = 0;
-      this.play().catch(() => {});
+      if (!isMuted) this.play().catch(() => {});
     }, false);
 
     const audioHit = new Audio('hit.mp3');
@@ -619,22 +720,54 @@
     audioWarning.volume = 0.7;
     audioWarning.addEventListener('ended', function() {
       this.currentTime = 0;
-      this.play().catch(() => {});
+      if (!isMuted) this.play().catch(() => {});
     }, false);
 
     const audioOver = new Audio('over.mp3');
     audioOver.volume = 1.0;
 
-    function attemptPlayBgm() {
-      audioBgm.play().catch(() => {});
+    const allAudios = [audioBgm, audioHit, audioWarning, audioOver];
+
+    function applyMuteState() {
+      allAudios.forEach(a => { a.muted = isMuted; });
+      document.getElementById('mute-icon').innerText = isMuted ? '🔇' : '🔊';
+      localStorage.setItem('dungeon_muted', isMuted ? 'true' : 'false');
     }
 
-    attemptPlayBgm();
-    ['click', 'touchstart', 'mousemove', 'keydown'].forEach(evt => {
-      window.addEventListener(evt, attemptPlayBgm, { once: true });
-    });
+    function toggleMute() {
+      isMuted = !isMuted;
+      applyMuteState();
+      if (!isMuted && gameState === 'PLANNING') {
+        audioBgm.play().catch(() => {});
+      }
+    }
+
+    // iOS Safari 關鍵解鎖機制：首次手勢預先激活所有 Audio 實例
+    let audioUnlocked = false;
+    function unlockAllAudiosForSafari() {
+      if (audioUnlocked) return;
+      audioUnlocked = true;
+
+      allAudios.forEach(a => {
+        const origVol = a.volume;
+        a.volume = 0.001;
+        a.play().then(() => {
+          a.pause();
+          a.currentTime = 0;
+          a.volume = origVol;
+        }).catch(() => {});
+      });
+
+      if (!isMuted && gameState === 'PLANNING') {
+        audioBgm.play().catch(() => {});
+      }
+    }
+
+    window.addEventListener('click', unlockAllAudiosForSafari, { once: true });
+    window.addEventListener('touchstart', unlockAllAudiosForSafari, { once: true });
 
     function playSound(sound) {
+      if (isMuted) return;
       sound.currentTime = 0;
       sound.play().catch(() => {});
     }
@@ -990,7 +1123,6 @@
           }
         }
 
-        // 聖癒術
         if (skill.type === 'heal') {
           typeText(`${char.name}使出了${skill.name}！`, async () => {
             await flashHealEffect();
@@ -999,7 +1131,6 @@
           return;
         }
 
-        // 淨化術
         if (skill.type === 'cleanse') {
           typeText(`${char.name}使出了${skill.name}！`, async () => {
             const tgt = chars[skill.target];
@@ -1014,7 +1145,6 @@
           return;
         }
 
-        // 偷竊
         if (skill.type === 'steal') {
           typeText(`${char.name}使出了${skill.name}！`, async () => {
             await animateMelee(char.id, skill.target);
@@ -1028,13 +1158,11 @@
           return;
         }
 
-        // 近戰攻擊
         if (skill.type === 'melee') {
           typeText(`${char.name}使出了${skill.name}！`, async () => {
             await animateMelee(char.id, skill.target);
             applyDamage(skill.target, skill.target === 'dragon' ? 1 : 10);
             
-            // 1. 先處理被攻擊目標的反饋與死亡哀號
             if (skill.target === 'dragon') {
               await new Promise(r => typeText(`${char.name}使出了${skill.name}！\n但是好像沒什麼效果...`, r));
               await waitTime(1500);
@@ -1046,7 +1174,6 @@
               }
             }
 
-            // 2. 再結算勇者流血效果與死亡哀號
             if (char.id === 'swordman' && char.statuses.some(s => s.name === '流血')) {
               applyDamage('swordman', 5);
               await new Promise(r => typeText("勇者因為流血-5HP", r));
@@ -1062,7 +1189,6 @@
           return;
         }
 
-        // 遠程攻擊
         if (skill.type === 'ranged') {
           typeText(`${char.name}使出了${skill.name}！`, async () => {
             const beamColor = skill.elem === 'fire' ? '#ff7700' : (skill.elem === 'ice' ? '#00e5ff' : '#ffffff');
@@ -1342,7 +1468,6 @@
       });
     }
 
-    /* 逃脫階段：顯示原始完整技能清單與真實狀態 */
     function renderEscapeControl(unitId) {
       if (unitId === 'dragon') return;
       const char = chars[unitId];
@@ -1353,7 +1478,6 @@
 
       document.getElementById('panel-name').innerText = char.name;
 
-      // 保留角色原始狀態（無狀態則顯示無狀態）
       const statusWrap = document.getElementById('panel-statuses');
       statusWrap.innerHTML = char.statuses.length === 0 ? '<span style="color:var(--text-dim); font-size:14px;">無狀態</span>' : '';
       char.statuses.forEach(st => {
@@ -1364,7 +1488,6 @@
         statusWrap.appendChild(badge);
       });
 
-      // 呈現完整 4 個技能，依階段設定可用性
       const skillWrap = document.getElementById('panel-skills');
       skillWrap.innerHTML = '';
 
@@ -1375,7 +1498,7 @@
         let isEnabled = false;
 
         if (gameState === 'ESCAPE_PHASE1') {
-          if (char.id === 'thief' && sk.id === 2) { // 盜賊：開鎖
+          if (char.id === 'thief' && sk.id === 2) {
             isEnabled = true;
             btn.onclick = async () => {
               gameState = 'EXECUTING';
@@ -1383,7 +1506,7 @@
               playSound(audioHit);
               await unlockDoorTransition();
             };
-          } else if (char.id === 'wizard' && sk.id === 2 && chars.wizard.selectedSkill === 4) { // 魔法師：開鎖術 (未耗盡魔力)
+          } else if (char.id === 'wizard' && sk.id === 2 && chars.wizard.selectedSkill === 4) {
             isEnabled = true;
             btn.onclick = async () => {
               gameState = 'EXECUTING';
@@ -1393,7 +1516,7 @@
             };
           }
         } else if (gameState === 'ESCAPE_PHASE2') {
-          if (char.id === 'swordman' && sk.id === 1) { // 勇者：奮力一擊
+          if (char.id === 'swordman' && sk.id === 1) {
             isEnabled = true;
             btn.onclick = async () => {
               clearInterval(escapeInterval);
@@ -1437,6 +1560,11 @@
     function waitTime(ms) {
       return new Promise(resolve => setTimeout(resolve, ms));
     }
+
+    // 初始化靜音狀態
+    window.onload = () => {
+      applyMuteState();
+    };
   </script>
 </body>
 </html>
