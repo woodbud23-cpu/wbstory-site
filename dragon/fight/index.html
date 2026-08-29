@@ -595,9 +595,9 @@
 </head>
 <body>
 
-  <!-- 全域靜音按鈕 -->
+  <!-- 全域靜音按鈕 (固定預設顯示靜音) -->
   <div id="mute-btn" onclick="toggleMute()" title="靜音/取消靜音">
-    <span id="mute-icon">🔊</span>
+    <span id="mute-icon">🔇</span>
   </div>
 
   <div id="game-container">
@@ -716,10 +716,9 @@
   </div>
 
   <script>
-    /* ================= 混合容錯音訊引擎 (相容所有瀏覽器政策) ================= */
-    let isMuted = localStorage.getItem('dungeon_muted') === 'true';
+    /* ================= 音訊管理 (固定預設靜音、不讀取不寫入 localStorage) ================= */
+    let isMuted = true; // 只要進入此頁面，一律強制預設為靜音
 
-    // 建立 Audio 標籤實例 (作為 HTML5 Audio 與 WebAudio 雙重保險)
     const audioBgm = new Audio('bgm.mp3');
     audioBgm.loop = true;
     audioBgm.volume = 0.35;
@@ -739,7 +738,6 @@
     function applyMuteState() {
       allAudios.forEach(a => { a.muted = isMuted; });
       document.getElementById('mute-icon').innerText = isMuted ? '🔇' : '🔊';
-      localStorage.setItem('dungeon_muted', isMuted ? 'true' : 'false');
     }
 
     function toggleMute() {
@@ -1461,11 +1459,8 @@
         flash.style.background = 'rgba(255, 60, 0, 0.8)';
         flash.style.opacity = '1';
         setTimeout(() => {
-          flash.style.background = '#ffffff';
-          setTimeout(() => {
-            window.location.href = 'bad1.html';
-          }, 1500);
-        }, 1000);
+          window.location.href = 'bad1.html';
+        }, 1500);
       });
     }
 
