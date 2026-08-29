@@ -19,7 +19,6 @@ export function initMinigame() {
       e.preventDefault();
       
       const rawVal = puzzleInput.value.trim();
-      // 統一轉大寫並去除內部空格，具備最佳容錯性
       const normalizedVal = rawVal.toUpperCase().replace(/\s+/g, '');
       
       puzzleResult.classList.add('hidden');
@@ -53,7 +52,7 @@ export function initMinigame() {
         return;
       }
 
-      // 3. 原本的折扣碼解鎖驗證
+      // 3. 折扣碼解鎖驗證
       if (normalizedVal === 'SPROUT' || normalizedVal === 'WOODBUD' || normalizedVal === '木芽') {
         puzzleResult.classList.remove('hidden');
       } else {
@@ -62,14 +61,30 @@ export function initMinigame() {
     });
   }
 
-  // 右側任務卡片點擊展開/收折邏輯
+  // 右側任務卡片互斥展開手風琴邏輯
   const missionCards = document.querySelectorAll('#minigame-mission-list .mission-card:not(.is-locked)');
+  
   missionCards.forEach(card => {
     card.addEventListener('click', () => {
+      // 若當前卡片已經展開，則不重複執行
+      if (card.classList.contains('is-active')) return;
+
+      // 1. 收折其他所有已展開的任務卡片
+      missionCards.forEach(otherCard => {
+        otherCard.classList.remove('is-active', 'border-accent-gold/50');
+        otherCard.classList.add('border-border-subtle');
+        const otherContent = otherCard.querySelector('.mission-content');
+        if (otherContent) {
+          otherContent.classList.add('hidden');
+        }
+      });
+
+      // 2. 展開當前被選取的任務卡片
+      card.classList.add('is-active', 'border-accent-gold/50');
+      card.classList.remove('border-border-subtle');
       const content = card.querySelector('.mission-content');
       if (content) {
-        content.classList.toggle('hidden');
-        card.classList.toggle('is-active');
+        content.classList.remove('hidden');
       }
     });
   });
