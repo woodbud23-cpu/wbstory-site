@@ -1,7 +1,7 @@
 import { playTransitionAnimation } from './intro.js';
 
 /**
- * 解鎖試煉互動與右側任務卡片控制模組
+ * 調查試煉互動與右側任務卡片控制模組
  */
 export function initMinigame() {
   const puzzleForm = document.getElementById('puzzle-form');
@@ -10,36 +10,50 @@ export function initMinigame() {
   const puzzleError = document.getElementById('puzzle-error');
 
   // 目標論壇跳轉網址
-  const FORUM_TARGET_URL = "https://wbstory.site/presentation/forum/";
+  const URL_PRESENTATION = "https://wbstory.site/presentation/forum/";
+  const URL_DRAGON = "https://wbstory.site/dragon/forum/";
 
-  // 表單解謎驗證與跳轉邏輯
+  // 表單驗證與跳轉邏輯
   if (puzzleForm) {
     puzzleForm.addEventListener('submit', (e) => {
       e.preventDefault();
       
       const rawVal = puzzleInput.value.trim();
-      // 統一轉大寫並去除字串內部空格，讓判斷更具容錯性
+      // 統一轉大寫並去除內部空格，具備最佳容錯性
       const normalizedVal = rawVal.toUpperCase().replace(/\s+/g, '');
       
       puzzleResult.classList.add('hidden');
       puzzleError.classList.add('hidden');
 
-      // 1. 判定是否符合「消失的簡報」系列通訊關鍵字
-      const triggerKeywords = [
+      // 1. 任務 01「消失的簡報」
+      const keywordsPresentation = [
         '消失的簡報',
         'PRESENTATION',
         '消失的簡報PRESENTATION'
       ];
 
-      if (triggerKeywords.includes(normalizedVal)) {
-        // 播放過場發芽讀取動畫後跳轉
-        playTransitionAnimation('[ ESTABLISHING FORUM CONNECTION... ]', () => {
-          window.location.href = FORUM_TARGET_URL;
+      if (keywordsPresentation.includes(normalizedVal)) {
+        playTransitionAnimation('[ ESTABLISHING PRESENTATION FORUM CONNECTION... ]', () => {
+          window.location.href = URL_PRESENTATION;
         });
         return;
       }
 
-      // 2. 原本的折扣碼解鎖驗證
+      // 2. 任務 02「屠龍冒險隊」
+      const keywordsDragon = [
+        '屠龍冒險隊',
+        'DUNGEON',
+        '屠龍冒險隊DUNGEON'
+      ];
+
+      if (keywordsDragon.includes(normalizedVal)) {
+        playTransitionAnimation('[ ESTABLISHING DRAGON FORUM CONNECTION... ]', () => {
+          window.location.href = URL_DRAGON;
+        });
+        return;
+      }
+
+      // 3. 原本的折扣碼解鎖驗證
       if (normalizedVal === 'SPROUT' || normalizedVal === 'WOODBUD' || normalizedVal === '木芽') {
         puzzleResult.classList.remove('hidden');
       } else {
