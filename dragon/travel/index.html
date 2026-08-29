@@ -4,6 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>有名小站 - 旅遊心得板</title>
+  
+  <!-- 連線加速優化：預解析主網域與目標跳轉頁面 -->
+  <link rel="preconnect" href="https://wbstory.site">
+  <link rel="dns-prefetch" href="https://wbstory.site">
+  <link rel="prefetch" href="https://wbstory.site/dragon/forum/">
+
   <style>
     * {
       box-sizing: border-box;
@@ -220,7 +226,7 @@
       color: #8a8d91;
     }
 
-    /* 貼文右上角檢舉按鈕 (無邊框、純文字與 hover 特效) */
+    /* 貼文右上角檢舉按鈕 */
     .btn-report {
       background: transparent;
       border: none;
@@ -433,7 +439,7 @@
       z-index: 200;
     }
 
-    /* ========== 檢舉文字方塊彈窗 Modal 樣式 ========== */
+    /* 檢舉文字方塊彈窗 Modal 樣式 */
     .modal-overlay {
       display: none;
       position: fixed;
@@ -769,13 +775,12 @@
 
     </main>
 
-    <!-- 右側側邊欄 (真連結樣式完全隱蔽同化) -->
+    <!-- 右側側邊欄 -->
     <aside class="sidebar-widget" id="sidebarWidget">
       <div class="widget-title">
         <span>📌 熱門看板</span>
         <span class="close-drawer-btn" style="display:none;" onclick="toggleMobileSidebar()">✕</span>
       </div>
-      <!-- 真實跳轉按鈕：連回求助主頁，外觀完全融入 -->
       <a class="widget-item" href="https://wbstory.site/dragon/forum/"><span># 日常求助板</span><span style="color:#8a8d91;">3.4k</span></a>
       <div class="widget-item"><span># 歐洲自駕旅遊推薦</span><span style="color:#8a8d91;">4.2k</span></div>
       <div class="widget-item"><span># 職場社畜求生指南</span><span style="color:#8a8d91;">3.5k</span></div>
@@ -833,7 +838,7 @@
     }
 
     // ==========================================
-    // 🚩 檢舉文字方塊邏輯 (本頁面純回饋，不觸發真結局)
+    // 🚩 檢舉文字方塊邏輯
     // ==========================================
     const reportModal = document.getElementById("reportModalOverlay");
     const reasonSelect = document.getElementById("reportReasonSelect");
@@ -888,7 +893,6 @@
         return;
       }
 
-      // 旅遊心得板無論填寫什麼均只提示收到申請
       alertMsg.innerText = "已收到檢舉申請";
       alertModal.style.display = "flex";
     }

@@ -4,6 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>達邦卡洞窟</title>
+  
+  <!-- 預連線優化：解決初次載入握手卡頓問題 -->
+  <link rel="preconnect" href="https://wbstory.site">
+  <link rel="dns-prefetch" href="https://wbstory.site">
+
   <style>
     :root {
       --ui-bg: rgba(18, 22, 34, 0.96);
@@ -590,9 +595,9 @@
 </head>
 <body>
 
-  <!-- 全域靜音按鈕 (預設顯示靜音) -->
+  <!-- 全域靜音按鈕 -->
   <div id="mute-btn" onclick="toggleMute()" title="靜音/取消靜音">
-    <span id="mute-icon">🔇</span>
+    <span id="mute-icon">🔊</span>
   </div>
 
   <div id="game-container">
@@ -711,134 +716,67 @@
   </div>
 
   <script>
-    /* ================= 音訊管理 (預設靜音 + Web Audio API 乾淨播放) ================= */
-    // 預設一律為靜音 (若本地有記錄則以記錄為準，初次進入預設 true)
-    let isMuted = localStorage.getItem('dungeon_muted') !== null ? (localStorage.getItem('dungeon_muted') === 'true') : true;
+    /* ================= 混合容錯音訊引擎 (相容所有瀏覽器政策) ================= */
+    let isMuted = localStorage.getItem('dungeon_muted') === 'true';
 
-    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-    let audioCtx = null;
-    let masterGainNode = null;
+    // 建立 Audio 標籤實例 (作為 HTML5 Audio 與 WebAudio 雙重保險)
+    const audioBgm = new Audio('bgm.mp3');
+    audioBgm.loop = true;
+    audioBgm.volume = 0.35;
 
-    const soundBuffers = {};
-    const soundFiles = {
-      bgm: 'bgm.mp3',
-      hit: 'hit.mp3',
-      warning: 'warning.mp3',
-      over: 'over.mp3'
-    };
+    const audioWarning = new Audio('warning.mp3');
+    audioWarning.loop = true;
+    audioWarning.volume = 0.75;
 
-    let currentBgmNode = null;
-    let currentWarningNode = null;
+    const audioHit = new Audio('hit.mp3');
+    audioHit.volume = 0.9;
 
-    function initAudioContext() {
-      if (!audioCtx) {
-        audioCtx = new AudioContextClass();
-        masterGainNode = audioCtx.createGain();
-        masterGainNode.gain.value = isMuted ? 0 : 1;
-        masterGainNode.connect(audioCtx.destination);
-      }
-    }
+    const audioOver = new Audio('over.mp3');
+    audioOver.volume = 1.0;
 
-    async function loadSoundBuffer(key, url) {
-      try {
-        const response = await fetch(url);
-        const arrayBuffer = await response.arrayBuffer();
-        audioCtx.decodeAudioData(arrayBuffer, (decodedData) => {
-          soundBuffers[key] = decodedData;
-          if (key === 'bgm' && gameState === 'PLANNING' && !currentBgmNode && !isMuted) {
-            playBgm();
-          }
-        }, () => {});
-      } catch (e) {}
-    }
-
-    function preloadAllAudioBuffers() {
-      initAudioContext();
-      for (let key in soundFiles) {
-        loadSoundBuffer(key, soundFiles[key]);
-      }
-    }
-
-    function playBgm() {
-      if (!audioCtx || !soundBuffers.bgm || currentBgmNode) return;
-      currentBgmNode = audioCtx.createBufferSource();
-      currentBgmNode.buffer = soundBuffers.bgm;
-      currentBgmNode.loop = true;
-
-      const bgmGain = audioCtx.createGain();
-      bgmGain.gain.value = 0.35;
-
-      currentBgmNode.connect(bgmGain);
-      bgmGain.connect(masterGainNode);
-      currentBgmNode.start(0);
-    }
-
-    function stopBgm() {
-      if (currentBgmNode) {
-        try { currentBgmNode.stop(0); } catch(e) {}
-        currentBgmNode = null;
-      }
-    }
-
-    function playWarning() {
-      if (!audioCtx || !soundBuffers.warning || currentWarningNode) return;
-      currentWarningNode = audioCtx.createBufferSource();
-      currentWarningNode.buffer = soundBuffers.warning;
-      currentWarningNode.loop = true;
-
-      const warningGain = audioCtx.createGain();
-      warningGain.gain.value = 0.75;
-
-      currentWarningNode.connect(warningGain);
-      warningGain.connect(masterGainNode);
-      currentWarningNode.start(0);
-    }
-
-    function stopWarning() {
-      if (currentWarningNode) {
-        try { currentWarningNode.stop(0); } catch(e) {}
-        currentWarningNode = null;
-      }
-    }
-
-    function playSound(key) {
-      if (!audioCtx || !soundBuffers[key]) return;
-      const src = audioCtx.createBufferSource();
-      src.buffer = soundBuffers[key];
-
-      const gain = audioCtx.createGain();
-      gain.gain.value = (key === 'hit' ? 0.9 : 1.0);
-
-      src.connect(gain);
-      gain.connect(masterGainNode);
-      src.start(0);
-    }
-
-    function stopAllAudios() {
-      stopBgm();
-      stopWarning();
-    }
+    const allAudios = [audioBgm, audioWarning, audioHit, audioOver];
 
     function applyMuteState() {
-      if (masterGainNode && audioCtx) {
-        masterGainNode.gain.setValueAtTime(isMuted ? 0 : 1, audioCtx.currentTime);
-      }
+      allAudios.forEach(a => { a.muted = isMuted; });
       document.getElementById('mute-icon').innerText = isMuted ? '🔇' : '🔊';
       localStorage.setItem('dungeon_muted', isMuted ? 'true' : 'false');
     }
 
-    // 玩家點擊右上角靜音按鈕時，必定具備完整手勢權限
     function toggleMute() {
-      initAudioContext();
-      if (audioCtx.state === 'suspended') {
-        audioCtx.resume();
-      }
       isMuted = !isMuted;
       applyMuteState();
-
-      if (!isMuted && gameState === 'PLANNING' && !currentBgmNode) {
-        playBgm();
+      if (!isMuted && gameState === 'PLANNING') {
+        audioBgm.play().catch(() => {});
       }
+    }
+
+    // 首次互動解鎖：喚醒音訊管線
+    let isAudioUnlocked = false;
+    function handleGlobalUnlock() {
+      if (isAudioUnlocked) return;
+      isAudioUnlocked = true;
+
+      if (!isMuted && gameState === 'PLANNING') {
+        audioBgm.play().catch(() => {});
+      }
+    }
+
+    window.addEventListener('click', handleGlobalUnlock, { once: true });
+    window.addEventListener('touchstart', handleGlobalUnlock, { once: true });
+
+    function playSound(audioElem) {
+      if (isMuted) return;
+      try {
+        audioElem.currentTime = 0;
+        audioElem.play().catch(() => {});
+      } catch(e) {}
+    }
+
+    function stopAllAudios() {
+      audioBgm.pause();
+      audioWarning.pause();
+      audioHit.pause();
+      audioOver.pause();
     }
 
     /* ================= 角色與技能數據 ================= */
@@ -1349,7 +1287,7 @@
 
     /* ================= 傷害與動畫處理 ================= */
     function applyDamage(targetId, dmg) {
-      playSound('hit');
+      playSound(audioHit);
       if (targetId === 'dragon') {
         chars.dragon.hp = Math.max(0, chars.dragon.hp - dmg);
         updateHpBar('dragon', chars.dragon.hp, chars.dragon.maxHp);
@@ -1445,7 +1383,7 @@
           beam.style.transition = 'width 0.25s linear';
           beam.style.width = `${distance}px`;
           setTimeout(() => {
-            playSound('hit');
+            playSound(audioHit);
             beam.remove();
             resolve();
           }, 260);
@@ -1517,7 +1455,7 @@
 
     function triggerBreathDefeat() {
       stopAllAudios();
-      playSound('over');
+      playSound(audioOver);
       typeText("巨龍使出了熾熱吐息！", () => {
         const flash = document.getElementById('screen-flash-overlay');
         flash.style.background = 'rgba(255, 60, 0, 0.8)';
@@ -1547,8 +1485,8 @@
       door.style.opacity = '1';
       await waitTime(1000);
 
-      stopBgm();
-      playWarning();
+      audioBgm.pause();
+      playSound(audioWarning);
       document.getElementById('stage').classList.add('shake-anim');
       document.getElementById('escape-timer-bar').style.display = 'block';
 
@@ -1571,7 +1509,7 @@
     function handleEscapeTimeout() {
       gameState = 'END';
       stopAllAudios();
-      playSound('over');
+      playSound(audioOver);
       typeText("洞穴崩塌了！", () => {
         const flash = document.getElementById('screen-flash-overlay');
         flash.style.background = '#000000';
@@ -1617,7 +1555,7 @@
             btn.onclick = async () => {
               gameState = 'EXECUTING';
               await animateMelee('thief', 'door');
-              playSound('hit');
+              playSound(audioHit);
               await unlockDoorTransition();
             };
           } else if (char.id === 'wizard' && sk.id === 2 && chars.wizard.selectedSkill === 4) {
@@ -1625,7 +1563,7 @@
             btn.onclick = async () => {
               gameState = 'EXECUTING';
               await shootBeam('wizard', 'door', '#ffd166');
-              playSound('hit');
+              playSound(audioHit);
               await unlockDoorTransition();
             };
           }
@@ -1637,7 +1575,7 @@
               gameState = 'END';
               typeText("勇者使出了奮力一擊！", async () => {
                 await animateMelee('swordman', 'door');
-                playSound('hit');
+                playSound(audioHit);
                 const flash = document.getElementById('screen-flash-overlay');
                 flash.style.background = '#ffffff';
                 flash.style.opacity = '1';
@@ -1676,7 +1614,6 @@
     }
 
     window.onload = () => {
-      preloadAllAudioBuffers();
       applyMuteState();
     };
   </script>

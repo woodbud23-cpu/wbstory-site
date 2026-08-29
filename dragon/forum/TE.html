@@ -5,9 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>終於結束了...</title>
   
-  <!-- 引入 Noto Serif TC 字體 -->
+  <!-- 連線加速：預連線至首頁與字體 CDN -->
+  <link rel="preconnect" href="https://wbstory.site">
+  <link rel="dns-prefetch" href="https://wbstory.site">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@500;700&display=swap" rel="stylesheet">
 
   <style>
@@ -19,7 +21,7 @@
     }
 
     body {
-      background-color: #fdfdfd; /* 白色基底 */
+      background-color: #fdfdfd;
       color: #2b2b2b;
       font-family: "Noto Serif TC", Georgia, serif;
       min-height: 100vh;
@@ -121,7 +123,6 @@
       background: rgba(212, 175, 55, 0.08);
     }
 
-    /* 手機版適配 */
     @media (max-width: 640px) {
       .message-container {
         padding: 32px 24px;
@@ -146,7 +147,7 @@
   <button class="skip-btn" id="skipBtn">略過 [SKIP] ➔</button>
 
   <script>
-    const HOME_URL = "https://wbstory.site/"; // 跳轉目標
+    const HOME_URL = "https://wbstory.site/";
 
     const MESSAGE = 
 `搞了半天，

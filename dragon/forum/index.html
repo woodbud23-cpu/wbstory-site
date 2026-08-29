@@ -4,6 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>有名小站 - 日常求助板</title>
+  
+  <!-- 連線加速：預解析主網域與目標跳轉頁面 -->
+  <link rel="preconnect" href="https://wbstory.site">
+  <link rel="dns-prefetch" href="https://wbstory.site">
+  <link rel="prefetch" href="https://wbstory.site/dragon/fight/">
+  <link rel="prefetch" href="https://wbstory.site/dragon/travel/">
+
   <style>
     * {
       box-sizing: border-box;
@@ -215,7 +222,6 @@
       color: #1c1e21;
     }
 
-    /* 刪除線劃記樣式 */
     .author-name.strikethrough {
       text-decoration: line-through;
       color: #dc3545;
@@ -582,7 +588,7 @@
       background: #0052a3;
     }
 
-    /* 最上層確認/警告彈窗 Alert Modal */
+    /* 最上層警告/確認彈窗 Alert Modal */
     .alert-modal-overlay {
       display: none;
       position: fixed;
@@ -617,7 +623,7 @@
       color: #1c1e21;
     }
 
-    /* 全螢幕全域互動鎖定遮罩 (3秒緩衝期使用) */
+    /* 全螢幕全域互動鎖定遮罩 */
     #global-lock-overlay {
       display: none;
       position: fixed;
@@ -630,7 +636,7 @@
       cursor: default;
     }
 
-    /* 全螢幕漸白覆蓋層 (真結局轉跳用) */
+    /* 全螢幕漸白覆蓋層 */
     #te-flash-overlay {
       position: fixed;
       top: 0;
@@ -947,7 +953,6 @@
         closeReportModal();
 
         if (isTrueEndingTriggered) {
-          // 鎖定所有操作 3 秒，畫面維持原本正常的模樣
           globalLock.style.display = "block";
           setTimeout(() => {
             triggerTrueEndingSequence();
