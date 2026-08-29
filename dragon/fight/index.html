@@ -517,7 +517,7 @@
     @media screen and (max-aspect-ratio: 16/10) {
       body {
         align-items: flex-start;
-        padding-top: 22.5vw; /* 恰好保留 2/5 舞台高度 (56.25vw * 0.4) 的留白空間 */
+        padding-top: 22.5vw;
       }
       #game-container {
         width: 100vw;
@@ -532,13 +532,11 @@
         justify-content: flex-start;
       }
 
-      /* 16:9 舞台完全保持比例 */
       #stage {
         width: 100vw;
         height: 56.25vw;
       }
 
-      /* 手機版時間暫停：字體微縮 (26px) + 偏左微調，完全不擋龍血量 */
       .time-stop-title-wrap {
         top: 15%;
         left: 40%;
@@ -562,7 +560,6 @@
         padding: 4px 14px;
       }
 
-      /* 對話框直接緊貼舞台下方，消除空隙 */
       #dialogue-window {
         position: relative;
         bottom: auto;
@@ -670,7 +667,7 @@
 
       </div>
 
-      <!-- 時間暫停濾鏡層與標題 (完整保留淡黃灰濾鏡與小沙漏) -->
+      <!-- 時間暫停濾鏡層與標題 -->
       <div id="time-stop-overlay">
         <div class="time-stop-title-wrap">
           <span>時</span><span>間</span>
@@ -685,7 +682,7 @@
 
     </div>
 
-    <!-- 底部懸浮戰術對話框 (緊貼舞台下方) -->
+    <!-- 底部懸浮戰術對話框 -->
     <div id="dialogue-window">
       
       <!-- 訊息展示區 -->
@@ -714,7 +711,7 @@
   </div>
 
   <script>
-    /* ================= 音訊管理與 Safari 解鎖池 ================= */
+    /* ================= 音訊管理 (徹底解決串音重疊問題) ================= */
     let isMuted = localStorage.getItem('dungeon_muted') === 'true';
 
     const audioBgm = new Audio('bgm.mp3');
@@ -755,31 +752,21 @@
       }
     }
 
-    let audioUnlocked = false;
-    function unlockAndStartAudio() {
-      if (audioUnlocked) return;
-      audioUnlocked = true;
-
-      allAudios.forEach(a => {
-        const origVol = a.volume;
-        a.volume = 0.001;
-        a.play().then(() => {
-          a.pause();
-          a.currentTime = 0;
-          a.volume = origVol;
-          if (a === audioBgm && !isMuted && gameState === 'PLANNING') {
-            audioBgm.play().catch(() => {});
-          }
-        }).catch(() => {
-          a.volume = origVol;
-        });
-      });
+    // 僅在首次觸控時啟動 BGM，絕不預先播放其他音效
+    let bgmStarted = false;
+    function startBgmOnFirstInteraction() {
+      if (bgmStarted) return;
+      bgmStarted = true;
+      if (!isMuted && gameState === 'PLANNING') {
+        audioBgm.play().catch(() => {});
+      }
     }
 
-    window.addEventListener('click', unlockAndStartAudio, { once: true });
-    window.addEventListener('touchstart', unlockAndStartAudio, { once: true });
+    window.addEventListener('click', startBgmOnFirstInteraction, { once: true });
+    window.addEventListener('touchstart', startBgmOnFirstInteraction, { once: true });
 
-    audioBgm.play().then(() => { audioUnlocked = true; }).catch(() => {});
+    // 載入時嘗試播放 BGM
+    audioBgm.play().then(() => { bgmStarted = true; }).catch(() => {});
 
     function playSound(sound) {
       if (isMuted) return;
@@ -1046,7 +1033,7 @@
       renderHeroPanel(activeChar);
     }
 
-    /* ================= 狀態長按/點擊 Tooltip (手機端無延遲無閃爍) ================= */
+    /* ================= 狀態長按/點擊 Tooltip ================= */
     let currentTooltipBadge = null;
     function bindTooltipEvents(elem, descText) {
       const tooltip = document.getElementById('status-tooltip');
@@ -1074,11 +1061,9 @@
         currentTooltipBadge = null;
       }
 
-      // 電腦滑鼠懸停
       elem.addEventListener('mouseenter', showTip);
       elem.addEventListener('mouseleave', hideTip);
 
-      // 手機觸控專用邏輯
       let touchTimer = null;
       elem.addEventListener('touchstart', (e) => {
         e.stopPropagation();
@@ -1101,7 +1086,6 @@
       });
     }
 
-    // 點擊空白處關閉 Tooltip
     document.addEventListener('click', () => {
       document.getElementById('status-tooltip').style.display = 'none';
     });
@@ -1180,7 +1164,6 @@
           }
         }
 
-        // 聖癒術
         if (skill.type === 'heal') {
           typeText(`${char.name}使出了${skill.name}！`, async () => {
             await flashHealEffect();
@@ -1189,7 +1172,6 @@
           return;
         }
 
-        // 淨化術
         if (skill.type === 'cleanse') {
           typeText(`${char.name}使出了${skill.name}！`, async () => {
             const tgt = chars[skill.target];
@@ -1204,7 +1186,6 @@
           return;
         }
 
-        // 偷竊
         if (skill.type === 'steal') {
           typeText(`${char.name}使出了${skill.name}！`, async () => {
             await animateMelee(char.id, skill.target);
@@ -1218,7 +1199,6 @@
           return;
         }
 
-        // 近戰攻擊
         if (skill.type === 'melee') {
           typeText(`${char.name}使出了${skill.name}！`, async () => {
             await animateMelee(char.id, skill.target);
@@ -1250,7 +1230,6 @@
           return;
         }
 
-        // 遠程攻擊 (附帶中毒提示)
         if (skill.type === 'ranged') {
           typeText(`${char.name}使出了${skill.name}！`, async () => {
             const beamColor = skill.elem === 'fire' ? '#ff7700' : (skill.elem === 'ice' ? '#00e5ff' : '#ffffff');
