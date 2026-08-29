@@ -63,7 +63,6 @@
       font-weight: 600;
     }
 
-    /* 手機版展開看板按鈕 */
     .btn-mobile-sidebar {
       display: none;
       background: #f0f2f5;
@@ -159,13 +158,20 @@
       border: 1px solid #e4e6eb;
       padding: 24px;
       box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+      position: relative;
     }
 
     .post-header {
       display: flex;
       align-items: center;
-      gap: 12px;
+      justify-content: space-between;
       margin-bottom: 16px;
+    }
+
+    .post-header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
     }
 
     .author-avatar-img {
@@ -175,6 +181,7 @@
       object-fit: cover;
       flex-shrink: 0;
       border: 1.5px solid #e4e6eb;
+      transition: all 0.3s ease;
     }
 
     .comment-avatar {
@@ -208,9 +215,29 @@
       color: #1c1e21;
     }
 
+    /* 刪除線劃記樣式 */
+    .author-name.strikethrough {
+      text-decoration: line-through;
+      color: #dc3545;
+    }
+
     .post-time {
       font-size: 12px;
       color: #8a8d91;
+    }
+
+    /* 貼文右上角檢舉按鈕 (無邊框、純文字與 hover 特效) */
+    .btn-report {
+      background: transparent;
+      border: none;
+      color: #65676b;
+      font-size: 13px;
+      cursor: pointer;
+      padding: 4px 6px;
+      transition: color 0.15s ease;
+    }
+    .btn-report:hover {
+      color: #0066cc;
     }
 
     .board-tag {
@@ -401,7 +428,7 @@
       cursor: pointer;
     }
 
-    /* 右側側邊欄 (完全隱蔽偽裝樣式) */
+    /* 側邊欄 */
     .sidebar-widget {
       background: #ffffff;
       border-radius: 12px;
@@ -439,7 +466,6 @@
       color: #0066cc;
     }
 
-    /* 手機版抽屜遮罩 */
     .mobile-drawer-overlay {
       display: none;
       position: fixed;
@@ -451,7 +477,160 @@
       z-index: 200;
     }
 
-    /* 手機版 RWD 適配 */
+    /* ========== 檢舉文字方塊彈窗 Modal 樣式 ========== */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.45);
+      z-index: 500;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+    }
+
+    .report-modal-box {
+      background: #ffffff;
+      border-radius: 12px;
+      width: 100%;
+      max-width: 440px;
+      padding: 24px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      text-align: left;
+    }
+
+    .report-title {
+      font-size: 20px;
+      font-weight: 800;
+      text-align: center;
+      color: #1c1e21;
+    }
+
+    .report-label {
+      font-size: 14px;
+      font-weight: bold;
+      color: #1c1e21;
+    }
+
+    .report-select {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid #ced4da;
+      font-size: 14px;
+      outline: none;
+      background-color: #fff;
+    }
+
+    .dynamic-reason-wrap {
+      display: none;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .report-textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid #ced4da;
+      font-size: 14px;
+      outline: none;
+      resize: vertical;
+      min-height: 80px;
+    }
+    .report-textarea:focus {
+      border-color: #0066cc;
+    }
+
+    .modal-btn-row {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 6px;
+    }
+
+    .modal-btn {
+      padding: 9px 24px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      transition: all 0.15s ease;
+    }
+
+    .modal-btn.btn-cancel {
+      background: #e4e6eb;
+      color: #4b4f56;
+    }
+    .modal-btn.btn-cancel:hover {
+      background: #d8dadf;
+    }
+
+    .modal-btn.btn-submit {
+      background: #0066cc;
+      color: #ffffff;
+      display: none;
+    }
+    .modal-btn.btn-submit:hover {
+      background: #0052a3;
+    }
+
+    /* 最上層確認/警告彈窗 (Alert Modal) */
+    .alert-modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.35);
+      z-index: 600;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+    }
+
+    .alert-modal-box {
+      background: #ffffff;
+      border-radius: 12px;
+      width: 100%;
+      max-width: 340px;
+      padding: 22px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.25);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      text-align: center;
+    }
+
+    .alert-msg-text {
+      font-size: 16px;
+      font-weight: bold;
+      color: #1c1e21;
+    }
+
+    /* 全螢幕漸白覆蓋層 (真結局轉跳用) */
+    #te-flash-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: #ffffff;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 9999;
+      transition: opacity 2.5s ease;
+    }
+
     @media (max-width: 768px) {
       .container {
         grid-template-columns: 1fr;
@@ -469,8 +648,6 @@
       .post-title {
         font-size: 18px;
       }
-
-      /* 側邊欄改為滑出抽屜 */
       .sidebar-widget {
         position: fixed;
         top: 0;
@@ -499,7 +676,6 @@
   <header>
     <div class="header-left">
       <div class="forum-logo">有名小站 <span>Beta</span></div>
-      <!-- 手機版展開看板按鈕 -->
       <button class="btn-mobile-sidebar" onclick="toggleMobileSidebar()">☰ 熱門看板</button>
       <div class="search-input-wrap">
         <span>🔍</span>
@@ -524,94 +700,97 @@
   <div class="container">
     
     <!-- 左側貼文與留言 -->
-    <main class="post-card">
-      <div class="board-tag">日常求助板</div>
+    <main class="post-card" id="mainPostCard">
+      <div class="board-tag" id="boardTag">日常求助板</div>
 
       <div class="post-header">
-        <img src="avatar.jpg" alt="異世界的魔法師" class="author-avatar-img">
-        <div class="post-meta">
-          <span class="author-name">異世界的魔法師</span>
-          <span class="post-time">2026年9月3日 17:42</span>
+        <div class="post-header-left">
+          <img src="avatar.jpg" alt="異世界的魔法師" class="author-avatar-img" id="authorAvatar">
+          <div class="post-meta">
+            <span class="author-name" id="authorName">異世界的魔法師</span>
+            <span class="post-time" id="postTime">2026年9月3日 17:42</span>
+          </div>
         </div>
+        <!-- 貼文右上角檢舉按鈕 -->
+        <button class="btn-report" id="btnReport" onclick="openReportModal()">檢舉</button>
       </div>
 
-      <h1 class="post-title">[緊急求助] 我們隊伍在地下城打巨龍快全滅了！拜託異世界的朋友救救我們！</h1>
+      <div id="postBodyArea">
+        <h1 class="post-title" id="postTitle">[緊急求助] 我們隊伍在地下城打巨龍快全滅了！拜託異世界的朋友救救我們！</h1>
 
-      <div class="post-content">
-我們是一群在達邦卡洞窟深處討伐巨龍的冒險者隊伍。
-現在戰況非常危急，巨龍隨時準備噴出毀滅一切的烈焰吐息，大家都已經殘血受傷，差一下就要全體陣亡了！
+        <div class="post-content" id="postContent">
+我們是一群討伐巨龍的冒險者隊伍。現在戰況非常危急，巨龍隨時準備噴出毀滅一切的烈焰吐息，大家都已經殘血受傷，差一下就要全體陣亡了！
 
 我用最後的魔力將現場的時間暫停，並穿透次元連到了你們這個論壇。
 我們需要異世界朋友的戰術指引，只要調整每個人的行動順序與技能，一定能找出擊倒巨龍的唯一破局解法！
 
 點擊下方的次元通道連結就能進入我們時間暫停的戰鬥現場，拜託大家了！
-      </div>
-
-      <div class="attachment-box">
-        <div class="attachment-title">🌀 空間裂隙傳送門：</div>
-        <a class="clue-link" href="https://wbstory.site/dragon/fight/">⚔️ 前往地下城</a>
-      </div>
-
-      <div class="post-actions">
-        <button class="action-btn">👍 32 個讚</button>
-        <button class="action-btn">💬 留言</button>
-        <button class="action-btn">↗ 分享</button>
-      </div>
-
-      <div class="comments-section">
-        <div class="comments-title">所有留言</div>
-
-        <div id="commentList" style="display: flex; flex-direction: column; gap: 14px;">
-          
-          <div class="comment-item">
-            <div class="comment-avatar color-user1">
-              <svg viewBox="0 0 100 100" fill="none">
-                <circle cx="50" cy="38" r="17" fill="#ffffff"/>
-                <path d="M19 82 C19 63, 33 58, 50 58 C67 58, 81 63, 81 82 Z" fill="#ffffff"/>
-              </svg>
-            </div>
-            <div class="comment-bubble">
-              <div class="comment-author-row">
-                <span class="comment-author">匿名</span>
-                <span class="comment-time">17:44</span>
-              </div>
-              <div class="comment-text">這中二病也太嚴重了吧 XD 現在詐騙集團連異世界冒險的劇本都寫得出來喔？點那個連結感覺電腦會直接中勒索病毒吧，大家千萬不要亂點。</div>
-            </div>
-          </div>
-
-          <div class="comment-item">
-            <div class="comment-avatar color-user2">
-              <svg viewBox="0 0 100 100" fill="none">
-                <circle cx="50" cy="38" r="17" fill="#ffffff"/>
-                <path d="M19 82 C19 63, 33 58, 50 58 C67 58, 81 63, 81 82 Z" fill="#ffffff"/>
-              </svg>
-            </div>
-            <div class="comment-bubble">
-              <div class="comment-author-row">
-                <span class="comment-author">匿名</span>
-                <span class="comment-time">17:45</span>
-              </div>
-              <div class="comment-text">笑死，現在假帳號釣魚都不演了是嗎？還時間暫停咧，點進去是不是要我輸入銀行帳號密碼解鎖封印？檢舉了啦。</div>
-            </div>
-          </div>
-
         </div>
 
-        <div class="comment-box-wrap">
-          <textarea id="playerInput" class="comment-input" placeholder="留個言參與討論..."></textarea>
-          <button id="sendBtn" class="btn-send">送出</button>
+        <div class="attachment-box" id="attachmentBox">
+          <div class="attachment-title">🌀 空間裂隙傳送門：</div>
+          <a class="clue-link" href="https://wbstory.site/dragon/fight/">⚔️ 前往地下城</a>
+        </div>
+
+        <div class="post-actions" id="postActions">
+          <button class="action-btn">👍 32 個讚</button>
+          <button class="action-btn">💬 留言</button>
+          <button class="action-btn">↗ 分享</button>
+        </div>
+
+        <div class="comments-section" id="commentsSection">
+          <div class="comments-title">所有留言</div>
+
+          <div id="commentList" style="display: flex; flex-direction: column; gap: 14px;">
+            
+            <div class="comment-item">
+              <div class="comment-avatar color-user1">
+                <svg viewBox="0 0 100 100" fill="none">
+                  <circle cx="50" cy="38" r="17" fill="#ffffff"/>
+                  <path d="M19 82 C19 63, 33 58, 50 58 C67 58, 81 63, 81 82 Z" fill="#ffffff"/>
+                </svg>
+              </div>
+              <div class="comment-bubble">
+                <div class="comment-author-row">
+                  <span class="comment-author">匿名</span>
+                  <span class="comment-time">17:44</span>
+                </div>
+                <div class="comment-text">這中二病也太嚴重了吧 XD 現在詐騙集團連異世界冒險的劇本都寫得出來喔？點那個連結感覺電腦會直接中勒索病毒吧 大家千萬不要亂點</div>
+              </div>
+            </div>
+
+            <div class="comment-item">
+              <div class="comment-avatar color-user2">
+                <svg viewBox="0 0 100 100" fill="none">
+                  <circle cx="50" cy="38" r="17" fill="#ffffff"/>
+                </svg>
+              </div>
+              <div class="comment-bubble">
+                <div class="comment-author-row">
+                  <span class="comment-author">匿名</span>
+                  <span class="comment-time">17:45</span>
+                </div>
+                <div class="comment-text">笑死，現在假帳號釣魚都不演了是嗎？還時間暫停咧，點進去是不是要我輸入銀行帳號密碼解鎖封印？檢舉了啦。</div>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="comment-box-wrap">
+            <textarea id="playerInput" class="comment-input" placeholder="留個言參與討論..."></textarea>
+            <button id="sendBtn" class="btn-send">送出</button>
+          </div>
         </div>
       </div>
 
     </main>
 
-    <!-- 右側側邊欄 (真連結樣式完全隱蔽同化) -->
+    <!-- 右側側邊欄 -->
     <aside class="sidebar-widget" id="sidebarWidget">
       <div class="widget-title">
         <span>📌 熱門看板</span>
         <span class="close-drawer-btn" style="display:none;" onclick="toggleMobileSidebar()">✕</span>
       </div>
-      <!-- 真實跳轉按鈕：外觀與其他按鈕完全一致 -->
       <a class="widget-item" href="https://wbstory.site/dragon/travel/"><span># 旅遊心得板</span><span style="color:#8a8d91;">2.1k</span></a>
       <div class="widget-item"><span># 奇幻文學討論</span><span style="color:#8a8d91;">3.1k</span></div>
       <div class="widget-item"><span># 網路釣魚防範宣導</span><span style="color:#8a8d91;">2.4k</span></div>
@@ -624,8 +803,50 @@
   <!-- 手機抽屜半透明遮罩 -->
   <div class="mobile-drawer-overlay" id="drawerOverlay" onclick="toggleMobileSidebar()"></div>
 
+  <!-- 檢舉文字方塊彈窗 Modal -->
+  <div class="modal-overlay" id="reportModalOverlay">
+    <div class="report-modal-box">
+      <!-- 第一行：標題置中 -->
+      <h2 class="report-title">檢舉</h2>
+
+      <!-- 第二行：粗體字 檢舉原因 -->
+      <div class="report-label">檢舉原因</div>
+
+      <!-- 第三行：下拉選單 -->
+      <select class="report-select" id="reportReasonSelect" onchange="handleReasonChange()">
+        <option value="">-請選擇-</option>
+        <option value="hate">發表仇恨言論</option>
+        <option value="fraud">散播詐騙訊息</option>
+        <option value="impersonate">冒用他人身分</option>
+        <option value="other">其他</option>
+      </select>
+
+      <!-- 動態插入的兩行：標籤與輸入框 -->
+      <div class="dynamic-reason-wrap" id="dynamicReasonWrap">
+        <div class="report-label" id="dynamicInputLabel">請說明理由：</div>
+        <textarea class="report-textarea" id="reportTextarea" placeholder="請在此輸入內容..."></textarea>
+      </div>
+
+      <!-- 第四行：按鈕行 (預設僅取消置中，選擇後出現提交於左側) -->
+      <div class="modal-btn-row" id="modalBtnRow">
+        <button class="modal-btn btn-submit" id="btnSubmitReport" onclick="submitReport()">提交</button>
+        <button class="modal-btn btn-cancel" onclick="closeReportModal()">取消</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 最上層警告/確認彈窗 Alert Modal -->
+  <div class="alert-modal-overlay" id="alertModalOverlay">
+    <div class="alert-modal-box">
+      <div class="alert-msg-text" id="alertMsgText">請說明理由</div>
+      <button class="modal-btn btn-submit" style="display:inline-block; padding:8px 30px;" onclick="closeAlertModal()">確定</button>
+    </div>
+  </div>
+
+  <!-- 真結局轉場漸白層 -->
+  <div id="te-flash-overlay"></div>
+
   <script>
-    // 手機抽屜開關
     function toggleMobileSidebar() {
       const sb = document.getElementById("sidebarWidget");
       const ol = document.getElementById("drawerOverlay");
@@ -636,6 +857,143 @@
       if (closeBtn) closeBtn.style.display = isOpen ? "block" : "none";
     }
 
+    // ==========================================
+    // 🚩 檢舉文字方塊邏輯
+    // ==========================================
+    const reportModal = document.getElementById("reportModalOverlay");
+    const reasonSelect = document.getElementById("reportReasonSelect");
+    const dynamicWrap = document.getElementById("dynamicReasonWrap");
+    const dynamicLabel = document.getElementById("dynamicInputLabel");
+    const reportText = document.getElementById("reportTextarea");
+    const btnSubmit = document.getElementById("btnSubmitReport");
+    
+    const alertModal = document.getElementById("alertModalOverlay");
+    const alertMsg = document.getElementById("alertMsgText");
+
+    let isTrueEndingTriggered = false;
+
+    function openReportModal() {
+      reportModal.style.display = "flex";
+      // 重置為預設狀態
+      reasonSelect.value = "";
+      dynamicWrap.style.display = "none";
+      btnSubmit.style.display = "none";
+      reportText.value = "";
+    }
+
+    function closeReportModal() {
+      reportModal.style.display = "none";
+    }
+
+    function handleReasonChange() {
+      const val = reasonSelect.value;
+      if (val === "") {
+        dynamicWrap.style.display = "none";
+        btnSubmit.style.display = "none";
+        return;
+      }
+
+      dynamicWrap.style.display = "flex";
+      btnSubmit.style.display = "inline-block";
+
+      if (val === "hate") {
+        dynamicLabel.innerText = "具體的內容是：";
+      } else if (val === "fraud") {
+        dynamicLabel.innerText = "詐騙訊息的內容是：";
+      } else if (val === "impersonate") {
+        dynamicLabel.innerText = "冒用者的真實身分是：";
+      } else if (val === "other") {
+        dynamicLabel.innerText = "請說明理由：";
+      }
+    }
+
+    function submitReport() {
+      const inputVal = reportText.value.trim();
+
+      if (inputVal === "") {
+        // 空白防呆彈窗
+        alertMsg.innerText = "請說明理由";
+        isTrueEndingTriggered = false;
+        alertModal.style.display = "flex";
+        return;
+      }
+
+      // 檢查是否達成真結局破局條件
+      const isDragonIdentity = (reasonSelect.value === "impersonate") && (inputVal === "巨龍" || inputVal === "邪惡巨龍");
+
+      if (isDragonIdentity) {
+        isTrueEndingTriggered = true;
+        alertMsg.innerText = "已收到檢舉申請";
+        alertModal.style.display = "flex";
+      } else {
+        isTrueEndingTriggered = false;
+        alertMsg.innerText = "已收到檢舉申請";
+        alertModal.style.display = "flex";
+      }
+    }
+
+    function closeAlertModal() {
+      alertModal.style.display = "none";
+      // 若成功提交 (非空白警告)，同時關閉原本檢舉方塊
+      if (alertMsg.innerText === "已收到檢舉申請") {
+        closeReportModal();
+
+        // 觸發真結局演出
+        if (isTrueEndingTriggered) {
+          triggerTrueEndingSequence();
+        }
+      }
+    }
+
+    // ==========================================
+    // 🌟 真結局 (TE) 演出流程
+    // ==========================================
+    function triggerTrueEndingSequence() {
+      // 1. 隱藏右上角檢舉按鈕
+      document.getElementById("btnReport").style.display = "none";
+
+      // 2. 清空原本貼文的所有內容，只留空白區塊
+      const postBody = document.getElementById("postBodyArea");
+      postBody.innerHTML = `<div id="teTypingContent" style="font-size: 16px; line-height: 2.0; color: #dc3545; font-weight: bold; white-space: pre-line; min-height: 220px; padding: 20px 0;"></div>`;
+
+      // 3. 發文者名稱加上刪除線劃記
+      const authorName = document.getElementById("authorName");
+      authorName.classList.add("strikethrough");
+
+      // 4. 頭像更換為 avatar1.jpg
+      const avatarImg = document.getElementById("authorAvatar");
+      avatarImg.src = "avatar1.jpg";
+
+      // 5. 巨龍氣急敗壞的獨白文字
+      const teMonologue = "可惡！\n可惡的人類！\n我的計畫...就差一點點就成功了！\n如果不是你來搗亂的話，這個世界，也將是我的囊中之物...\n一切都被你給毀了！\n可惡！\n可惡啊！！！！！！！";
+
+      // 6. 打字機逐字呈現
+      const typingContainer = document.getElementById("teTypingContent");
+      let idx = 0;
+
+      function typeNextChar() {
+        if (idx < teMonologue.length) {
+          typingContainer.innerHTML += teMonologue[idx] === '\n' ? '<br>' : teMonologue[idx];
+          idx++;
+          setTimeout(typeNextChar, 50);
+        } else {
+          // 打字結束後停留 1 秒，畫面開始逐漸變白並跳轉
+          setTimeout(() => {
+            const flash = document.getElementById("te-flash-overlay");
+            flash.style.opacity = "1";
+            setTimeout(() => {
+              window.location.href = "TE.html";
+            }, 2600);
+          }, 1000);
+        }
+      }
+
+      setTimeout(typeNextChar, 600);
+    }
+
+    // ==========================================
+    // 💬 原有留言互動邏輯
+    // ==========================================
     let currentMinute = 46;
     let currentHour = 17;
 
