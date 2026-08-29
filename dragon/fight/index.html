@@ -360,7 +360,7 @@
       box-shadow: 0 0 15px rgba(255, 0, 0, 0.6);
     }
 
-    /* ========== 底部對話框 (電腦版) ========== */
+    /* ========== 底部對話框 ========== */
     #dialogue-window {
       position: absolute;
       bottom: 12px;
@@ -513,7 +513,7 @@
       transition: opacity 1.5s ease, background 1.5s ease;
     }
 
-    /* ========== 手機直向：上方留 2/5 舞台高度空隙 (22.5vw) ========== */
+    /* ========== 手機直向適配 ========== */
     @media screen and (max-aspect-ratio: 16/10) {
       body {
         align-items: flex-start;
@@ -711,7 +711,7 @@
   </div>
 
   <script>
-    /* ================= 音訊管理 (徹底解決串音重疊問題) ================= */
+    /* ================= 音訊管理 (iOS Safari 權限解鎖與防串音) ================= */
     let isMuted = localStorage.getItem('dungeon_muted') === 'true';
 
     const audioBgm = new Audio('bgm.mp3');
@@ -752,21 +752,38 @@
       }
     }
 
-    // 僅在首次觸控時啟動 BGM，絕不預先播放其他音效
-    let bgmStarted = false;
-    function startBgmOnFirstInteraction() {
-      if (bgmStarted) return;
-      bgmStarted = true;
+    // 關鍵解鎖：在玩家首次觸控時，以完全靜音模式激活 warning 與所有音效的硬體管道，絕不出聲
+    let audioUnlocked = false;
+    function unlockAudiosForSafari() {
+      if (audioUnlocked) return;
+      audioUnlocked = true;
+
+      allAudios.forEach(a => {
+        // 先完全靜音解鎖
+        a.muted = true;
+        const playPromise = a.play();
+        if (playPromise !== undefined) {
+          playPromise.then(() => {
+            a.pause();
+            a.currentTime = 0;
+            // 恢復玩家原本的靜音偏好設定
+            a.muted = isMuted;
+          }).catch(() => {
+            a.muted = isMuted;
+          });
+        }
+      });
+
+      // 只有 BGM 在非靜音下開始正常播放
       if (!isMuted && gameState === 'PLANNING') {
-        audioBgm.play().catch(() => {});
+        setTimeout(() => {
+          audioBgm.play().catch(() => {});
+        }, 50);
       }
     }
 
-    window.addEventListener('click', startBgmOnFirstInteraction, { once: true });
-    window.addEventListener('touchstart', startBgmOnFirstInteraction, { once: true });
-
-    // 載入時嘗試播放 BGM
-    audioBgm.play().then(() => { bgmStarted = true; }).catch(() => {});
+    window.addEventListener('click', unlockAudiosForSafari, { once: true });
+    window.addEventListener('touchstart', unlockAudiosForSafari, { once: true });
 
     function playSound(sound) {
       if (isMuted) return;
@@ -1164,6 +1181,7 @@
           }
         }
 
+        // 聖癒術
         if (skill.type === 'heal') {
           typeText(`${char.name}使出了${skill.name}！`, async () => {
             await flashHealEffect();
@@ -1172,6 +1190,7 @@
           return;
         }
 
+        // 淨化術
         if (skill.type === 'cleanse') {
           typeText(`${char.name}使出了${skill.name}！`, async () => {
             const tgt = chars[skill.target];
@@ -1186,6 +1205,7 @@
           return;
         }
 
+        // 偷竊
         if (skill.type === 'steal') {
           typeText(`${char.name}使出了${skill.name}！`, async () => {
             await animateMelee(char.id, skill.target);
@@ -1199,6 +1219,7 @@
           return;
         }
 
+        // 近戰攻擊
         if (skill.type === 'melee') {
           typeText(`${char.name}使出了${skill.name}！`, async () => {
             await animateMelee(char.id, skill.target);
@@ -1230,6 +1251,7 @@
           return;
         }
 
+        // 遠程攻擊
         if (skill.type === 'ranged') {
           typeText(`${char.name}使出了${skill.name}！`, async () => {
             const beamColor = skill.elem === 'fire' ? '#ff7700' : (skill.elem === 'ice' ? '#00e5ff' : '#ffffff');
