@@ -226,7 +226,7 @@
       color: #8a8d91;
     }
 
-    /* 貼文右上角檢舉按鈕 (無邊框、純文字與 hover 特效) */
+    /* 貼文右上角檢舉按鈕 */
     .btn-report {
       background: transparent;
       border: none;
@@ -477,7 +477,7 @@
       z-index: 200;
     }
 
-    /* ========== 檢舉文字方塊彈窗 Modal 樣式 ========== */
+    /* 檢舉文字方塊彈窗 Modal */
     .modal-overlay {
       display: none;
       position: fixed;
@@ -582,7 +582,7 @@
       background: #0052a3;
     }
 
-    /* 最上層確認/警告彈窗 (Alert Modal) */
+    /* 最上層確認/警告彈窗 Alert Modal */
     .alert-modal-overlay {
       display: none;
       position: fixed;
@@ -615,6 +615,19 @@
       font-size: 16px;
       font-weight: bold;
       color: #1c1e21;
+    }
+
+    /* 全螢幕全域互動鎖定遮罩 (3秒緩衝期使用) */
+    #global-lock-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 9998;
+      background: transparent;
+      cursor: default;
     }
 
     /* 全螢幕漸白覆蓋層 (真結局轉跳用) */
@@ -759,10 +772,12 @@
               </div>
             </div>
 
+            <!-- 第二個留言者：完整人形 SVG 修正 -->
             <div class="comment-item">
               <div class="comment-avatar color-user2">
                 <svg viewBox="0 0 100 100" fill="none">
                   <circle cx="50" cy="38" r="17" fill="#ffffff"/>
+                  <path d="M19 82 C19 63, 33 58, 50 58 C67 58, 81 63, 81 82 Z" fill="#ffffff"/>
                 </svg>
               </div>
               <div class="comment-bubble">
@@ -806,13 +821,8 @@
   <!-- 檢舉文字方塊彈窗 Modal -->
   <div class="modal-overlay" id="reportModalOverlay">
     <div class="report-modal-box">
-      <!-- 第一行：標題置中 -->
       <h2 class="report-title">檢舉</h2>
-
-      <!-- 第二行：粗體字 檢舉原因 -->
       <div class="report-label">檢舉原因</div>
-
-      <!-- 第三行：下拉選單 -->
       <select class="report-select" id="reportReasonSelect" onchange="handleReasonChange()">
         <option value="">-請選擇-</option>
         <option value="hate">發表仇恨言論</option>
@@ -821,13 +831,11 @@
         <option value="other">其他</option>
       </select>
 
-      <!-- 動態插入的兩行：標籤與輸入框 -->
       <div class="dynamic-reason-wrap" id="dynamicReasonWrap">
         <div class="report-label" id="dynamicInputLabel">請說明理由：</div>
         <textarea class="report-textarea" id="reportTextarea" placeholder="請在此輸入內容..."></textarea>
       </div>
 
-      <!-- 第四行：按鈕行 (預設僅取消置中，選擇後出現提交於左側) -->
       <div class="modal-btn-row" id="modalBtnRow">
         <button class="modal-btn btn-submit" id="btnSubmitReport" onclick="submitReport()">提交</button>
         <button class="modal-btn btn-cancel" onclick="closeReportModal()">取消</button>
@@ -842,6 +850,9 @@
       <button class="modal-btn btn-submit" style="display:inline-block; padding:8px 30px;" onclick="closeAlertModal()">確定</button>
     </div>
   </div>
+
+  <!-- 全域互動鎖定層 (3秒緩衝期攔截所有點擊) -->
+  <div id="global-lock-overlay"></div>
 
   <!-- 真結局轉場漸白層 -->
   <div id="te-flash-overlay"></div>
@@ -869,12 +880,12 @@
     
     const alertModal = document.getElementById("alertModalOverlay");
     const alertMsg = document.getElementById("alertMsgText");
+    const globalLock = document.getElementById("global-lock-overlay");
 
     let isTrueEndingTriggered = false;
 
     function openReportModal() {
       reportModal.style.display = "flex";
-      // 重置為預設狀態
       reasonSelect.value = "";
       dynamicWrap.style.display = "none";
       btnSubmit.style.display = "none";
@@ -911,14 +922,12 @@
       const inputVal = reportText.value.trim();
 
       if (inputVal === "") {
-        // 空白防呆彈窗
         alertMsg.innerText = "請說明理由";
         isTrueEndingTriggered = false;
         alertModal.style.display = "flex";
         return;
       }
 
-      // 檢查是否達成真結局破局條件
       const isDragonIdentity = (reasonSelect.value === "impersonate") && (inputVal === "巨龍" || inputVal === "邪惡巨龍");
 
       if (isDragonIdentity) {
@@ -934,40 +943,36 @@
 
     function closeAlertModal() {
       alertModal.style.display = "none";
-      // 若成功提交 (非空白警告)，同時關閉原本檢舉方塊
       if (alertMsg.innerText === "已收到檢舉申請") {
         closeReportModal();
 
-        // 觸發真結局演出
         if (isTrueEndingTriggered) {
-          triggerTrueEndingSequence();
+          // 鎖定所有操作 3 秒，畫面維持原本正常的模樣
+          globalLock.style.display = "block";
+          setTimeout(() => {
+            triggerTrueEndingSequence();
+          }, 3000);
         }
       }
     }
 
     // ==========================================
-    // 🌟 真結局 (TE) 演出流程
+    // 🌟 真結局 (TE) 演出流程 (3秒後執行)
     // ==========================================
     function triggerTrueEndingSequence() {
-      // 1. 隱藏右上角檢舉按鈕
       document.getElementById("btnReport").style.display = "none";
 
-      // 2. 清空原本貼文的所有內容，只留空白區塊
       const postBody = document.getElementById("postBodyArea");
       postBody.innerHTML = `<div id="teTypingContent" style="font-size: 16px; line-height: 2.0; color: #dc3545; font-weight: bold; white-space: pre-line; min-height: 220px; padding: 20px 0;"></div>`;
 
-      // 3. 發文者名稱加上刪除線劃記
       const authorName = document.getElementById("authorName");
       authorName.classList.add("strikethrough");
 
-      // 4. 頭像更換為 avatar1.jpg
       const avatarImg = document.getElementById("authorAvatar");
       avatarImg.src = "avatar1.jpg";
 
-      // 5. 巨龍氣急敗壞的獨白文字
       const teMonologue = "可惡！\n可惡的人類！\n我的計畫...就差一點點就成功了！\n如果不是你來搗亂的話，這個世界，也將是我的囊中之物...\n一切都被你給毀了！\n可惡！\n可惡啊！！！！！！！";
 
-      // 6. 打字機逐字呈現
       const typingContainer = document.getElementById("teTypingContent");
       let idx = 0;
 
@@ -977,7 +982,6 @@
           idx++;
           setTimeout(typeNextChar, 50);
         } else {
-          // 打字結束後停留 1 秒，畫面開始逐漸變白並跳轉
           setTimeout(() => {
             const flash = document.getElementById("te-flash-overlay");
             flash.style.opacity = "1";
@@ -988,7 +992,7 @@
         }
       }
 
-      setTimeout(typeNextChar, 600);
+      setTimeout(typeNextChar, 300);
     }
 
     // ==========================================

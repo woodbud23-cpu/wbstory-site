@@ -156,13 +156,20 @@
       border: 1px solid #e4e6eb;
       padding: 24px;
       box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+      position: relative;
     }
 
     .post-header {
       display: flex;
       align-items: center;
-      gap: 12px;
+      justify-content: space-between;
       margin-bottom: 16px;
+    }
+
+    .post-header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
     }
 
     .author-avatar-img {
@@ -211,6 +218,20 @@
     .post-time {
       font-size: 12px;
       color: #8a8d91;
+    }
+
+    /* 貼文右上角檢舉按鈕 (無邊框、純文字與 hover 特效) */
+    .btn-report {
+      background: transparent;
+      border: none;
+      color: #65676b;
+      font-size: 13px;
+      cursor: pointer;
+      padding: 4px 6px;
+      transition: color 0.15s ease;
+    }
+    .btn-report:hover {
+      color: #0066cc;
     }
 
     .board-tag {
@@ -412,6 +433,146 @@
       z-index: 200;
     }
 
+    /* ========== 檢舉文字方塊彈窗 Modal 樣式 ========== */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.45);
+      z-index: 500;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+    }
+
+    .report-modal-box {
+      background: #ffffff;
+      border-radius: 12px;
+      width: 100%;
+      max-width: 440px;
+      padding: 24px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      text-align: left;
+    }
+
+    .report-title {
+      font-size: 20px;
+      font-weight: 800;
+      text-align: center;
+      color: #1c1e21;
+    }
+
+    .report-label {
+      font-size: 14px;
+      font-weight: bold;
+      color: #1c1e21;
+    }
+
+    .report-select {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid #ced4da;
+      font-size: 14px;
+      outline: none;
+      background-color: #fff;
+    }
+
+    .dynamic-reason-wrap {
+      display: none;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .report-textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid #ced4da;
+      font-size: 14px;
+      outline: none;
+      resize: vertical;
+      min-height: 80px;
+    }
+    .report-textarea:focus {
+      border-color: #0066cc;
+    }
+
+    .modal-btn-row {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 6px;
+    }
+
+    .modal-btn {
+      padding: 9px 24px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      transition: all 0.15s ease;
+    }
+
+    .modal-btn.btn-cancel {
+      background: #e4e6eb;
+      color: #4b4f56;
+    }
+    .modal-btn.btn-cancel:hover {
+      background: #d8dadf;
+    }
+
+    .modal-btn.btn-submit {
+      background: #0066cc;
+      color: #ffffff;
+      display: none;
+    }
+    .modal-btn.btn-submit:hover {
+      background: #0052a3;
+    }
+
+    /* 最上層確認/警告彈窗 Alert Modal */
+    .alert-modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.35);
+      z-index: 600;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+    }
+
+    .alert-modal-box {
+      background: #ffffff;
+      border-radius: 12px;
+      width: 100%;
+      max-width: 340px;
+      padding: 22px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.25);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      text-align: center;
+    }
+
+    .alert-msg-text {
+      font-size: 16px;
+      font-weight: bold;
+      color: #1c1e21;
+    }
+
     @media (max-width: 768px) {
       .container {
         grid-template-columns: 1fr;
@@ -486,11 +647,15 @@
       <div class="board-tag">旅遊心得板</div>
 
       <div class="post-header">
-        <img src="avatar.jpg" alt="林翔宇" class="author-avatar-img">
-        <div class="post-meta">
-          <span class="author-name">林翔宇</span>
-          <span class="post-time">2026年9月3日 15:24</span>
+        <div class="post-header-left">
+          <img src="avatar.jpg" alt="林翔宇" class="author-avatar-img">
+          <div class="post-meta">
+            <span class="author-name">林翔宇</span>
+            <span class="post-time">2026年9月3日 15:24</span>
+          </div>
         </div>
+        <!-- 貼文右上角檢舉按鈕 -->
+        <button class="btn-report" onclick="openReportModal()">檢舉</button>
       </div>
 
       <h1 class="post-title">[心得] 歐洲達邦卡洞窟觀光 鐘乳石真的超壯觀</h1>
@@ -623,6 +788,39 @@
   <!-- 手機抽屜半透明遮罩 -->
   <div class="mobile-drawer-overlay" id="drawerOverlay" onclick="toggleMobileSidebar()"></div>
 
+  <!-- 檢舉文字方塊彈窗 Modal -->
+  <div class="modal-overlay" id="reportModalOverlay">
+    <div class="report-modal-box">
+      <h2 class="report-title">檢舉</h2>
+      <div class="report-label">檢舉原因</div>
+      <select class="report-select" id="reportReasonSelect" onchange="handleReasonChange()">
+        <option value="">-請選擇-</option>
+        <option value="hate">發表仇恨言論</option>
+        <option value="fraud">散播詐騙訊息</option>
+        <option value="impersonate">冒用他人身分</option>
+        <option value="other">其他</option>
+      </select>
+
+      <div class="dynamic-reason-wrap" id="dynamicReasonWrap">
+        <div class="report-label" id="dynamicInputLabel">請說明理由：</div>
+        <textarea class="report-textarea" id="reportTextarea" placeholder="請在此輸入內容..."></textarea>
+      </div>
+
+      <div class="modal-btn-row" id="modalBtnRow">
+        <button class="modal-btn btn-submit" id="btnSubmitReport" onclick="submitReport()">提交</button>
+        <button class="modal-btn btn-cancel" onclick="closeReportModal()">取消</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 最上層警告/確認彈窗 Alert Modal -->
+  <div class="alert-modal-overlay" id="alertModalOverlay">
+    <div class="alert-modal-box">
+      <div class="alert-msg-text" id="alertMsgText">請說明理由</div>
+      <button class="modal-btn btn-submit" style="display:inline-block; padding:8px 30px;" onclick="closeAlertModal()">確定</button>
+    </div>
+  </div>
+
   <script>
     function toggleMobileSidebar() {
       const sb = document.getElementById("sidebarWidget");
@@ -634,6 +832,77 @@
       if (closeBtn) closeBtn.style.display = isOpen ? "block" : "none";
     }
 
+    // ==========================================
+    // 🚩 檢舉文字方塊邏輯 (本頁面純回饋，不觸發真結局)
+    // ==========================================
+    const reportModal = document.getElementById("reportModalOverlay");
+    const reasonSelect = document.getElementById("reportReasonSelect");
+    const dynamicWrap = document.getElementById("dynamicReasonWrap");
+    const dynamicLabel = document.getElementById("dynamicInputLabel");
+    const reportText = document.getElementById("reportTextarea");
+    const btnSubmit = document.getElementById("btnSubmitReport");
+    
+    const alertModal = document.getElementById("alertModalOverlay");
+    const alertMsg = document.getElementById("alertMsgText");
+
+    function openReportModal() {
+      reportModal.style.display = "flex";
+      reasonSelect.value = "";
+      dynamicWrap.style.display = "none";
+      btnSubmit.style.display = "none";
+      reportText.value = "";
+    }
+
+    function closeReportModal() {
+      reportModal.style.display = "none";
+    }
+
+    function handleReasonChange() {
+      const val = reasonSelect.value;
+      if (val === "") {
+        dynamicWrap.style.display = "none";
+        btnSubmit.style.display = "none";
+        return;
+      }
+
+      dynamicWrap.style.display = "flex";
+      btnSubmit.style.display = "inline-block";
+
+      if (val === "hate") {
+        dynamicLabel.innerText = "具體的內容是：";
+      } else if (val === "fraud") {
+        dynamicLabel.innerText = "詐騙訊息的內容是：";
+      } else if (val === "impersonate") {
+        dynamicLabel.innerText = "冒用者的真實身分是：";
+      } else if (val === "other") {
+        dynamicLabel.innerText = "請說明理由：";
+      }
+    }
+
+    function submitReport() {
+      const inputVal = reportText.value.trim();
+
+      if (inputVal === "") {
+        alertMsg.innerText = "請說明理由";
+        alertModal.style.display = "flex";
+        return;
+      }
+
+      // 旅遊心得板無論填寫什麼均只提示收到申請
+      alertMsg.innerText = "已收到檢舉申請";
+      alertModal.style.display = "flex";
+    }
+
+    function closeAlertModal() {
+      alertModal.style.display = "none";
+      if (alertMsg.innerText === "已收到檢舉申請") {
+        closeReportModal();
+      }
+    }
+
+    // ==========================================
+    // 💬 原有留言互動邏輯
+    // ==========================================
     let currentMinute = 55;
     let currentHour = 15;
 
