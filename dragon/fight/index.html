@@ -33,6 +33,13 @@
       -webkit-touch-callout: none;
     }
 
+    /* 鎖定動態視口高度，徹底防止 Safari 重新整理自動下滑 */
+    html {
+      overflow: hidden;
+      height: 100%;
+      height: 100dvh;
+    }
+
     body {
       background-color: #050608;
       color: var(--text-main);
@@ -41,8 +48,13 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
+      height: 100%;
+      height: 100dvh;
       width: 100vw;
+      position: fixed;
+      top: 0;
+      left: 0;
+      touch-action: none;
     }
 
     /* 右上角靜音按鈕 */
@@ -716,8 +728,14 @@
   </div>
 
   <script>
+    // 禁用 Safari 捲動記憶並在載入時鎖定置頂
+    if ('scrollRestoration' in history) {
+      history.scrollRestoration = 'manual';
+    }
+    window.scrollTo(0, 0);
+
     /* ================= 音訊管理 (固定預設靜音、不讀取不寫入 localStorage) ================= */
-    let isMuted = true; // 只要進入此頁面，一律強制預設為靜音
+    let isMuted = true;
 
     const audioBgm = new Audio('bgm.mp3');
     audioBgm.loop = true;
@@ -748,7 +766,6 @@
       }
     }
 
-    // 首次互動解鎖：喚醒音訊管線
     let isAudioUnlocked = false;
     function handleGlobalUnlock() {
       if (isAudioUnlocked) return;
@@ -1030,7 +1047,7 @@
       renderHeroPanel(activeChar);
     }
 
-    /* ================= 狀態長按/點擊 Tooltip ================= */
+    /* ================= 狀態說明 Tooltip ================= */
     let currentTooltipBadge = null;
     function bindTooltipEvents(elem, descText) {
       const tooltip = document.getElementById('status-tooltip');
