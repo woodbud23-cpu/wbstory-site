@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>寶島冒險公會內部系統</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="main-container" class="phone-container">
+  <div class="top-bar">寶島冒險公會</div>
+
+  <div class="content-area">
+    <!-- 視圖 1：首頁選單 -->
+    <div id="view-home" class="view-section active">
+      <div class="home-hero">
+        <h2 class="home-title">業務管理入口</h2>
+        <p class="home-desc">請選擇您要執行的作業流程</p>
+      </div>
+      <button class="btn" id="btn-to-register">填寫入職資訊</button>
+      <button class="btn btn-secondary" id="btn-to-report-login">進行工作匯報</button>
+    </div>
+
+    <!-- 視圖 2：填寫入職資訊 -->
+    <div id="view-register" class="view-section">
+      <div class="form-group">
+        <label for="reg-name">姓名：</label>
+        <input type="text" id="reg-name" placeholder="請輸入姓名">
+      </div>
+
+      <div class="form-group">
+        <label>種族：</label>
+        <input type="text" value="人類" disabled>
+      </div>
+
+      <div class="form-group">
+        <label>工作技能：</label>
+        <div class="checkbox-list">
+          <label class="checkbox-item"><input type="checkbox" class="skill-check"> 學習力強，無須培訓</label>
+          <label class="checkbox-item"><input type="checkbox" class="skill-check"> 熱愛挑戰，能者多勞</label>
+          <label class="checkbox-item"><input type="checkbox" class="skill-check"> 勇於承擔，捨我其誰</label>
+          <label class="checkbox-item"><input type="checkbox" class="skill-check"> 免費加班，任勞任怨</label>
+          <label class="checkbox-item"><input type="checkbox" class="skill-check"> 客戶最大，改到滿意</label>
+          <label class="checkbox-item"><input type="checkbox" class="skill-check"> 家事國事，分內之事</label>
+        </div>
+      </div>
+
+      <button class="btn" id="btn-submit-register">確定</button>
+      <button class="btn btn-secondary btn-compact" id="btn-back-home-1">返回</button>
+    </div>
+
+    <!-- 視圖 3：入職審核通過結果 -->
+    <div id="view-register-success" class="view-section">
+      <div id="reg-typewriter" class="typewriter-box"></div>
+      <div id="callout-envelope" class="callout-box" style="display: none;">請打開信封A</div>
+      <button class="btn btn-secondary" style="margin-top: 15px;" id="btn-back-home-2">返回</button>
+    </div>
+
+    <!-- 視圖 4：工作匯報身分輸入 -->
+    <div id="view-report-login" class="view-section">
+      <div class="form-group">
+        <label for="report-name">匯報人姓名：</label>
+        <input type="text" id="report-name" placeholder="請輸入姓名">
+      </div>
+      <button class="btn" id="btn-submit-report-login">確定</button>
+      <button class="btn btn-secondary btn-compact" id="btn-back-home-3">返回</button>
+    </div>
+
+    <!-- 視圖 5：克里斯真名驗證 -->
+    <div id="view-chris-confirm" class="view-section">
+      <div id="chris-typewriter" class="typewriter-box"></div>
+      <div class="choice-row">
+        <button class="btn btn-half" id="btn-chris-yes">是</button>
+        <button class="btn btn-secondary btn-half" id="btn-chris-no">不是</button>
+      </div>
+    </div>
+
+    <!-- 視圖 6：選擇匯報日期 -->
+    <div id="view-report-select" class="view-section">
+      <div class="form-group">
+        <label for="report-date-select">選擇匯報週次與日期：</label>
+        <select id="report-date-select">
+          <option value="">請選擇</option>
+          <option value="w1">7月22日(孟秋之月，第四週)</option>
+          <option value="w2">7月29日(孟秋之月，第五週)</option>
+          <option value="w3">8月5日(仲秋之月，第一週)</option>
+          <option value="w4">8月12日(仲秋之月，第二週)</option>
+          <option value="w5">8月19日(仲秋之月，第三週)</option>
+          <option value="w6">8月26日(仲秋之月，第四週)</option>
+        </select>
+      </div>
+      <button class="btn" id="btn-submit-date">確定</button>
+      <button class="btn btn-secondary btn-compact" id="btn-back-home-4">返回</button>
+    </div>
+
+    <!-- 視圖 7：純 JS 動態注入匯報工作區 -->
+    <div id="view-report-container" class="view-section">
+      <div id="dynamic-report-content"></div>
+      <button class="btn btn-secondary btn-compact" style="margin-top: 18px;" id="btn-reselect-date">返回</button>
+    </div>
+  </div>
+
+  <!-- 提示彈窗 -->
+  <div id="alert-modal" class="modal-overlay">
+    <div class="modal-content">
+      <div id="alert-modal-msg" class="modal-msg">提示內容</div>
+      <button class="btn btn-dialog" id="btn-close-modal">確定</button>
+    </div>
+  </div>
+
+  <!-- 讀取中彈窗 -->
+  <div id="loading-modal" class="modal-overlay">
+    <div class="modal-content loading-card">
+      <div class="loading-spinner"></div>
+      <div class="loading-text">讀取中...</div>
+    </div>
+  </div>
+</div>
+
+<script src="quizData.js"></script>
+<script src="main.js"></script>
+</body>
+</html>
