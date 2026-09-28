@@ -46,7 +46,8 @@ function renderChoices(choices) {
   choices.forEach(c => {
     const btn = document.createElement('button');
     btn.className = 'choice-btn';
-    if (c.text === '我想問其他問題') {
+    const isAskOther = (c.text === '我想問其他問題');
+    if (isAskOther) {
       btn.classList.add('alt-btn');
     }
     btn.innerText = c.text;
@@ -54,9 +55,11 @@ function renderChoices(choices) {
       footer.innerHTML = ''; // 點選後立即清空按鈕
       // 玩家說話 (靠右直接出現)
       addMessage('player', c.text, false, () => {
+        // 如果是「我想問其他問題」，停留等待 1 秒 (1000ms)，其餘選項停留 300ms
+        const delay = isAskOther ? 1000 : 300;
         setTimeout(() => {
           c.action();
-        }, 300);
+        }, delay);
       });
     });
     footer.appendChild(btn);
