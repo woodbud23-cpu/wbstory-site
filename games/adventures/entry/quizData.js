@@ -23,9 +23,9 @@ const WAR_LOCATIONS = [
 ];
 
 const QUIZ_DATA = {
-  // ================= 7月22日 =================
+  // ================= 孟秋之月，第四週 =================
   w1: {
-    title: "7月22日(孟秋之月，第四週)",
+    title: "孟秋之月，第四週",
     verifyQuestion: "本週「王國先鋒報」第一篇報導中第二段的第四個字是什麼？",
     verifyAnswer: ["國"],
     stages: [
@@ -34,7 +34,7 @@ const QUIZ_DATA = {
         blocks: [
           {
             type: "paragraph",
-            template: "委託1-1。根據委託的內容，執行這項任務的冒險者需要有對{f1}的抗性，並且具有能應對大白蚊的攻擊模式。符合這幾項標準的冒險者有{f2}、{f3}和{f4}。",
+            template: "<strong>委託1-1</strong>。根據委託的內容，執行這項任務的冒險者需要有對{f1}的抗性，並且具有能應對大白蚊的攻擊模式。符合這幾項標準的冒險者有{f2}、{f3}和{f4}。",
             fields: {
               f1: { type: "select", options: ["火焰", "水流", "寒冷", "毒液", "黑暗", "詛咒"], answer: "毒液" },
               f2: { type: "select", options: ADVENTURERS_POOL_1, isCharacter: true, group: "w1_1_members" },
@@ -47,34 +47,16 @@ const QUIZ_DATA = {
           },
           {
             type: "paragraph",
-            template: "委託1-2。根據{f5}中的{f6}，可以和亡者對話的神器是{f7}。這個神器在{f8}的{f9}。要在一週內完成任務，冒險者中要有人具備{f10}能力，並能抵抗{f11}，最後由一位{f12}進入目的地取出神器。符合上述需求的冒險者組合是{f13}和{f14}。",
+            template: "<strong>委託1-2</strong>。可以和亡者對話的神器是{f1}，這個神器在{f2}的{f3}。要完成任務，冒險者中要有人具備{f4}能力，並能抵抗{f5}，最後由一位{f6}進入目的地取出神器。符合上述需求的冒險者組合是{f7}和{f8}。",
             fields: {
-              f5: { 
-                type: "select", 
-                options: ["報紙", "履歷", "委託", "其他訊息"], 
-                answer: "報紙",
-                cascadeTarget: "f6" 
-              },
-              f6: { 
-                type: "select", 
-                options: [], 
-                answer: "第一份報紙",
-                cascadeSource: "f5",
-                cascadeMap: {
-                  "報紙": ["第一份報紙"],
-                  "履歷": ADVENTURERS_POOL_1.map(n => n + "履歷"),
-                  "委託": ["委託1-1", "委託1-2"],
-                  "其他訊息": ["第一封會長信件"]
-                }
-              },
-              f7: { type: "input", answer: "亡者八音盒" },
-              f8: { type: "input", answer: "狡兔島" },
-              f9: { type: "input", answer: "海之神殿" },
-              f10: { type: "select", options: ["航海", "登山", "談判", "游泳", "戰鬥"], answer: "航海" },
-              f11: { type: "select", options: ["北國士兵", "沿海蚊蟲", "山間強盜", "人魚歌聲", "亡者詛咒"], answer: "人魚歌聲" },
-              f12: { type: "input", answer: ["男"], matchMode: "includes" },
-              f13: { type: "select", options: ADVENTURERS_POOL_1, isCharacter: true, group: "w1_2_members" },
-              f14: { type: "select", options: ADVENTURERS_POOL_1, isCharacter: true, group: "w1_2_members" }
+              f1: { type: "input", answer: "亡者八音盒" },
+              f2: { type: "input", answer: "狡兔島" },
+              f3: { type: "input", answer: "海之神殿" },
+              f4: { type: "select", options: ["航海", "登山", "談判", "游泳", "戰鬥"], answer: "航海" },
+              f5: { type: "select", options: ["北國士兵", "沿海蚊蟲", "山間強盜", "人魚歌聲", "亡者詛咒"], answer: "人魚歌聲" },
+              f6: { type: "input", answer: ["男"], matchMode: "includes" },
+              f7: { type: "select", options: ADVENTURERS_POOL_1, isCharacter: true, group: "w1_2_members" },
+              f8: { type: "select", options: ADVENTURERS_POOL_1, isCharacter: true, group: "w1_2_members" }
             },
             setValidations: [
               { group: "w1_2_members", set: ["莉莉安・席爾", "艾登・霍恩"] }
@@ -87,9 +69,9 @@ const QUIZ_DATA = {
     ]
   },
 
-  // ================= 7月29日 =================
+  // ================= 孟秋之月，第五週 =================
   w2: {
-    title: "7月29日(孟秋之月，第五週)",
+    title: "孟秋之月，第五週",
     verifyQuestion: "上週新註冊的四位冒險者，最晚註冊那位的名字是什麼？",
     verifyAnswer: ["巴林", "鐵石", "巴林 鐵石", "巴林・鐵石", "巴林.鐵石"],
     stages: [
@@ -98,7 +80,7 @@ const QUIZ_DATA = {
         blocks: [
           {
             type: "paragraph",
-            template: "委託2-1。根據委託內容，死靈術士最麻煩的技能就是{f1}，所以需要由{f2}快速解決他。面對大量的骷髏士兵，需要由{f3}控制局面，並且由{f4}提供協助，避免他受到{f5}攻擊。最後，再由{f6}以大範圍攻擊消滅敵人。",
+            template: "<strong>委託2-1</strong>。根據委託內容，死靈術士最麻煩的技能就是{f1}，所以需要由{f2}快速解決他。面對大量的骷髏士兵，需要由{f3}控制局面，並且由{f4}提供協助，避免他受到{f5}攻擊。最後，再由{f6}以大範圍攻擊消滅敵人。",
             fields: {
               f1: { type: "select", options: ["召喚", "操控", "維持", "射線"], answer: "召喚" },
               f2: { type: "select", options: ADVENTURERS_POOL_2, answer: "希爾溫・晨露", isCharacter: true },
@@ -110,7 +92,7 @@ const QUIZ_DATA = {
           },
           {
             type: "paragraph",
-            template: "委託2-2。除去第一項任務中的四位冒險者，以及其他無法執行任務的冒險者之後，最適合這項任務的兩個人分別是{f7}和{f8}。",
+            template: "<strong>委託2-2</strong>。除去第一項任務中的四位冒險者，以及其他無法執行任務的冒險者之後，最適合這項任務的兩個人分別是{f7}和{f8}。",
             fields: {
               f7: { type: "select", options: ADVENTURERS_POOL_2, isCharacter: true, group: "w2_2_members" },
               f8: { type: "select", options: ADVENTURERS_POOL_2, isCharacter: true, group: "w2_2_members" }
@@ -141,9 +123,9 @@ const QUIZ_DATA = {
     ]
   },
 
-  // ================= 8月5日 =================
+  // ================= 仲秋之月，第一週 =================
   w3: {
-    title: "8月5日(仲秋之月，第一週)",
+    title: "仲秋之月，第一週",
     verifyQuestion: "這週報紙第一頁的最後兩個字是什麼？",
     verifyAnswer: ["漩渦"],
     stages: [
@@ -152,58 +134,26 @@ const QUIZ_DATA = {
         blocks: [
           {
             type: "paragraph",
-            template: "委託3-1。疏散民眾的部分，應該派{f1}和{f2}前往。和巨龍戰鬥的部分，只能派{f3}前往，因為其他人無法承受巨龍的傷害。另外，{f4}也應該參與這次的任務。雖然他的{f5}不適合和巨龍對抗，但根據{f6}中的{f7}和{f8}中的{f9}，可以得知她和巨龍有一段淵源，且他的{f10}很適合阻擋巨龍的破壞，因此也將他加入討伐隊伍中。",
+            template: "<strong>委託3-1</strong>。疏散民眾的部分，應該派{f1}和{f2}前往。和巨龍戰鬥的部分，只能派{f3}前往，因為其他人無法承受巨龍的傷害。另外，{f4}和巨龍有一段淵源，且他的{f5}很適合阻擋巨龍的破壞，因此也將他加入討伐隊伍中。",
             fields: {
               f1: { type: "select", options: ADVENTURERS_POOL_3, isCharacter: true, group: "w3_evac" },
               f2: { type: "select", options: ADVENTURERS_POOL_3, isCharacter: true, group: "w3_evac" },
               f3: { type: "select", options: ADVENTURERS_POOL_3, answer: "無名", isCharacter: true },
               f4: { type: "select", options: ADVENTURERS_POOL_3, answer: "伊格妮絲・蓋亞", isCharacter: true },
-              f5: { type: "select", options: ["性別", "技能", "喜好", "種族", "經歷"], answer: "種族" },
-              f6: { type: "select", options: ["報紙", "履歷", "委託", "其他訊息"], cascadeTarget: "f7" },
-              f7: { 
-                type: "select", 
-                options: [], 
-                cascadeSource: "f6",
-                cascadeMap: {
-                  "報紙": ["第一份報紙", "第二份報紙", "第三份報紙"],
-                  "履歷": ADVENTURERS_POOL_3.map(n => n + "履歷"),
-                  "委託": ["委託1-1", "委託1-2", "委託2-1", "委託2-2", "委託3-1", "委託3-2", "秘密委託：神器失竊", "秘密委託：生靈會"],
-                  "其他訊息": ["第一封會長信件", "第二封會長信件", "第三封會長信件", "博物館門票"]
-                }
-              },
-              f8: { type: "select", options: ["報紙", "履歷", "委託", "其他訊息"], cascadeTarget: "f9" },
-              f9: { 
-                type: "select", 
-                options: [], 
-                cascadeSource: "f8",
-                cascadeMap: {
-                  "報紙": ["第一份報紙", "第二份報紙", "第三份報紙"],
-                  "履歷": ADVENTURERS_POOL_3.map(n => n + "履歷"),
-                  "委託": ["委託1-1", "委託1-2", "委託2-1", "委託2-2", "委託3-1", "委託3-2", "秘密委託：神器失竊", "秘密委託：生靈會"],
-                  "其他訊息": ["第一封會長信件", "第二封會長信件", "第三封會長信件", "博物館門票"]
-                }
-              },
-              f10: { type: "select", options: ["性別", "技能", "喜好", "種族", "經歷"], answer: "技能" }
+              f5: { type: "select", options: ["性別", "技能", "喜好", "種族", "經歷"], answer: "技能" }
             },
             setValidations: [
-              { group: "w3_evac", set: ["西萊爾・晨露", "莉莉安・席爾"] },
-              {
-                pairSwap: true,
-                p1: { typeField: "f6", detailField: "f7" },
-                p2: { typeField: "f8", detailField: "f9" },
-                validA: { t: "報紙", d: "第三份報紙" },
-                validB: { t: "履歷", d: "伊格妮絲・蓋亞履歷" }
-              }
+              { group: "w3_evac", set: ["西萊爾・晨露", "莉莉安・席爾"] }
             ]
           },
           {
             type: "paragraph",
-            template: "委託3-2。在這四項任務中，應該派{f11}、{f12}和{f13}去進行{f14}的任務。",
+            template: "<strong>委託3-2</strong>。在這四項任務中，應該派{f6}、{f7}和{f8}去進行{f9}的任務。",
             fields: {
-              f11: { type: "select", options: ADVENTURERS_POOL_3, isCharacter: true, group: "w3_bfort" },
-              f12: { type: "select", options: ADVENTURERS_POOL_3, isCharacter: true, group: "w3_bfort" },
-              f13: { type: "select", options: ADVENTURERS_POOL_3, isCharacter: true, group: "w3_bfort" },
-              f14: { type: "select", options: ["偷取聖物", "修復碉堡", "採集資源", "討伐強盜"], answer: "修復碉堡" }
+              f6: { type: "select", options: ADVENTURERS_POOL_3, isCharacter: true, group: "w3_bfort" },
+              f7: { type: "select", options: ADVENTURERS_POOL_3, isCharacter: true, group: "w3_bfort" },
+              f8: { type: "select", options: ADVENTURERS_POOL_3, isCharacter: true, group: "w3_bfort" },
+              f9: { type: "select", options: ["偷取聖物", "修復碉堡", "採集資源", "討伐強盜"], answer: "修復碉堡" }
             },
             setValidations: [
               { group: "w3_bfort", set: ["露露・普羅特", "杜爾加・裂岩", "艾登・霍恩"] }
@@ -218,7 +168,7 @@ const QUIZ_DATA = {
             type: "paragraph",
             template: "根據委託上的指引，可以得知生靈會的象徵符號是{f1}。因此，生靈會的成員就是{f2}。",
             fields: {
-              f1: { type: "select", options: ["一顆星星", "一隻蜻蜓", "一片葉子", "一副鎧甲", "一個洞穴"], answer: "一隻蜻蜓" },
+              f1: { type: "select", options: ["一顆星星", "一隻蜻蜓", "一片葉子", "一副鎧甲", "一個洞穴"], answer: "一片葉子" },
               f2: { type: "select", options: ADVENTURERS_POOL_3, answer: "青羽・洛恩", isCharacter: true }
             }
           }
@@ -229,9 +179,9 @@ const QUIZ_DATA = {
     ]
   },
 
-  // ================= 8月12日 =================
+  // ================= 仲秋之月，第二週 =================
   w4: {
-    title: "8月12日(仲秋之月，第二週)",
+    title: "仲秋之月，第二週",
     verifyQuestion: "仲秋之月，第八日接受訪談的冒險者，慣用武器是什麼？",
     verifyAnswer: ["千年鹿角法杖"],
     stages: [
@@ -240,7 +190,7 @@ const QUIZ_DATA = {
         blocks: [
           {
             type: "paragraph",
-            template: "委託4-1。根據「生命靈樹治癒法則」，最適合執行任務的冒險者是{f1}、{f2}和{f3}。",
+            template: "<strong>委託4-1</strong>。根據「生命靈樹治癒法則」，最適合執行任務的冒險者是{f1}、{f2}和{f3}。",
             fields: {
               f1: { type: "select", options: ADVENTURERS_POOL_4, isCharacter: true, group: "w4_tree" },
               f2: { type: "select", options: ADVENTURERS_POOL_4, isCharacter: true, group: "w4_tree" },
@@ -272,9 +222,9 @@ const QUIZ_DATA = {
     ]
   },
 
-  // ================= 8月19日 =================
+  // ================= 仲秋之月，第三週 =================
   w5: {
-    title: "8月19日(仲秋之月，第三週)",
+    title: "仲秋之月，第三週",
     verifyQuestion: "請問本週報紙介紹的地點是哪裡？",
     verifyAnswer: ["花池"],
     stages: [
@@ -283,48 +233,17 @@ const QUIZ_DATA = {
         blocks: [
           {
             type: "paragraph",
-            template: "委託5-1。在黑水村的案件，正確的{f1}應該是{f2}。根據{f3}中的{f4}和{f5}中的{f6}，要正確的處理問題，應該派出的冒險者是{f7}、{f8}、{f9}和{f10}。",
+            template: "<strong>委託5-1</strong>。在黑水村的案件，正確的{f1}應該是{f2}。因此，這次應該派出的冒險者是{f3}、{f4}、{f5}和{f6}。",
             fields: {
               f1: { type: "select", options: ["任務地點", "敵人技能", "討伐對象", "出擊時間"], answer: "討伐對象" },
               f2: { type: "input", answer: "地牛" },
-              f3: { type: "select", options: ["報紙", "履歷", "委託", "其他訊息"], cascadeTarget: "f4" },
-              f4: { 
-                type: "select", 
-                options: [], 
-                cascadeSource: "f3",
-                cascadeMap: {
-                  "報紙": ["第一份報紙", "第二份報紙", "第三份報紙", "第四份報紙", "第五份報紙"],
-                  "履歷": ADVENTURERS_POOL_4.map(n => n + "履歷"),
-                  "委託": ["委託1-1", "委託1-2", "委託2-1", "委託2-2", "委託3-1", "委託3-2", "委託4-1", "委託5-1", "委託5-2", "秘密委託：神器失竊", "秘密委託：生靈會", "秘密委託：找回神器", "秘密委託：找出真凶"],
-                  "其他訊息": ["第一封會長信件", "第二封會長信件", "第三封會長信件", "第四封會長信件", "第五封會長信件", "博物館門票", "月餅"]
-                }
-              },
-              f5: { type: "select", options: ["報紙", "履歷", "委託", "其他訊息"], cascadeTarget: "f6" },
-              f6: { 
-                type: "select", 
-                options: [], 
-                cascadeSource: "f5",
-                cascadeMap: {
-                  "報紙": ["第一份報紙", "第二份報紙", "第三份報紙", "第四份報紙", "第五份報紙"],
-                  "履歷": ADVENTURERS_POOL_4.map(n => n + "履歷"),
-                  "委託": ["委託1-1", "委託1-2", "委託2-1", "委託2-2", "委託3-1", "委託3-2", "委託4-1", "委託5-1", "委託5-2", "秘密委託：神器失竊", "秘密委託：生靈會", "秘密委託：找回神器", "秘密委託：找出真凶"],
-                  "其他訊息": ["第一封會長信件", "第二封會長信件", "第三封會長信件", "第四封會長信件", "第五封會長信件", "博物館門票", "月餅"]
-                }
-              },
-              f7: { type: "select", options: ADVENTURERS_POOL_4, isCharacter: true, group: "w5_bull" },
-              f8: { type: "select", options: ADVENTURERS_POOL_4, isCharacter: true, group: "w5_bull" },
-              f9: { type: "select", options: ADVENTURERS_POOL_4, isCharacter: true, group: "w5_bull" },
-              f10: { type: "select", options: ADVENTURERS_POOL_4, isCharacter: true, group: "w5_bull" }
+              f3: { type: "select", options: ADVENTURERS_POOL_4, isCharacter: true, group: "w5_bull" },
+              f4: { type: "select", options: ADVENTURERS_POOL_4, isCharacter: true, group: "w5_bull" },
+              f5: { type: "select", options: ADVENTURERS_POOL_4, isCharacter: true, group: "w5_bull" },
+              f6: { type: "select", options: ADVENTURERS_POOL_4, isCharacter: true, group: "w5_bull" }
             },
             setValidations: [
-              { group: "w5_bull", set: ["雷蒙・巴拉德", "阿雅・斑紋", "西萊爾・晨露", "托馬斯・佩里"] },
-              {
-                pairSwap: true,
-                p1: { typeField: "f3", detailField: "f4" },
-                p2: { typeField: "f5", detailField: "f6" },
-                validA: { t: "履歷", d: "阿雅・斑紋履歷" },
-                validB: { t: "報紙", d: "第三份報紙" }
-              }
+              { group: "w5_bull", set: ["雷蒙・巴拉德", "阿雅・斑紋", "西萊爾・晨露", "托馬斯・佩里"] }
             ]
           }
         ]
@@ -334,7 +253,7 @@ const QUIZ_DATA = {
         blocks: [
           {
             type: "paragraph",
-            template: "委託5-2。由於委託需要兩位成年人，且體重加起來不可以超過一百公斤，符合的人選就只有{f1}和{f2}。",
+            template: "<strong>委託5-2</strong>。由於委託需要兩位成年人，且體重加起來不可以超過一百公斤，符合的人選就只有{f1}和{f2}。",
             fields: {
               f1: { type: "select", options: ADVENTURERS_POOL_4, isCharacter: true, group: "w5_weight" },
               f2: { type: "select", options: ADVENTURERS_POOL_4, isCharacter: true, group: "w5_weight" }
@@ -346,27 +265,14 @@ const QUIZ_DATA = {
         ]
       },
       {
-        presidentText: "等等，這兩個人……好像哪裡怪怪的。",
+        presidentText: "等等，這兩個人……好像哪裡怪怪的。\n這樣有符合任務需求嗎？",
         blocks: [
           {
             type: "paragraph",
-            template: "根據{f1}中的{f2}，可以得知無名其實是{f3}；而莉莉安其實是{f4}。",
+            template: "有。因為無名其實是{f1}；而莉莉安其實是{f2}。",
             fields: {
-              f1: { type: "select", options: ["報紙", "履歷", "委託", "其他訊息"], answer: "委託", cascadeTarget: "f2" },
-              f2: { 
-                type: "select", 
-                options: [], 
-                answer: "委託4-1",
-                cascadeSource: "f1",
-                cascadeMap: {
-                  "報紙": ["第一份報紙", "第二份報紙", "第三份報紙", "第四份報紙", "第五份報紙"],
-                  "履歷": ADVENTURERS_POOL_4.map(n => n + "履歷"),
-                  "委託": ["委託1-1", "委託1-2", "委託2-1", "委託2-2", "委託3-1", "委託3-2", "委託4-1", "委託5-1", "委託5-2", "秘密委託：神器失竊", "秘密委託：生靈會", "秘密委託：找回神器", "秘密委託：找出真凶"],
-                  "其他訊息": ["第一封會長信件", "第二封會長信件", "第三封會長信件", "第四封會長信件", "第五封會長信件", "博物館門票", "月餅"]
-                }
-              },
-              f3: { type: "input", answer: ["女"], matchMode: "includes" },
-              f4: { type: "input", answer: ["男"], matchMode: "includes" }
+              f1: { type: "input", answer: ["女"], matchMode: "includes" },
+              f2: { type: "input", answer: ["男"], matchMode: "includes" }
             }
           }
         ]
@@ -390,9 +296,9 @@ const QUIZ_DATA = {
     ]
   },
 
-  // ================= 8月26日 =================
+  // ================= 仲秋之月，第四週 =================
   w6: {
-    title: "8月26日(仲秋之月，第四週)",
+    title: "仲秋之月，第四週",
     verifyQuestion: "請問本週委託6-2的標題是什麼？",
     verifyAnswer: ["尋找女兒"],
     stages: [
