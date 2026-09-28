@@ -233,17 +233,18 @@ const QUIZ_DATA = {
         blocks: [
           {
             type: "paragraph",
-            template: "<strong>委託5-1</strong>。在黑水村的案件，正確的{f1}應該是{f2}。因此，這次應該派出的冒險者是{f3}、{f4}、{f5}和{f6}。",
+            template: "<strong>委託5-1</strong>。在黑水村的案件，正確的{f1}應該是{f2}。因此，這次應該派出的冒險者是{f3}、{f4}、{f5}、{f6}和{f7}。",
             fields: {
               f1: { type: "select", options: ["任務地點", "敵人技能", "討伐對象", "出擊時間"], answer: "討伐對象" },
               f2: { type: "input", answer: "地牛" },
               f3: { type: "select", options: ADVENTURERS_POOL_4, isCharacter: true, group: "w5_bull" },
               f4: { type: "select", options: ADVENTURERS_POOL_4, isCharacter: true, group: "w5_bull" },
               f5: { type: "select", options: ADVENTURERS_POOL_4, isCharacter: true, group: "w5_bull" },
-              f6: { type: "select", options: ADVENTURERS_POOL_4, isCharacter: true, group: "w5_bull" }
+              f6: { type: "select", options: ADVENTURERS_POOL_4, isCharacter: true, group: "w5_bull" },
+              f7: { type: "select", options: ADVENTURERS_POOL_4, isCharacter: true, group: "w5_bull" }
             },
             setValidations: [
-              { group: "w5_bull", set: ["雷蒙・巴拉德", "阿雅・斑紋", "西萊爾・晨露", "托馬斯・佩里"] }
+              { group: "w5_bull", set: ["雷蒙・巴拉德", "阿雅・斑紋", "西萊爾・晨露", "托馬斯・佩里", "布倫希爾德・銅鬚"] }
             ]
           }
         ]
