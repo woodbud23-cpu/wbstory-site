@@ -34,7 +34,7 @@ const QUIZ_DATA = {
         blocks: [
           {
             type: "paragraph",
-            template: "<strong>委託1-1</strong>。根據委託的內容，執行這項任務的冒險者需要有對{f1}的抗性，並且具有能應對大白蚊的攻擊模式。符合這幾項標準的冒險者有{f2}、{f3}和{f4}。",
+            template: "<strong>委託1-1</strong>。根據委託的內容，執行這項任務的冒險者需要有對{f1}的抗性，並且具備能應對大白蚊的攻擊方式。符合這幾項標準的冒險者有{f2}、{f3}和{f4}。",
             fields: {
               f1: { type: "select", options: ["火焰", "水流", "寒冷", "毒液", "黑暗", "詛咒"], answer: "毒液" },
               f2: { type: "select", options: ADVENTURERS_POOL_1, isCharacter: true, group: "w1_1_members" },
@@ -117,7 +117,7 @@ const QUIZ_DATA = {
             }
           }
         ],
-        successText: "原來如此，很有邏輯的推理。我會將你的想法回報給王國治安隊，希望能趕快找回失蹤的神器。這週的工作也辛苦了，下週記下加油吧！",
+        successText: "原來如此，很有邏輯的推理。我會將你的想法回報給王國治安隊，希望能趕快找回失蹤的神器。這週的工作也辛苦了，下週繼續加油吧！",
         nextEnvelope: "請打開信封C"
       }
     ]
@@ -202,7 +202,7 @@ const QUIZ_DATA = {
           },
           {
             type: "paragraph",
-            template: "秘密委託的部分，因為「黃金寶珠」的功用是{f4}，在失去神器後，問題變的嚴重許多，只有來自{f5}的{f6}不受影響，所以神器現在一定在那裡。考量到當地環境和任務性質，最適合這個任務的人選就是{f7}、{f8}和{f9}。",
+            template: "秘密委託的部分，因為「黃金寶珠」的功用是{f4}，在失去神器後，問題變得嚴重許多，只有來自{f5}的{f6}不受影響，所以神器現在一定在那裡。考量到當地環境和任務性質，最適合這個任務的人選就是{f7}、{f8}和{f9}。",
             fields: {
               f4: { type: "select", options: ["促進作物生長", "生成防禦結界", "杜絕糧食蟲害", "治癒病危患者", "增加食物美味"], answer: "杜絕糧食蟲害" },
               f5: { type: "input", answer: "北國" },
@@ -212,11 +212,11 @@ const QUIZ_DATA = {
               f9: { type: "select", options: ADVENTURERS_POOL_4, isCharacter: true, group: "w4_north" }
             },
             setValidations: [
-              { group: "w4_north", set: ["青羽・洛恩", "阿雅・斑紋", "無名"] }
+              { group: "w4_north", set: ["奈雅・霧痕", "卡隆・泥爪", "杜爾加・裂岩"] }
             ]
           }
         ],
-        successText: "原來是這樣啊。難怪我總覺得可翔月餅比較好吃。\n你看，我還特地留了一塊給你，好好品嘗吧。\n這下問題全都解決，可以開開心心過中秋了！",
+        successText: "原來是這樣啊。難怪我總覺得可翔月餅比較好吃。\n好好品嘗我特地留給你的那一塊吧。\n這下問題全都解決，可以開開心心過中秋了！",
         nextEnvelope: "請打開信封E"
       }
     ]
@@ -233,7 +233,7 @@ const QUIZ_DATA = {
         blocks: [
           {
             type: "paragraph",
-            template: "<strong>委託5-1</strong>。在黑水村的案件，正確的{f1}應該是{f2}。因此，這次應該派出的冒險者是{f3}、{f4}、{f5}、{f6}和{f7}。",
+            template: "<strong>委託5-1</strong>。在黑水村的案件中，正確的{f1}應該是{f2}。因此，這次應該派出的冒險者是{f3}、{f4}、{f5}、{f6}和{f7}。",
             fields: {
               f1: { type: "select", options: ["任務地點", "敵人技能", "討伐對象", "出擊時間"], answer: "討伐對象" },
               f2: { type: "input", answer: "地牛" },

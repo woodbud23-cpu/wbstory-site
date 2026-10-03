@@ -426,7 +426,7 @@ function handleRegisterSubmit() {
   showLoading(() => {
     switchView('view-register-success');
     document.getElementById('callout-envelope').style.display = 'none';
-    const welcomeText = `${name}你好，歡迎來到寶島冒險公會！\n\n你的履歷已通過審核，資料也進入員工系統。從今天起，你就是我們的一員了！\n\n下週一，請直接到寶島冒險公會櫃檯報到，你將會收到員工培訓資訊，和進一步的工作訊息。\n\n期待你在工作中的精采表現！`;
+    const welcomeText = `${name}你好，歡迎來到寶島冒險公會！\n\n你的履歷已通過審核，資料也進入員工系統。從今天起，你就是我們的一員了！\n\n下週一，請直接到寶島冒險公會櫃台報到，你將會收到員工培訓資訊，和進一步的工作訊息。\n\n期待你在工作中的精采表現！`;
     runTypewriter(document.getElementById('reg-typewriter'), welcomeText, 30, () => {
       document.getElementById('callout-envelope').style.display = 'block';
     });
@@ -436,7 +436,7 @@ function handleRegisterSubmit() {
 function handleReportLoginSubmit() {
   const name = document.getElementById('report-name').value.trim();
   if (!name) {
-    showAlert('請填寫名稱');
+    showAlert('請填寫姓名');
     return;
   }
 
