@@ -72,7 +72,7 @@ body {
     linear-gradient(180deg, #0E1017 0%, #12131C 100%);
 }
 
-/* 3. 解鎖試煉區 */
+/* 3. 試玩遊戲區 */
 .section-minigame {
   background: 
     radial-gradient(circle at 30% 40%, rgba(43, 62, 88, 0.25), transparent 55%),
@@ -241,7 +241,7 @@ body {
   100% { opacity: 1; transform: scale(1); }
 }
 
-/* ================= 解鎖試煉右側卡片樣式 ================= */
+/* ================= 試玩遊戲右側卡片樣式 ================= */
 
 .mission-card {
   transition: all 0.3s ease;

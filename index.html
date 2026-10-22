@@ -11,18 +11,18 @@
   <meta name="author" content="笑芽" />
   <link rel="canonical" href="https://wbstory.site/" />
 
-  <!-- Open Graph / 社群分享標籤 -->
+  <!-- Open Graph / 社群分享標籤（已改用 Logo 預覽圖） -->
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://wbstory.site/" />
   <meta property="og:title" content="木芽故事館 | Woodbud Story - 跨媒材推理工作室" />
   <meta property="og:description" content="故事，在虛實的縫隙中萌芽。專注於本格推理與邏輯博弈的沉浸式實境遊戲體驗。" />
-  <meta property="og:image" content="https://wbstory.site/image/project_01.png" />
+  <meta property="og:image" content="https://wbstory.site/image/logo.jpg" />
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="木芽故事館 | Woodbud Story" />
   <meta name="twitter:description" content="本格推理 × 邏輯博弈，跨媒材獨立推理遊戲工作室。" />
-  <meta name="twitter:image" content="https://wbstory.site/image/project_01.png" />
+  <meta name="twitter:image" content="https://wbstory.site/image/logo.jpg" />
 
   <!-- 結構化資料 (JSON-LD Schema) -->
   <script type="application/ld+json">
@@ -140,7 +140,7 @@
 
       <nav class="hidden md:flex items-center gap-8 text-base text-text-body font-medium">
         <a href="#projects" class="nav-link hover:text-accent-gold transition py-1">案件檔案</a>
-        <a href="#minigame" class="nav-link hover:text-accent-gold transition py-1">調查試煉</a>
+        <a href="#minigame" class="nav-link hover:text-accent-gold transition py-1">試玩遊戲</a>
         <a href="#about" class="nav-link hover:text-accent-gold transition py-1">幕後密室</a>
         <a href="#dimensions" class="nav-link hover:text-accent-gold transition py-1">推理維度</a>
         <a href="#contact" class="nav-link hover:text-accent-gold transition py-1">發起通訊</a>
@@ -156,7 +156,7 @@
 
     <div id="mobile-menu" class="hidden md:hidden bg-bg-surface border-b border-border-subtle px-6 py-5 space-y-4 text-base">
       <a href="#projects" class="block mobile-nav-link text-text-headline hover:text-accent-gold">案件檔案 (Projects)</a>
-      <a href="#minigame" class="block mobile-nav-link text-text-headline hover:text-accent-gold">調查試煉 (Trial)</a>
+      <a href="#minigame" class="block mobile-nav-link text-text-headline hover:text-accent-gold">試玩遊戲 (Minigames)</a>
       <a href="#about" class="block mobile-nav-link text-text-headline hover:text-accent-gold">幕後密室 (About)</a>
       <a href="#dimensions" class="block mobile-nav-link text-text-headline hover:text-accent-gold">推理維度 (Dimensions)</a>
       <a href="#contact" class="block mobile-nav-link text-text-headline hover:text-accent-gold">發起通訊 (Contact)</a>
@@ -212,7 +212,7 @@
             <img src="./image/project_01.png" alt="心理測驗殺人事件" class="w-full h-full object-cover transition duration-500 hover:scale-105" 
                  onerror="this.onerror=null; this.parentElement.classList.add('flex','items-center','justify-center'); this.parentElement.innerHTML='<div class=\'text-text-muted font-serif text-base tracking-widest\'>[ 心理測驗殺人事件 ]</div>';" />
             <div class="absolute inset-0 bg-gradient-to-t from-bg-surface via-transparent to-transparent z-10 pointer-events-none"></div>
-            <span class="absolute top-3 left-3 z-20 bg-accent-crimson text-text-headline text-base font-serif font-bold px-3 py-1 rounded shadow">現正發售</span>
+            <span class="absolute top-3 left-3 z-20 bg-[#2D1B1E] border border-accent-crimson/50 text-[#E8DCCA] text-base font-serif font-medium px-3 py-1 rounded shadow">補貨中</span>
           </div>
           <div class="p-6 flex-1 flex flex-col justify-between">
             <div>
@@ -266,12 +266,12 @@
     </div>
   </section>
 
-  <!-- ================= 5. 調查試煉 (TRIAL) ================= -->
+  <!-- ================= 5. 試玩遊戲 (MINIGAMES) ================= -->
   <section id="minigame" class="section-minigame py-24 border-b border-border-subtle px-6">
     <div class="max-w-6xl mx-auto">
       <div class="flex items-center gap-3 mb-4 text-left">
         <div class="w-10 h-0.5 bg-accent-gold"></div>
-        <h2 class="text-base sm:text-lg uppercase font-serif tracking-[0.2em] text-accent-gold font-bold">02. 調查試煉 / TRIALS</h2>
+        <h2 class="text-base sm:text-lg uppercase font-serif tracking-[0.2em] text-accent-gold font-bold">02. 試玩遊戲 / MINIGAMES</h2>
       </div>
       
       <h3 class="text-3xl sm:text-4xl font-serif font-bold text-text-headline text-left mb-10">終端通訊權限驗證</h3>
@@ -287,9 +287,9 @@
             <div>
               <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 mb-2">
                 <label class="block text-base font-mono text-text-muted">ENTER PASSCODE :</label>
-                <span class="text-base font-sans text-accent-gold/90">（提示：可輸入進行中任務的任務標題以展開通訊）</span>
+                <span class="text-base font-sans text-accent-gold/90">（提示：可輸入任務標題或編號「01」、「02」展開通訊）</span>
               </div>
-              <input type="text" id="puzzle-input" placeholder="請輸入案件暗號..." 
+              <input type="text" id="puzzle-input" placeholder="請輸入案件名稱或編號..." 
                      class="w-full bg-[#090a0f] border border-border-subtle rounded px-4 py-3.5 text-text-headline font-mono text-base focus:outline-none focus:border-accent-gold transition" />
             </div>
             <button type="submit" class="w-full bg-bg-surface-hover hover:bg-accent-gold hover:text-bg-primary text-text-headline text-base font-serif font-bold tracking-widest py-3.5 rounded transition border border-border-subtle">
@@ -297,10 +297,6 @@
             </button>
           </form>
 
-          <div id="puzzle-result" class="hidden mt-5 p-4 rounded bg-[#162117] border border-accent-gold/50 text-base font-mono">
-            <p class="text-accent-gold font-bold">✔ 驗證成功！機密檔案已解鎖：</p>
-            <p class="text-text-headline mt-1.5 leading-relaxed">恭喜破解終端！專屬折扣碼：<span class="text-accent-gold-light font-bold select-all">WOODBUD2026</span>（結帳享 9 折優惠）</p>
-          </div>
           <div id="puzzle-error" class="hidden mt-5 p-3.5 rounded bg-[#241315] border border-accent-crimson text-base font-mono text-red-300">
             ✖ 驗證失敗：暗號不正確，請重新檢視線索。
           </div>

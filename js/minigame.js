@@ -6,7 +6,6 @@ import { playTransitionAnimation } from './intro.js';
 export function initMinigame() {
   const puzzleForm = document.getElementById('puzzle-form');
   const puzzleInput = document.getElementById('puzzle-input');
-  const puzzleResult = document.getElementById('puzzle-result');
   const puzzleError = document.getElementById('puzzle-error');
 
   // 目標論壇跳轉網址
@@ -21,11 +20,11 @@ export function initMinigame() {
       const rawVal = puzzleInput.value.trim();
       const normalizedVal = rawVal.toUpperCase().replace(/\s+/g, '');
       
-      puzzleResult.classList.add('hidden');
-      puzzleError.classList.add('hidden');
+      if (puzzleError) puzzleError.classList.add('hidden');
 
-      // 1. 任務 01「消失的簡報」
+      // 1. 任務 01「消失的簡報」：支援 01、1、名稱
       const keywordsPresentation = [
+        '01',
         '消失的簡報',
         'PRESENTATION',
         '消失的簡報PRESENTATION'
@@ -38,8 +37,9 @@ export function initMinigame() {
         return;
       }
 
-      // 2. 任務 02「屠龍冒險隊」
+      // 2. 任務 02「屠龍冒險隊」：支援 02、2、名稱
       const keywordsDragon = [
+        '02',
         '屠龍冒險隊',
         'DUNGEON',
         '屠龍冒險隊DUNGEON'
@@ -52,10 +52,8 @@ export function initMinigame() {
         return;
       }
 
-      // 3. 折扣碼解鎖驗證
-      if (normalizedVal === 'SPROUT' || normalizedVal === 'WOODBUD' || normalizedVal === '木芽') {
-        puzzleResult.classList.remove('hidden');
-      } else {
+      // 驗證失敗提示
+      if (puzzleError) {
         puzzleError.classList.remove('hidden');
       }
     });
@@ -66,7 +64,6 @@ export function initMinigame() {
   
   missionCards.forEach(card => {
     card.addEventListener('click', () => {
-      // 若當前卡片已經展開，則不重複執行
       if (card.classList.contains('is-active')) return;
 
       // 1. 收折其他所有已展開的任務卡片
