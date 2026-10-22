@@ -314,11 +314,11 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(160, 140, 70, 0.32);
-      backdrop-filter: sepia(0.35) contrast(1.05);
+      background: rgba(145, 125, 65, 0.42);
       z-index: 50;
       transition: opacity 1s ease;
       pointer-events: none;
+      transform: translateZ(0);
     }
 
     .time-stop-title-wrap {
@@ -399,7 +399,7 @@
 
     #dialogue-content {
       font-size: 18px;
-      line-height: 1.5;
+      line-height: 1.4;
       color: var(--text-main);
       white-space: pre-wrap;
       text-align: center;
@@ -590,6 +590,7 @@
 
       #dialogue-content {
         font-size: 14.5px;
+        line-height: 1.35;
       }
       .panel-char-name {
         font-size: 19px;
@@ -623,7 +624,7 @@
       <!-- 鐘乳石 -->
       <div id="stalactite-click-zone" onclick="handleStalactiteClick()"></div>
       <div id="stalactite-obj">
-        <img src="stone.png" alt="鐘乳石">
+        <img src="stone.png" alt="鐘乳石" decoding="async">
       </div>
 
       <!-- 巨龍血條與數值 -->
@@ -634,13 +635,13 @@
 
       <!-- 邪惡巨龍 -->
       <div id="dragon-unit" onclick="handleUnitClick('dragon')">
-        <img src="dragon.png" alt="邪惡巨龍">
+        <img src="dragon.png" alt="邪惡巨龍" decoding="async">
       </div>
 
       <!-- 逃脫大門 -->
       <div id="door-unit">
-        <img id="doorlock-img" class="door-layer" src="doorlock.png" alt="鎖住的大門" style="opacity: 1;">
-        <img id="door-img" class="door-layer" src="door.png" alt="開啟的大門" style="opacity: 0;">
+        <img id="doorlock-img" class="door-layer" src="doorlock.png" alt="鎖住的大門" style="opacity: 1;" decoding="async">
+        <img id="door-img" class="door-layer" src="door.png" alt="開啟的大門" style="opacity: 0;" decoding="async">
       </div>
 
       <!-- 冒險者隊伍 -->
@@ -652,7 +653,7 @@
             <span class="hp-num-text" id="hp-num-wizard">7/33</span>
             <div class="hp-bar-wrap"><div class="hp-bar-fill" id="hp-wizard" style="width: 21.2%;"></div></div>
           </div>
-          <img src="wizard.png" alt="魔法師">
+          <img src="wizard.png" alt="魔法師" decoding="async">
         </div>
 
         <!-- 弓箭手 -->
@@ -661,7 +662,7 @@
             <span class="hp-num-text" id="hp-num-archer">5/47</span>
             <div class="hp-bar-wrap"><div class="hp-bar-fill" id="hp-archer" style="width: 10.6%;"></div></div>
           </div>
-          <img src="archer.png" alt="弓箭手">
+          <img src="archer.png" alt="弓箭手" decoding="async">
         </div>
 
         <!-- 盜賊 -->
@@ -670,7 +671,7 @@
             <span class="hp-num-text" id="hp-num-thief">8/32</span>
             <div class="hp-bar-wrap"><div class="hp-bar-fill" id="hp-thief" style="width: 25%;"></div></div>
           </div>
-          <img src="thief.png" alt="盜賊">
+          <img src="thief.png" alt="盜賊" decoding="async">
         </div>
 
         <!-- 勇者 -->
@@ -679,7 +680,7 @@
             <span class="hp-num-text" id="hp-num-swordman">3/55</span>
             <div class="hp-bar-wrap"><div class="hp-bar-fill" id="hp-swordman" style="width: 5.5%;"></div></div>
           </div>
-          <img src="swordman.png" alt="勇者">
+          <img src="swordman.png" alt="勇者" decoding="async">
         </div>
 
       </div>
@@ -800,10 +801,10 @@
         id: 'swordman', name: '勇者', hp: 3, maxHp: 55, dead: false,
         statuses: [{ name: '流血', desc: '移動時，會損失5HP' }],
         skills: [
-          { id: 1, name: '奮力一擊', type: 'melee', needTarget: true, target: 'dragon' },
-          { id: 2, name: '輕巧刺擊', type: 'melee', needTarget: true, target: 'dragon' },
-          { id: 3, name: '神聖劈砍', type: 'melee', needTarget: true, target: 'dragon' },
-          { id: 4, name: '什麼都不做', type: 'none', needTarget: false }
+          { id: 1, name: '奮力一擊', desc: '用盡全身的力氣進行攻擊，破壞力十足。', type: 'melee', needTarget: true, target: 'dragon' },
+          { id: 2, name: '輕巧刺擊', desc: '快速進行攻擊，威力小但命中率高。', type: 'melee', needTarget: true, target: 'dragon' },
+          { id: 3, name: '神聖劈砍', desc: '附帶神聖屬性的斬擊。', type: 'melee', needTarget: true, target: 'dragon' },
+          { id: 4, name: '什麼都不做', desc: '', type: 'none', needTarget: false }
         ],
         selectedSkill: 4,
         wail: '勇者：可惡……就差一步了嗎……'
@@ -812,10 +813,10 @@
         id: 'thief', name: '盜賊', hp: 8, maxHp: 32, dead: false,
         statuses: [],
         skills: [
-          { id: 1, name: '偷竊', type: 'steal', needTarget: true, target: 'dragon' },
-          { id: 2, name: '開鎖', type: 'unlock_melee', needTarget: false, disabled: true },
-          { id: 3, name: '寒冰飛刀', type: 'ranged', elem: 'ice', needTarget: true, target: 'stalactite' },
-          { id: 4, name: '什麼都不做', type: 'none', needTarget: false }
+          { id: 1, name: '偷竊', desc: '偷取某個對象身上的一件物品。', type: 'steal', needTarget: true, target: 'dragon' },
+          { id: 2, name: '開鎖', desc: '', type: 'unlock_melee', needTarget: false, disabled: true },
+          { id: 3, name: '寒冰飛刀', desc: '以帶有寒冰屬性的飛刀進行遠程攻擊。', type: 'ranged', elem: 'ice', needTarget: true, target: 'stalactite' },
+          { id: 4, name: '什麼都不做', desc: '', type: 'none', needTarget: false }
         ],
         selectedSkill: 3,
         wail: '盜賊：可惡啊……失手了……'
@@ -824,10 +825,10 @@
         id: 'archer', name: '弓箭手', hp: 5, maxHp: 47, dead: false,
         statuses: [{ name: '中毒', desc: '每次攻擊-1HP' }],
         skills: [
-          { id: 1, name: '烈火箭', type: 'ranged', elem: 'fire', needTarget: true, target: 'stalactite' },
-          { id: 2, name: '寒冰箭', type: 'ranged', elem: 'ice', needTarget: true, target: 'dragon' },
-          { id: 3, name: '穿心箭', type: 'ranged', elem: 'none', needTarget: true, target: 'dragon' },
-          { id: 4, name: '什麼都不做', type: 'none', needTarget: false }
+          { id: 1, name: '烈火箭', desc: '射出帶有火焰屬性的箭矢。', type: 'ranged', elem: 'fire', needTarget: true, target: 'stalactite' },
+          { id: 2, name: '寒冰箭', desc: '射出帶有寒冰屬性的箭矢。', type: 'ranged', elem: 'ice', needTarget: true, target: 'dragon' },
+          { id: 3, name: '穿心箭', desc: '射出無屬性，但威力較大的箭矢。', type: 'ranged', elem: 'none', needTarget: true, target: 'dragon' },
+          { id: 4, name: '什麼都不做', desc: '', type: 'none', needTarget: false }
         ],
         selectedSkill: 1,
         wail: '弓箭手：我的箭……已經射不出了嗎……'
@@ -836,10 +837,10 @@
         id: 'wizard', name: '魔法師', hp: 7, maxHp: 33, dead: false,
         statuses: [{ name: '魔法束縛', desc: '只能再施放一次法術' }],
         skills: [
-          { id: 1, name: '聖癒術', type: 'heal', needTarget: false },
-          { id: 2, name: '開鎖術', type: 'unlock_magic', needTarget: false, disabled: true },
-          { id: 3, name: '淨化術', type: 'cleanse', needTarget: true, target: 'archer' },
-          { id: 4, name: '什麼都不做', type: 'none', needTarget: false }
+          { id: 1, name: '聖癒術', desc: '', type: 'heal', needTarget: false },
+          { id: 2, name: '開鎖術', desc: '', type: 'unlock_magic', needTarget: false, disabled: true },
+          { id: 3, name: '淨化術', desc: '驅散一位隊友身上的負面效果。', type: 'cleanse', needTarget: true, target: 'archer' },
+          { id: 4, name: '什麼都不做', desc: '', type: 'none', needTarget: false }
         ],
         selectedSkill: 4,
         wail: '魔法師：魔力……燃燒殆盡了……'
@@ -854,7 +855,7 @@
           { name: '狂怒', desc: '屬性傷害提升100%' },
           { name: '怪力', desc: '物理傷害提升200%' },
           { name: '銳利目光', desc: '敏捷提升50%' },
-          { name: '赤焰衝能', desc: '下次行動可以使出「熾熱吐息」' },
+          { name: '赤焰充能', desc: '下次行動可以使出「熾熱吐息」' },
           { name: '火焰抗性', desc: '免疫燃燒狀態' },
           { name: '寒冰抗性', desc: '免疫冰凍狀態' },
           { name: '世界之力', desc: '具有暫停時間的能力' },
@@ -1021,7 +1022,8 @@
       gameState = 'SELECTING_TARGET';
       activeChar = char;
       pendingSkill = skill;
-      typeText(`請選取【${skill.name}】對象\n\n[點選目標，或點擊下方取消]`, () => {
+      const descLine = skill.desc ? `${skill.desc}\n` : '';
+      typeText(`${descLine}請選擇【${skill.name}】對象\n[點選目標，或點擊下方取消]`, () => {
         const btnCancel = document.createElement('button');
         btnCancel.className = 'skill-btn';
         btnCancel.style.marginTop = '6px';
