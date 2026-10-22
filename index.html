@@ -277,6 +277,7 @@
       <h3 class="text-3xl sm:text-4xl font-serif font-bold text-text-headline text-left mb-10">終端通訊權限驗證</h3>
 
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        <!-- 左側終端區 -->
         <div class="lg:col-span-7 bg-bg-surface/90 p-6 sm:p-8 rounded-xl border border-border-subtle glow-border">
           <div class="flex items-center justify-between border-b border-border-subtle pb-3 mb-5 font-mono text-base text-text-muted">
             <span>TERMINAL // DECRYPTION_PROTOCOL</span>
@@ -287,7 +288,7 @@
             <div>
               <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 mb-2">
                 <label class="block text-base font-mono text-text-muted">ENTER PASSCODE :</label>
-                <span class="text-base font-sans text-accent-gold/90">（提示：可輸入任務標題或編號展開通訊）</span>
+                <span class="text-base font-sans text-accent-gold/90">（可輸入任務標題或編號）</span>
               </div>
               <input type="text" id="puzzle-input" placeholder="請輸入案件名稱或編號..." 
                      class="w-full bg-[#090a0f] border border-border-subtle rounded px-4 py-3.5 text-text-headline font-mono text-base focus:outline-none focus:border-accent-gold transition" />
@@ -302,8 +303,8 @@
           </div>
         </div>
 
-        <!-- 右側任務卡片列表（加入最大高度限制與精緻滾動條，不改變總體尺寸） -->
-        <div class="lg:col-span-5 space-y-4 max-h-[500px] overflow-y-auto pr-1 custom-scrollbar" id="minigame-mission-list">
+        <!-- 右側任務卡片列表（高度鎖定 310px 與左側齊平，超出時啟用平滑自訂深色卷軸） -->
+        <div class="lg:col-span-5 space-y-4 max-h-[310px] overflow-y-auto pr-1 custom-scrollbar" id="minigame-mission-list">
           
           <!-- 任務 01 (預設展開) -->
           <div class="mission-card is-active bg-bg-surface/90 border border-accent-gold/50 rounded-xl p-5 transition-all duration-300 cursor-pointer">
