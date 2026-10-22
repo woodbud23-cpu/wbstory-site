@@ -155,10 +155,9 @@ body {
               border-color 0.4s ease, 
               box-shadow 0.4s ease;
   width: 100%;
-  height: auto; /* 手機端自動展開全部文字，不被截斷 */
+  height: auto;
 }
 
-/* 電腦端 (lg 以上)：維持 80%:18% 與固定高度平滑滑動 */
 @media (min-width: 1024px) {
   .about-panel {
     height: 590px;
@@ -178,7 +177,6 @@ body {
   }
 }
 
-/* 手機端 (lg 以下)：收折方塊呈現極簡緊湊橫條 */
 @media (max-width: 1023px) {
   .about-panel.is-collapsed {
     padding: 1rem 1.25rem !important;
@@ -241,7 +239,7 @@ body {
   100% { opacity: 1; transform: scale(1); }
 }
 
-/* ================= 試玩遊戲右側卡片樣式 ================= */
+/* ================= 試玩遊戲右側卡片樣式與卷軸 ================= */
 
 .mission-card {
   transition: all 0.3s ease;
@@ -256,4 +254,20 @@ body {
 .mission-card:hover:not(.is-locked) {
   border-color: rgba(212, 175, 55, 0.5);
   transform: translateX(4px);
+}
+
+/* 右側任務卡片專屬深色小卷軸 */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 5px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: rgba(13, 14, 19, 0.5);
+  border-radius: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(212, 175, 55, 0.25);
+  border-radius: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(212, 175, 55, 0.5);
 }

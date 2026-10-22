@@ -287,7 +287,7 @@
             <div>
               <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 mb-2">
                 <label class="block text-base font-mono text-text-muted">ENTER PASSCODE :</label>
-                <span class="text-base font-sans text-accent-gold/90">（提示：可輸入任務標題或編號「01」、「02」展開通訊）</span>
+                <span class="text-base font-sans text-accent-gold/90">（提示：可輸入任務標題或編號展開通訊）</span>
               </div>
               <input type="text" id="puzzle-input" placeholder="請輸入案件名稱或編號..." 
                      class="w-full bg-[#090a0f] border border-border-subtle rounded px-4 py-3.5 text-text-headline font-mono text-base focus:outline-none focus:border-accent-gold transition" />
@@ -302,7 +302,9 @@
           </div>
         </div>
 
-        <div class="lg:col-span-5 space-y-4" id="minigame-mission-list">
+        <!-- 右側任務卡片列表（加入最大高度限制與精緻滾動條，不改變總體尺寸） -->
+        <div class="lg:col-span-5 space-y-4 max-h-[500px] overflow-y-auto pr-1 custom-scrollbar" id="minigame-mission-list">
+          
           <!-- 任務 01 (預設展開) -->
           <div class="mission-card is-active bg-bg-surface/90 border border-accent-gold/50 rounded-xl p-5 transition-all duration-300 cursor-pointer">
             <div class="flex items-center justify-between">
@@ -343,6 +345,22 @@
               <span class="text-base font-mono text-text-muted border border-border-subtle px-2.5 py-0.5 rounded">未解鎖</span>
             </div>
           </div>
+
+          <!-- 任務 99 (提示區) -->
+          <div class="mission-card bg-bg-surface/90 border border-border-subtle rounded-xl p-5 transition-all duration-300 cursor-pointer">
+            <div class="flex items-center justify-between">
+              <h4 class="text-lg font-serif font-bold text-text-headline flex items-center gap-2.5">
+                <span class="w-2.5 h-2.5 rounded-full bg-accent-gold animate-pulse"></span>
+                99. 提示區 HINTS
+              </h4>
+              <span class="text-base font-mono text-accent-gold border border-accent-gold/30 px-2.5 py-0.5 rounded mission-badge">進行中</span>
+            </div>
+            
+            <div class="mission-content hidden mt-3.5 pt-3.5 border-t border-border-subtle text-base text-text-body leading-relaxed">
+              需要提示嗎？點進來看看吧。
+            </div>
+          </div>
+
         </div>
       </div>
     </div>
