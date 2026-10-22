@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>案件提示區 | 木芽故事館</title>
+  
+  <!-- 字型引入 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;700&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    :root {
+      --bg-primary: #0D0E13;
+      --bg-surface: #151822;
+      --bg-surface-hover: #1E2230;
+      --accent-gold: #D4AF37;
+      --accent-gold-light: #F3E5AB;
+      --text-headline: #E8DCCA;
+      --text-body: #C5C6C7;
+      --text-muted: #7D828A;
+      --border-subtle: rgba(212, 175, 55, 0.16);
+    }
+
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-body);
+      font-family: 'Noto Sans TC', sans-serif;
+      background-image: 
+        radial-gradient(circle at 50% 10%, rgba(58, 80, 107, 0.2), transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(212, 175, 55, 0.05), transparent 45%);
+    }
+
+    .font-serif-title {
+      font-family: 'Cinzel', 'Noto Serif TC', serif;
+    }
+
+    /* 漸入動畫 */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .animate-fade-in {
+      animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    /* 卡片收合與展開平滑過渡 */
+    .game-card {
+      transition: all 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+  </style>
+</head>
+<body class="min-h-screen py-16 px-4 sm:px-6 flex flex-col items-center">
+
+  <main class="w-full max-w-2xl mx-auto">
+    
+    <!-- 頂部標題區 -->
+    <header class="text-center mb-12">
+      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-[rgba(212,175,55,0.2)] bg-[#151822]/60 text-[#D4AF37] text-xs font-serif-title tracking-widest mb-4">
+        <span class="w-2 h-2 rounded-full bg-[#9E2A2B] animate-pulse"></span>
+        INVESTIGATION PROTOCOL
+      </div>
+      <h1 class="text-3xl sm:text-4xl font-serif-title font-bold text-[#E8DCCA] tracking-wider mb-3">
+        提示區
+      </h1>
+      <p class="text-sm text-[#7D828A]">點選對應的案件檔案查看階段性破案線索</p>
+    </header>
+
+    <!-- 遊戲卡片列表容器 -->
+    <div id="game-list" class="space-y-6"></div>
+
+  </main>
+
+  <script>
+    // 提示資料集
+    const gamesData = [
+      {
+        id: "presentation",
+        number: "01",
+        title: "消失的簡報",
+        initialHint: "根據他們的聊天紀錄，林翔宇似乎把自己的儲存空間、帳號密碼藏在私人用品裡，仔細觀察一下那些用品有沒有奇怪的地方吧。",
+        steps: [
+          {
+            trigger: "還是找不到簡報在哪裡",
+            content: "林翔宇曾經提到「上面是帳號，下面是密碼，左邊是網址」，有分成這三個部分的，就只有桌上的發票了。仔細看看，帳號就藏在發票條碼裡，而下面兩個QRcode，則分別對應了儲存空間的網址和藏密碼的網站。"
+          },
+          {
+            trigger: "不知道打地鼠遊戲和帳號密碼有什麼關聯",
+            content: "委託人說，林翔宇不喜歡玩小遊戲，說不定，其實根本不用玩打地鼠遊戲，直接看就可以看到密碼是多少了。"
+          },
+          {
+            trigger: "還是找不到帳號密碼，我想直接知道答案",
+            content: "仔細看發票上面的條碼，可以在裡面看到「20190706」這串數字。而在打地鼠的頁面中，不需要玩小遊戲，直接看上面分數的地方，在時間剩下20秒左右時，會直接顯示密碼為「2239」，直接輸入到另一個QRcode裡，儲存空間的登入介面，就可以找到簡報了。"
+          },
+          {
+            trigger: "找到簡報了，但不知道他簡報裡的話是什麼意思",
+            content: "簡報中只有一張投影片和其他張有明顯的不同，還出現了代表「你」的單字，試著點擊它的旁邊吧。"
+          },
+          {
+            trigger: "還是找不到在什麼地方",
+            content: "簡報最後一頁不同於其他張投影片，背景是白色的。直接點擊代表「你」的單字「YOU」的旁邊，就可以找到林翔宇熬夜趕至出來的網站囉！"
+          }
+        ]
+      },
+      {
+        id: "dragon",
+        number: "02",
+        title: "屠龍冒險隊",
+        initialHint: "在前往拯救冒險隊之前，先點擊看看網站各處，說不定能找到額外的資訊。",
+        steps: [
+          {
+            trigger: "找不到可以點擊的地方",
+            content: "「熱門看板」中的「旅遊心得板」，有一篇熱騰騰的旅遊心得，裡面的內容對於拯救冒險隊至關重要，看完之後再進入傳送門吧。"
+          },
+          {
+            trigger: "打不贏巨龍",
+            content: "不妨先試看看什麼都不做，直接讓時間流動，或許可以找到打贏巨龍的關鍵。"
+          },
+          {
+            trigger: "可以打贏巨龍，但還是逃不出洞窟",
+            content: "要逃出洞窟，最重要的是要讓勇者使出「奮力一擊」，所以勇者絕對不可以犧牲。想想看，有什麼方法可以讓勇者活下來吧。"
+          },
+          {
+            trigger: "我想知道讓勇者活下來的辦法",
+            content: "要讓勇者不會因為流血而死，一開始就只能讓他「什麼都不做」，並且靠著魔法師的「淨化術」來治療他的「流血」狀態。其他冒險者都只要維持原本的行動，就可以打倒巨龍，並逃出洞窟了。"
+          },
+          {
+            trigger: "成功拯救冒險隊伍了，然後呢？",
+            content: "回到現實世界的社群網站，有沒有發現什麼奇怪的地方呢？"
+          },
+          {
+            trigger: "請告訴我進一步的線索",
+            content: "剛剛冒險隊中的魔法師明明是個老年男子，但發文者的頭像卻是個年輕的女生。另外，時間停止這種高級的魔法，好像只有一個角色有辦法施展出來。"
+          },
+          {
+            trigger: "還是不知道該怎麼做，請告訴我解答",
+            content: "根據上面的線索，再加上戰鬥畫面中的技能介紹，我們可以發現發文的魔法師並不是來自冒險隊伍的魔法師，而是由會時間暫停魔法的巨龍所假扮的。既然有人冒用身分，我們就應該要去檢舉他才行。"
+          }
+        ]
+      }
+    ];
+
+    // 目前展開的卡片 ID
+    let currentExpandedId = null;
+
+    // 儲存每個卡片當前的線索進度
+    const gameProgress = {};
+    gamesData.forEach(game => {
+      gameProgress[game.id] = 0;
+    });
+
+    const listContainer = document.getElementById('game-list');
+
+    // 渲染整個列表
+    function render() {
+      listContainer.innerHTML = '';
+
+      gamesData.forEach(game => {
+        const isExpanded = currentExpandedId === game.id;
+        const currentStep = gameProgress[game.id];
+
+        const card = document.createElement('div');
+        card.className = `game-card rounded-xl border transition-all duration-300 ${
+          isExpanded 
+            ? 'bg-[#151822] border-[rgba(212,175,55,0.45)] shadow-[0_0_24px_rgba(212,175,55,0.08)] p-6 sm:p-8 cursor-default' 
+            : 'bg-[#12141C]/80 border-[rgba(212,175,55,0.15)] hover:border-[rgba(212,175,55,0.4)] hover:bg-[#151822] p-6 cursor-pointer hover:-translate-y-0.5'
+        }`;
+
+        // 1. 卡片頂部/標題區塊（含移動動畫過渡）
+        const header = document.createElement('div');
+        header.className = `flex items-center justify-between transition-all duration-300 ${
+          isExpanded ? 'border-b border-[rgba(212,175,55,0.15)] pb-4 mb-6' : ''
+        }`;
+
+        const titleWrapper = document.createElement('div');
+        titleWrapper.className = "flex items-center gap-3";
+
+        const badge = document.createElement('span');
+        badge.className = `text-xs font-mono font-bold px-2 py-0.5 rounded transition-all duration-300 ${
+          isExpanded 
+            ? 'bg-[#D4AF37] text-[#0D0E13]' 
+            : 'bg-[rgba(212,175,55,0.12)] text-[#D4AF37] border border-[rgba(212,175,55,0.2)]'
+        }`;
+        badge.textContent = game.number;
+
+        const title = document.createElement('h2');
+        title.className = `font-serif-title font-bold text-[#E8DCCA] transition-all duration-300 ${
+          isExpanded ? 'text-2xl text-[#F3E5AB]' : 'text-xl'
+        }`;
+        title.textContent = game.title;
+
+        titleWrapper.appendChild(badge);
+        titleWrapper.appendChild(title);
+        header.appendChild(titleWrapper);
+
+        // 未展開時右側的展開箭頭
+        if (!isExpanded) {
+          const arrow = document.createElement('div');
+          arrow.className = "text-[#7D828A] text-sm font-mono flex items-center gap-1";
+          arrow.innerHTML = '<span>展開提示</span> ➔';
+          header.appendChild(arrow);
+
+          // 點擊卡片展開
+          card.addEventListener('click', () => {
+            // 如果原本有展開別的，將別的進度重置回 0
+            if (currentExpandedId && currentExpandedId !== game.id) {
+              gameProgress[currentExpandedId] = 0;
+            }
+            currentExpandedId = game.id;
+            render();
+          });
+        }
+
+        card.appendChild(header);
+
+        // 2. 展開後的提示內容區塊
+        if (isExpanded) {
+          const contentContainer = document.createElement('div');
+          contentContainer.className = "space-y-4 animate-fade-in";
+
+          // 基礎提示（第 0 步）
+          const baseHintBox = document.createElement('div');
+          baseHintBox.className = "p-4 sm:p-5 rounded-lg bg-[#090A0F] border border-[rgba(212,175,55,0.1)] text-[#C5C6C7] text-base leading-relaxed";
+          baseHintBox.textContent = game.initialHint;
+          contentContainer.appendChild(baseHintBox);
+
+          // 依序渲染已經解鎖的進階提示
+          for (let i = 0; i < currentStep; i++) {
+            const stepData = game.steps[i];
+            const nextStepBox = document.createElement('div');
+            nextStepBox.className = "p-4 sm:p-5 rounded-lg bg-[#090A0F] border-l-2 border-l-[#D4AF37] border-y border-r border-[rgba(212,175,55,0.12)] text-[#C5C6C7] text-base leading-relaxed animate-fade-in";
+            nextStepBox.textContent = stepData.content;
+            contentContainer.appendChild(nextStepBox);
+          }
+
+          // 判斷是否還有下一個提示可觸發
+          if (currentStep < game.steps.length) {
+            const nextStepData = game.steps[currentStep];
+
+            const triggerBtn = document.createElement('button');
+            triggerBtn.type = "button";
+            triggerBtn.className = "w-full mt-3 p-4 rounded-lg bg-[#1A1D28] hover:bg-[#202534] border border-dashed border-[rgba(212,175,55,0.35)] hover:border-[#D4AF37] text-[#D4AF37] hover:text-[#F3E5AB] text-sm sm:text-base font-medium flex items-center justify-center gap-2 transition-all duration-200 group";
+            triggerBtn.innerHTML = `
+              <span class="text-xs font-mono px-1.5 py-0.5 rounded bg-[rgba(212,175,55,0.1)] group-hover:bg-[#D4AF37] group-hover:text-black transition">NEXT</span>
+              <span>${nextStepData.trigger}</span>
+            `;
+
+            // 點擊觸發點解鎖下一個提示
+            triggerBtn.addEventListener('click', (e) => {
+              e.stopPropagation();
+              gameProgress[game.id] += 1;
+              render();
+            });
+
+            contentContainer.appendChild(triggerBtn);
+          } else {
+            // 所有提示皆已展示
+            const endNotice = document.createElement('div');
+            endNotice.className = "mt-4 text-center py-3 text-xs font-mono text-[#7D828A] border-t border-[rgba(212,175,55,0.1)]";
+            endNotice.textContent = "— 所有線索已全部解鎖完畢 —";
+            contentContainer.appendChild(endNotice);
+          }
+
+          card.appendChild(contentContainer);
+        }
+
+        listContainer.appendChild(card);
+      });
+
+      if (window.lucide) {
+        window.lucide.createIcons();
+      }
+    }
+
+    // 初始化首次渲染
+    render();
+  </script>
+</body>
+</html>
