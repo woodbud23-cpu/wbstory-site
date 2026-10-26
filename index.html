@@ -7,7 +7,7 @@
   
   <!-- 基本 SEO 標籤 -->
   <meta name="description" content="木芽故事館 (Woodbud Story) 是專注於本格推理、邏輯博弈與實境調查的跨媒材獨立遊戲工作室。提供原創沉浸式盒裝遊戲、線索調查與客製化推理企劃。" />
-  <meta name="keywords" content="木芽故事館, Woodbud Story, 心理測驗殺人事件, 本格推理, 沉浸式遊戲, 盒裝遊戲, 推理遊戲, 實境解謎" />
+  <meta name="keywords" content="木芽故事館, Woodbud Story, 心理測驗殺人事件, 寶島冒險公會, 本格推理, 沉浸式遊戲, 盒裝遊戲, 推理遊戲, 實境解謎" />
   <meta name="author" content="笑芽" />
   <link rel="canonical" href="https://wbstory.site/" />
 
@@ -229,20 +229,25 @@
           </div>
         </div>
 
-        <div class="bg-bg-surface/60 rounded-xl border border-border-subtle overflow-hidden flex flex-col opacity-75">
-          <div class="h-48 bg-[#11131a] flex items-center justify-center">
-            <span class="text-base font-serif text-text-muted tracking-widest">[ 企劃檔案保密中 ]</span>
+        <div class="bg-bg-surface/90 rounded-xl border border-accent-gold/40 overflow-hidden flex flex-col glow-border transition duration-300">
+          <div class="h-48 bg-[#1a1c26] relative flex items-center justify-center overflow-hidden">
+            <img src="https://wbstory.site/image/project_02.png" alt="寶島冒險公會" class="w-full h-full object-cover transition duration-500 hover:scale-105"
+                 onerror="this.onerror=null; this.parentElement.classList.add('flex','items-center','justify-center'); this.parentElement.innerHTML='<div class=\'text-text-muted font-serif text-base tracking-widest\'>[ 寶島冒險公會 ]</div>';" />
+            <div class="absolute inset-0 bg-gradient-to-t from-bg-surface via-transparent to-transparent z-10 pointer-events-none"></div>
+            <span class="absolute top-3 left-3 z-20 bg-[#2D1B1E] border border-accent-crimson/50 text-[#E8DCCA] text-base font-serif font-medium px-3 py-1 rounded shadow">開發中</span>
           </div>
           <div class="p-6 flex-1 flex flex-col justify-between">
             <div>
-              <h3 class="text-2xl font-serif font-bold text-text-muted mb-3">寶島探險隊</h3>
-              <p class="text-base text-text-muted mb-4 leading-relaxed">
+              <h3 class="text-2xl font-serif font-bold text-text-headline mb-3">寶島冒險公會</h3>
+              <p class="text-base text-text-body mb-4 leading-relaxed line-clamp-3">
                 融合 TRPG 機制的實境冒險調查，滿足玩家渴望深入未知的偵探本能。
               </p>
+              <div class="text-base font-mono text-text-muted mb-6">遊玩人數：1-4 人 ｜ 時間：200 分鐘</div>
             </div>
-            <button disabled class="w-full py-3.5 px-4 rounded bg-bg-surface-hover text-text-muted text-base font-serif tracking-widest cursor-not-allowed border border-border-subtle">
-              COMING SOON
-            </button>
+            <a href="https://wbstory.site/product/adventure/" target="_blank" rel="noopener noreferrer"
+               class="block text-center w-full py-3.5 px-4 rounded bg-accent-gold hover:bg-accent-gold-light text-bg-primary font-serif font-bold text-base transition shadow">
+              前往購買作品 ➔
+            </a>
           </div>
         </div>
 
@@ -257,7 +262,7 @@
                 具有現代風格的搞笑情感推理劇，適合朋友或情侶共同在謊言中推敲真心。
               </p>
             </div>
-            <button disabled class="w-full py-3.5 px-4 rounded bg-bg-surface-hover text-text-muted text-base font-serif tracking-widest cursor-not-allowed border border-border-subtle">
+            <button disabled class="w-full py-3.5 px-4 rounded bg-bg-hover text-text-muted text-base font-serif tracking-widest cursor-not-allowed border border-border-subtle">
               COMING SOON
             </button>
           </div>
@@ -293,7 +298,7 @@
               <input type="text" id="puzzle-input" placeholder="請輸入案件名稱或編號..." 
                      class="w-full bg-[#090a0f] border border-border-subtle rounded px-4 py-3.5 text-text-headline font-mono text-base focus:outline-none focus:border-accent-gold transition" />
             </div>
-            <button type="submit" class="w-full bg-bg-surface-hover hover:bg-accent-gold hover:text-bg-primary text-text-headline text-base font-serif font-bold tracking-widest py-3.5 rounded transition border border-border-subtle">
+            <button type="submit" class="w-full bg-bg-hover hover:bg-accent-gold hover:text-bg-primary text-text-headline text-base font-serif font-bold tracking-widest py-3.5 rounded transition border border-border-subtle">
               [ 執行驗證 DECRYPT ]
             </button>
           </form>

@@ -3,18 +3,37 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>心理測驗殺人事件 | 木芽故事館 - 桌上實境解謎</title>
-  
-  <!-- Google Fonts -->
+  <title>心理測驗殺人事件 | 木芽故事館 Woodbud Story</title>
+
+  <!-- 基本 SEO 標籤 -->
+  <meta name="description" content="心理測驗殺人事件：一場由心理測驗開始的案件調查，透過 30 多份實體線索與數位互動網站，體驗偵探辦案的樂趣。遊玩人數 1-4 人，約 180 分鐘。" />
+  <meta name="keywords" content="心理測驗殺人事件, 木芽故事館, Woodbud Story, 本格推理, 沉浸式遊戲, 盒裝遊戲, 推理遊戲, 實境解謎" />
+  <meta name="author" content="笑芽" />
+  <link rel="canonical" href="https://wbstory.site/product/psychology/" />
+
+  <!-- Open Graph / 社群分享標籤 -->
+  <meta property="og:type" content="product" />
+  <meta property="og:url" content="https://wbstory.site/product/psychology/" />
+  <meta property="og:title" content="心理測驗殺人事件 | 木芽故事館 Woodbud Story" />
+  <meta property="og:description" content="一場由心理測驗開始的案件調查，透過實體線索，體驗偵探辦案的樂趣。" />
+  <meta property="og:image" content="https://wbstory.site/image/project_01.png" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="心理測驗殺人事件 | 木芽故事館" />
+  <meta name="twitter:description" content="一場由心理測驗開始的案件調查，透過實體線索，體驗偵探辦案的樂趣。" />
+  <meta name="twitter:image" content="https://wbstory.site/image/project_01.png" />
+
+  <!-- Google Fonts: Cinzel, Noto Serif TC, Noto Sans TC -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;700;900&display=swap" rel="stylesheet">
 
-  <!-- Tailwind CSS CDN & Lucide Icons -->
+  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
-  
-  <!-- 引入根目錄下的 CSS 樣式檔 (向上跳兩層 ../../) -->
+  <!-- 共用 CSS（位於網站根目錄，向上兩層） -->
   <link rel="stylesheet" href="../../css/style.css" />
 
   <script>
@@ -49,84 +68,98 @@
     }
   </script>
 </head>
-<body class="min-h-screen relative font-sans selection:bg-accent-gold selection:text-black">
+<body class="min-h-screen relative font-sans selection:bg-accent-gold selection:text-black text-base">
 
-  <!-- ================= 頂部導覽列 (NAVBAR) ================= -->
+  <!-- ================= 頂部導覽列 (NAVBAR)：與官網一致 ================= -->
   <header class="fixed top-0 left-0 right-0 z-40 bg-[#0D0E13]/90 backdrop-blur-md border-b border-border-subtle">
-    <div class="max-w-5xl mx-auto px-6 h-20 flex items-center justify-between">
+    <div class="max-w-6xl mx-auto px-6 h-20 flex items-center justify-between">
       <a href="../../index.html" class="flex items-center gap-3 group">
         <div class="w-10 h-10 rounded-full border border-border-subtle flex items-center justify-center p-0.5 bg-black group-hover:border-accent-gold transition overflow-hidden">
           <img src="../../image/logo.jpg" alt="Woodbud Logo" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='../../image/logo.png';" />
         </div>
         <div>
           <span class="font-serif font-bold text-lg tracking-wider text-text-headline group-hover:text-accent-gold transition">木芽故事館</span>
-          <span class="text-xs text-text-muted block font-serif tracking-[0.2em] uppercase">Woodbud Story</span>
+          <span class="text-base text-text-muted block font-serif tracking-[0.2em] uppercase leading-tight">Woodbud Story</span>
         </div>
       </a>
 
-      <nav class="flex items-center gap-6 text-base text-text-body font-medium">
-        <a href="../../index.html#projects" class="hover:text-accent-gold transition flex items-center gap-1.5 font-serif text-base">
-          <i data-lucide="arrow-left" class="w-5 h-5 text-accent-gold"></i> 返回解謎檔案
-        </a>
+      <nav class="hidden md:flex items-center gap-8 text-base text-text-body font-medium">
+        <a href="../../index.html#projects" class="nav-link text-accent-gold transition py-1">案件檔案</a>
+        <a href="../../index.html#minigame" class="nav-link hover:text-accent-gold transition py-1">試玩遊戲</a>
+        <a href="../../index.html#about" class="nav-link hover:text-accent-gold transition py-1">幕後密室</a>
+        <a href="../../index.html#dimensions" class="nav-link hover:text-accent-gold transition py-1">推理維度</a>
+        <a href="../../index.html#contact" class="nav-link hover:text-accent-gold transition py-1">發起通訊</a>
       </nav>
+
+      <button id="mobile-menu-btn" class="md:hidden text-text-headline p-1" aria-label="開啟選單">
+        <i data-lucide="menu" class="w-6 h-6"></i>
+      </button>
+    </div>
+
+    <div id="mobile-menu" class="hidden md:hidden bg-bg-surface border-b border-border-subtle px-6 py-5 space-y-4 text-base">
+      <a href="../../index.html#projects" class="block mobile-nav-link text-accent-gold">案件檔案 (Projects)</a>
+      <a href="../../index.html#minigame" class="block mobile-nav-link text-text-headline hover:text-accent-gold">試玩遊戲 (Minigames)</a>
+      <a href="../../index.html#about" class="block mobile-nav-link text-text-headline hover:text-accent-gold">幕後密室 (About)</a>
+      <a href="../../index.html#dimensions" class="block mobile-nav-link text-text-headline hover:text-accent-gold">推理維度 (Dimensions)</a>
+      <a href="../../index.html#contact" class="block mobile-nav-link text-text-headline hover:text-accent-gold">發起通訊 (Contact)</a>
     </div>
   </header>
 
   <!-- ================= 產品主要下單與預覽區塊 ================= -->
   <main class="pt-32 pb-24 px-6">
     <div class="max-w-5xl mx-auto">
-      
-      <!-- 麵包屑導航 (放大為 text-base) -->
+
+      <!-- 麵包屑導航 -->
       <div class="flex items-center gap-2.5 text-base font-mono text-text-muted mb-8">
         <a href="../../index.html" class="hover:text-accent-gold transition">首頁</a>
         <span>/</span>
-        <a href="../../index.html#projects" class="hover:text-accent-gold transition">解謎檔案</a>
+        <a href="../../index.html#projects" class="hover:text-accent-gold transition">案件檔案</a>
         <span>/</span>
         <span class="text-accent-gold">心理測驗殺人事件</span>
       </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
-        
+
         <!-- 左側：視覺媒體展示 (宣傳影音 / 實體內容物大圖) -->
         <div class="lg:col-span-7 space-y-6">
-          
+
           <!-- 1. 宣傳影片 Embed -->
           <div class="relative w-full aspect-video rounded-xl overflow-hidden border border-accent-gold/40 shadow-2xl bg-black">
-            <iframe class="w-full h-full" 
-                    src="https://www.youtube.com/embed/uvxkTrYSvis" 
-                    title="心理測驗殺人事件 官方宣傳影片" 
-                    frameborder="0" 
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+            <iframe class="w-full h-full"
+                    src="https://www.youtube.com/embed/uvxkTrYSvis"
+                    title="心理測驗殺人事件 官方宣傳影片"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                     allowfullscreen>
             </iframe>
           </div>
 
-          <!-- 2. 實物開箱照與說明文字 (放大為 text-base) -->
+          <!-- 2. 實物開箱照與說明文字 -->
           <div class="rounded-xl overflow-hidden border border-border-subtle bg-bg-surface group">
-            <img src="../../image/product_psychology_contents.jpg" alt="心理測驗殺人事件 完整解謎內容物" class="w-full h-auto object-cover transition duration-500 group-hover:scale-102" />
+            <img src="../../image/product_psychology_contents.jpg" alt="心理測驗殺人事件 完整內容物" class="w-full h-auto object-cover transition duration-500 group-hover:scale-[1.02]" />
             <div class="p-4 bg-bg-surface text-base font-mono text-text-muted text-center border-t border-border-subtle leading-relaxed">
-              ▲ 實體解謎包全內容物（包含 30+ 份案件證物、筆錄、現場照片與實體解謎道具）
+              ▲ 遊戲盒完整內容物（包含 30+ 份案件證物、筆錄、現場照片與實體調查道具）
             </div>
           </div>
         </div>
 
-        <!-- 右側：商品核心規格與改版預約面板 -->
+        <!-- 右側：商品核心規格與補貨通知面板 -->
         <div class="lg:col-span-5 bg-bg-surface/90 border border-border-subtle rounded-xl p-6 sm:p-8 sticky top-28 glow-border">
-          <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-accent-crimson/50 bg-accent-crimson/10 text-accent-crimson text-sm font-serif font-bold mb-4">
+          <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-accent-crimson/50 bg-[#2D1B1E] text-[#E8DCCA] text-base font-serif font-medium mb-4">
             <span class="w-2 h-2 rounded-full bg-accent-crimson animate-pulse"></span>
-            改版中 ｜ 暫無庫存
+            補貨中
           </div>
 
           <h1 class="text-3xl sm:text-4xl font-serif font-bold text-text-headline mb-3">
             心理測驗殺人事件
           </h1>
-          <p class="text-base font-mono text-accent-gold tracking-wider mb-6">桌上實境解謎系列 ｜ 沉浸式盒裝作品</p>
+          <p class="text-base font-mono text-accent-gold tracking-wider mb-6">本格推理 ｜ 沉浸式盒裝推理遊戲</p>
 
           <p class="text-base text-text-body leading-relaxed mb-6">
-            一位補習班老師的離奇命案，背後隱藏著什麼秘密？化身案件偵探，抽絲剝繭 3 萬字案情紀錄與 30 多份證物，找出心理測驗背後的唯一真相。
+            一場由心理測驗開始的案件調查。一位補習班老師的離奇命案，背後隱藏著什麼秘密？化身偵探，抽絲剝繭 3 萬字案情紀錄與 30 多份實體證物，找出心理測驗背後的唯一真相。
           </p>
 
-          <!-- 核心規格標籤 (說明文字放大為 text-base) -->
+          <!-- 核心規格標籤 -->
           <div class="grid grid-cols-3 gap-3 py-5 border-y border-border-subtle mb-6 text-center">
             <div>
               <div class="text-base text-text-muted font-serif">遊玩人數</div>
@@ -142,29 +175,37 @@
             </div>
           </div>
 
-          <!-- 價格與狀態 -->
+          <!-- 價格 -->
           <div class="flex items-baseline gap-3 mb-6">
             <span class="text-3xl font-serif font-bold text-accent-gold">NT$ 720</span>
             <span class="text-sm px-2.5 py-1 rounded bg-accent-gold/10 text-accent-gold font-bold">9 折</span>
             <span class="text-base text-text-muted line-through">原價 NT$ 800</span>
           </div>
 
-          <!-- 預約/下單區 -->
+          <!-- 下單 / 補貨通知區 -->
           <div class="space-y-5">
-            <button disabled class="w-full py-4 rounded bg-bg-surface-hover text-text-muted font-serif font-bold text-base cursor-not-allowed border border-border-subtle flex items-center justify-center gap-2">
-              <i data-lucide="package-x" class="w-5 h-5"></i> 作品改版中，暫停下單
+            <button disabled class="w-full py-4 rounded bg-bg-hover text-text-muted font-serif font-bold text-base cursor-not-allowed border border-border-subtle flex items-center justify-center gap-2">
+              <i data-lucide="package-x" class="w-5 h-5"></i> 補貨中，暫停下單
             </button>
 
-            <!-- 補貨通知登記 (提示語放大為 text-base) -->
+            <!-- 補貨通知登記（透過 Web3Forms 寄到工作室信箱） -->
             <form id="notify-form" class="pt-5 border-t border-border-subtle space-y-3">
-              <label class="block text-base font-serif text-text-muted">改版完成開放訂購時，第一時間通知我：</label>
+              <input type="hidden" name="access_key" value="3951ecda-0024-495d-b683-25e298e98796" />
+              <input type="hidden" name="subject" value="【木芽故事館】心理測驗殺人事件 補貨通知登記" />
+              <input type="hidden" name="from_name" value="木芽故事館官網通訊系統" />
+              <input type="hidden" name="type" value="補貨通知登記：心理測驗殺人事件" />
+              <input type="hidden" name="message" value="此訪客希望在「心理測驗殺人事件」補貨完成時收到通知。" />
+              <input type="checkbox" name="botcheck" class="hidden" style="display: none;" />
+
+              <label for="notify-email" class="block text-base font-serif text-text-muted">補貨完成開放訂購時，第一時間通知我：</label>
               <div class="flex gap-2">
-                <input type="email" required placeholder="請輸入您的 Email" 
-                       class="flex-1 bg-[#090a0f] border border-border-subtle rounded px-3.5 py-2.5 text-base text-text-headline focus:outline-none focus:border-accent-gold transition" />
-                <button type="submit" class="px-5 py-2.5 bg-accent-gold hover:bg-accent-gold-light text-bg-primary font-serif font-bold text-base rounded transition whitespace-nowrap">
-                  預約通知
+                <input type="email" id="notify-email" name="email" required placeholder="請輸入您的 Email"
+                       class="flex-1 min-w-0 bg-[#090a0f] border border-border-subtle rounded px-3.5 py-2.5 text-base text-text-headline focus:outline-none focus:border-accent-gold transition" />
+                <button type="submit" id="notify-submit-btn" class="px-5 py-2.5 bg-accent-gold hover:bg-accent-gold-light text-bg-primary font-serif font-bold text-base rounded transition whitespace-nowrap disabled:opacity-60 disabled:cursor-wait">
+                  <span id="notify-btn-text">預約通知</span>
                 </button>
               </div>
+              <div id="notify-result-msg" class="hidden p-3.5 rounded text-center text-base font-serif border"></div>
             </form>
           </div>
         </div>
@@ -180,24 +221,24 @@
             跨越螢幕邊界，將密室濃縮於掌心
           </h2>
           <p class="text-base text-text-body leading-relaxed">
-            打破單純紙上解謎的限制，結合實體觸感、數位互動網站與高密度懸疑劇本。
+            揉合紙本書寫、實體道具與數位互動，結合實體觸感、數位互動網站與高密度懸疑劇本。
           </p>
         </div>
 
         <div class="grid grid-cols-2 md:grid-cols-4 gap-5">
-          <div class="p-6 rounded-xl bg-bg-surface/60 border border-border-subtle text-center">
+          <div class="p-6 rounded-xl bg-bg-surface/60 border border-border-subtle hover:border-accent-gold/50 transition text-center">
             <div class="text-3xl sm:text-4xl font-serif font-bold text-accent-gold mb-2">30+</div>
             <div class="text-base text-text-muted font-serif">實體案件調查文件</div>
           </div>
-          <div class="p-6 rounded-xl bg-bg-surface/60 border border-border-subtle text-center">
+          <div class="p-6 rounded-xl bg-bg-surface/60 border border-border-subtle hover:border-accent-gold/50 transition text-center">
             <div class="text-3xl sm:text-4xl font-serif font-bold text-accent-gold mb-2">10 張</div>
             <div class="text-base text-text-muted font-serif">擬真現場與證物照片</div>
           </div>
-          <div class="p-6 rounded-xl bg-bg-surface/60 border border-border-subtle text-center">
+          <div class="p-6 rounded-xl bg-bg-surface/60 border border-border-subtle hover:border-accent-gold/50 transition text-center">
             <div class="text-3xl sm:text-4xl font-serif font-bold text-accent-gold mb-2">5 個</div>
             <div class="text-base text-text-muted font-serif">專屬數位互動網站</div>
           </div>
-          <div class="p-6 rounded-xl bg-bg-surface/60 border border-border-subtle text-center">
+          <div class="p-6 rounded-xl bg-bg-surface/60 border border-border-subtle hover:border-accent-gold/50 transition text-center">
             <div class="text-3xl sm:text-4xl font-serif font-bold text-accent-gold mb-2">30,000+</div>
             <div class="text-base text-text-muted font-serif">原創長篇推理劇本文本</div>
           </div>
@@ -209,7 +250,7 @@
         <div class="bg-bg-surface/40 border border-border-subtle rounded-2xl p-6 sm:p-10">
           <div class="max-w-2xl mx-auto text-center mb-8">
             <h2 class="text-2xl sm:text-3xl font-serif font-bold text-text-headline mb-3">
-              解謎包該如何遊玩？
+              這款推理遊戲該如何遊玩？
             </h2>
             <p class="text-base text-text-body leading-relaxed">
               拆封即玩、無需繁複準備。點擊下方影片，掌握完整辦案指南。
@@ -218,21 +259,21 @@
 
           <!-- 教學影片 Embed -->
           <div class="max-w-3xl mx-auto aspect-video rounded-xl overflow-hidden border border-border-subtle bg-black shadow-xl">
-            <iframe class="w-full h-full" 
-                    src="https://www.youtube.com/embed/0khE_ZLIrEo" 
-                    title="解謎包遊玩方式介紹" 
-                    frameborder="0" 
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+            <iframe class="w-full h-full"
+                    src="https://www.youtube.com/embed/0khE_ZLIrEo"
+                    title="心理測驗殺人事件 遊玩方式介紹"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                     allowfullscreen>
             </iframe>
           </div>
         </div>
       </section>
 
-      <!-- 3. 桌上實境解謎 vs 傳統娛樂比較表 -->
+      <!-- 3. 沉浸式推理遊戲 vs 傳統娛樂比較表 -->
       <section class="mt-20">
         <h2 class="text-2xl sm:text-3xl font-serif font-bold text-text-headline text-center mb-10">
-          為什麼選擇桌上實境解謎？
+          為什麼選擇沉浸式推理遊戲？
         </h2>
 
         <div class="overflow-x-auto">
@@ -240,7 +281,7 @@
             <thead>
               <tr class="border-b border-border-subtle bg-bg-surface text-accent-gold font-serif text-base">
                 <th class="p-4 sm:p-5">維度</th>
-                <th class="p-4 sm:p-5 bg-accent-gold/10 text-accent-gold-light font-bold border-x border-border-subtle">桌上實境解謎</th>
+                <th class="p-4 sm:p-5 bg-accent-gold/10 text-accent-gold-light font-bold border-x border-border-subtle">沉浸式推理遊戲</th>
                 <th class="p-4 sm:p-5 text-text-muted">實體密室逃脫</th>
                 <th class="p-4 sm:p-5 text-text-muted">解謎電玩遊戲</th>
               </tr>
@@ -248,7 +289,7 @@
             <tbody class="divide-y divide-border-subtle text-base text-text-body">
               <tr>
                 <td class="p-4 sm:p-5 font-bold text-text-headline">人數限制</td>
-                <td class="p-4 sm:p-5 bg-accent-gold/5 font-bold text-accent-gold border-x border-border-subtle">不限人數，1-4 人皆宜</td>
+                <td class="p-4 sm:p-5 bg-accent-gold/5 font-bold text-accent-gold border-x border-border-subtle">1-4 人皆宜，單人也能玩</td>
                 <td class="p-4 sm:p-5">需湊滿多人開團</td>
                 <td class="p-4 sm:p-5">通常僅限單人</td>
               </tr>
@@ -282,28 +323,28 @@
         </h2>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div class="p-6 rounded-xl bg-bg-surface/80 border border-border-subtle">
+          <div class="p-6 rounded-xl bg-bg-surface/80 border border-border-subtle hover:border-accent-gold/50 transition">
             <div class="text-base font-mono text-accent-gold mb-2">▍ 解謎電玩愛好者</div>
             <p class="text-base text-text-body leading-relaxed italic">
               「和電玩遊戲相比，桌上實境解謎多了很多實體道具，親手翻閱證物的感覺玩起來更有臨場感！」
             </p>
           </div>
 
-          <div class="p-6 rounded-xl bg-bg-surface/80 border border-border-subtle">
+          <div class="p-6 rounded-xl bg-bg-surface/80 border border-border-subtle hover:border-accent-gold/50 transition">
             <div class="text-base font-mono text-accent-gold mb-2">▍ 密室逃脫工作人員</div>
             <p class="text-base text-text-body leading-relaxed italic">
               「道具精緻度跟密室逃脫差不多，但不用提前預約，要約朋友聚會或者自己在家玩都更方便。」
             </p>
           </div>
 
-          <div class="p-6 rounded-xl bg-bg-surface/80 border border-border-subtle">
+          <div class="p-6 rounded-xl bg-bg-surface/80 border border-border-subtle hover:border-accent-gold/50 transition">
             <div class="text-base font-mono text-accent-gold mb-2">▍ 劇本殺資深玩家</div>
             <p class="text-base text-text-body leading-relaxed italic">
               「劇情深度非常厲害，跟劇本殺一樣有深度辦案的體驗，而且整體性價比非常高。」
             </p>
           </div>
 
-          <div class="p-6 rounded-xl bg-bg-surface/80 border border-border-subtle">
+          <div class="p-6 rounded-xl bg-bg-surface/80 border border-border-subtle hover:border-accent-gold/50 transition">
             <div class="text-base font-mono text-accent-gold mb-2">▍ 推理小說書迷</div>
             <p class="text-base text-text-body leading-relaxed italic">
               「在看推理小說時總是想跟著偵探一起推理，這個遊戲徹底滿足了我的推理欲，最後的劇情反轉也令人印象深刻。」
@@ -315,11 +356,23 @@
     </div>
   </main>
 
-  <!-- ================= 頁尾 FOOTER ================= -->
-  <footer class="py-10 bg-[#08090C] border-t border-border-subtle text-base text-text-muted font-serif">
-    <div class="max-w-5xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-      <p>© 2026 木芽故事館 Woodbud Story. All Rights Reserved.</p>
-      <a href="../../index.html" class="text-accent-gold hover:underline">返回木芽故事館首頁</a>
+  <!-- ================= 頁尾 FOOTER：與官網一致 ================= -->
+  <footer class="py-12 bg-[#08090C] border-t border-border-subtle text-base text-text-muted font-serif">
+    <div class="max-w-4xl mx-auto px-4 flex flex-col items-center justify-center text-center space-y-2">
+      <div class="text-lg font-serif font-bold text-text-headline tracking-wide">木芽故事館</div>
+      <div>統一編號：61060052</div>
+      <div>合作信箱：<a href="mailto:wbstory23@gmail.com" class="font-sans hover:text-accent-gold transition-colors">wbstory23@gmail.com</a></div>
+      <div class="pt-1">© 2026 木芽故事館. All Rights Reserved.</div>
+
+      <div class="pt-2">
+        <a href="https://www.instagram.com/wbstory23/" target="_blank" rel="noopener noreferrer"
+           title="追蹤木芽故事館 Instagram"
+           class="group inline-flex w-9 h-9 rounded-full border border-border-subtle bg-bg-surface items-center justify-center transition-all duration-300 hover:border-accent-gold hover:shadow-[0_0_12px_rgba(212,175,55,0.35)]">
+          <svg class="w-4.5 h-4.5 fill-current text-accent-gold/70 group-hover:text-accent-gold-light transition-colors duration-300" viewBox="0 0 24 24">
+            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+          </svg>
+        </a>
+      </div>
     </div>
   </footer>
 
@@ -328,11 +381,60 @@
       window.lucide.createIcons();
     }
 
-    // 預約通知簡易提交回應
-    document.getElementById('notify-form')?.addEventListener('submit', (e) => {
+    // 手機選單開關（與官網 nav.js 行為一致）
+    const mobileBtn = document.getElementById('mobile-menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    mobileBtn?.addEventListener('click', () => {
+      mobileMenu?.classList.toggle('hidden');
+    });
+    document.querySelectorAll('.mobile-nav-link').forEach(link => {
+      link.addEventListener('click', () => mobileMenu?.classList.add('hidden'));
+    });
+
+    // 補貨通知登記：透過 Web3Forms 寄送，結果顯示在表單下方（不跳 alert）
+    const notifyForm = document.getElementById('notify-form');
+    const notifyBtn = document.getElementById('notify-submit-btn');
+    const notifyBtnText = document.getElementById('notify-btn-text');
+    const notifyResult = document.getElementById('notify-result-msg');
+
+    const MSG_OK_CLASS = 'p-3.5 rounded text-center text-base font-serif border border-accent-gold/60 bg-[#162117] text-accent-gold';
+    const MSG_ERR_CLASS = 'p-3.5 rounded text-center text-base font-serif border border-accent-crimson bg-[#241315] text-red-300';
+
+    notifyForm?.addEventListener('submit', (e) => {
       e.preventDefault();
-      alert('【預約成功】改版完成開放訂購時，我們將第一時間通知您！');
-      e.target.reset();
+      notifyBtnText.textContent = '登記中...';
+      notifyBtn.disabled = true;
+      notifyResult.classList.add('hidden');
+
+      const json = JSON.stringify(Object.fromEntries(new FormData(notifyForm)));
+
+      fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: json
+      })
+      .then(async (response) => {
+        const res = await response.json();
+        if (response.status === 200) {
+          notifyResult.textContent = '✔ 登記成功！補貨完成開放訂購時，我們會第一時間通知您。';
+          notifyResult.className = MSG_OK_CLASS;
+          notifyForm.reset();
+        } else {
+          notifyResult.textContent = '✖ 登記失敗：' + (res.message || '請稍後再試');
+          notifyResult.className = MSG_ERR_CLASS;
+        }
+      })
+      .catch(() => {
+        notifyResult.textContent = '✖ 網路連線異常，請稍後再試，或直接來信至 wbstory23@gmail.com';
+        notifyResult.className = MSG_ERR_CLASS;
+      })
+      .then(() => {
+        notifyBtn.disabled = false;
+        notifyBtnText.textContent = '預約通知';
+      });
     });
   </script>
 </body>

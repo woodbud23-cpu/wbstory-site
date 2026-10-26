@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>寶島冒險公會 | 木芽故事館 Woodbud Story</title>
+
+  <!-- 基本 SEO 標籤 -->
+  <meta name="description" content="寶島冒險公會：你是公會新上任的調遣師，必須從履歷、委託、信件、報紙與道具中蒐集線索，為每個委託找出唯一最佳的冒險者。六週任務、20 位冒險者，遊玩人數 1-4 人，約 200 分鐘。（開發中）" />
+  <meta name="keywords" content="寶島冒險公會, 木芽故事館, Woodbud Story, 本格推理, 邏輯推理, 沉浸式遊戲, 盒裝遊戲, 推理遊戲, 角色調派" />
+  <meta name="author" content="笑芽" />
+  <link rel="canonical" href="https://wbstory.site/product/adventure/" />
+
+  <!-- Open Graph / 社群分享標籤 -->
+  <meta property="og:type" content="product" />
+  <meta property="og:url" content="https://wbstory.site/product/adventure/" />
+  <meta property="og:title" content="寶島冒險公會 | 木芽故事館 Woodbud Story" />
+  <meta property="og:description" content="你是冒險公會的新任調遣師。從履歷、委託、信件與報紙中找出線索，為每個委託找到唯一最佳的人選。" />
+  <meta property="og:image" content="https://wbstory.site/image/project_02.png" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="寶島冒險公會 | 木芽故事館" />
+  <meta name="twitter:description" content="你是冒險公會的新任調遣師。從履歷、委託、信件與報紙中找出線索，為每個委託找到唯一最佳的人選。" />
+  <meta name="twitter:image" content="https://wbstory.site/image/product_adventure_contents.jpg" />
+
+  <!-- Google Fonts: Cinzel, Noto Serif TC, Noto Sans TC -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;700;900&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- 共用 CSS（位於網站根目錄，向上兩層） -->
+  <link rel="stylesheet" href="../../css/style.css" />
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            bg: {
+              primary: '#0D0E13',
+              surface: '#151822',
+              hover: '#1E2230'
+            },
+            accent: {
+              gold: '#D4AF37',
+              'gold-light': '#F3E5AB',
+              crimson: '#9E2A2B',
+              'blue-mystic': '#3A506B'
+            },
+            text: {
+              headline: '#E8DCCA',
+              body: '#C5C6C7',
+              muted: '#7D828A'
+            }
+          },
+          fontFamily: {
+            serif: ['"Cinzel"', '"Noto Serif TC"', 'serif'],
+            sans: ['"Noto Sans TC"', 'sans-serif'],
+            mono: ['Courier New', 'monospace']
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="min-h-screen relative font-sans selection:bg-accent-gold selection:text-black text-base">
+
+  <!-- ================= 頂部導覽列 (NAVBAR)：與官網一致 ================= -->
+  <header class="fixed top-0 left-0 right-0 z-40 bg-[#0D0E13]/90 backdrop-blur-md border-b border-border-subtle">
+    <div class="max-w-6xl mx-auto px-6 h-20 flex items-center justify-between">
+      <a href="../../index.html" class="flex items-center gap-3 group">
+        <div class="w-10 h-10 rounded-full border border-border-subtle flex items-center justify-center p-0.5 bg-black group-hover:border-accent-gold transition overflow-hidden">
+          <img src="../../image/logo.jpg" alt="Woodbud Logo" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='../../image/logo.png';" />
+        </div>
+        <div>
+          <span class="font-serif font-bold text-lg tracking-wider text-text-headline group-hover:text-accent-gold transition">木芽故事館</span>
+          <span class="text-base text-text-muted block font-serif tracking-[0.2em] uppercase leading-tight">Woodbud Story</span>
+        </div>
+      </a>
+
+      <nav class="hidden md:flex items-center gap-8 text-base text-text-body font-medium">
+        <a href="../../index.html#projects" class="nav-link text-accent-gold transition py-1">案件檔案</a>
+        <a href="../../index.html#minigame" class="nav-link hover:text-accent-gold transition py-1">試玩遊戲</a>
+        <a href="../../index.html#about" class="nav-link hover:text-accent-gold transition py-1">幕後密室</a>
+        <a href="../../index.html#dimensions" class="nav-link hover:text-accent-gold transition py-1">推理維度</a>
+        <a href="../../index.html#contact" class="nav-link hover:text-accent-gold transition py-1">發起通訊</a>
+      </nav>
+
+      <button id="mobile-menu-btn" class="md:hidden text-text-headline p-1" aria-label="開啟選單">
+        <i data-lucide="menu" class="w-6 h-6"></i>
+      </button>
+    </div>
+
+    <div id="mobile-menu" class="hidden md:hidden bg-bg-surface border-b border-border-subtle px-6 py-5 space-y-4 text-base">
+      <a href="../../index.html#projects" class="block mobile-nav-link text-accent-gold">案件檔案 (Projects)</a>
+      <a href="../../index.html#minigame" class="block mobile-nav-link text-text-headline hover:text-accent-gold">試玩遊戲 (Minigames)</a>
+      <a href="../../index.html#about" class="block mobile-nav-link text-text-headline hover:text-accent-gold">幕後密室 (About)</a>
+      <a href="../../index.html#dimensions" class="block mobile-nav-link text-text-headline hover:text-accent-gold">推理維度 (Dimensions)</a>
+      <a href="../../index.html#contact" class="block mobile-nav-link text-text-headline hover:text-accent-gold">發起通訊 (Contact)</a>
+    </div>
+  </header>
+
+  <!-- ================= 產品主要資訊與預覽區塊 ================= -->
+  <main class="pt-32 pb-24 px-6">
+    <div class="max-w-5xl mx-auto">
+
+      <!-- 麵包屑導航 -->
+      <div class="flex items-center gap-2.5 text-base font-mono text-text-muted mb-8">
+        <a href="../../index.html" class="hover:text-accent-gold transition">首頁</a>
+        <span>/</span>
+        <a href="../../index.html#projects" class="hover:text-accent-gold transition">案件檔案</a>
+        <span>/</span>
+        <span class="text-accent-gold">寶島冒險公會</span>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
+
+        <!-- 左側：視覺媒體展示 (宣傳影音 / 實體內容物大圖) -->
+        <div class="lg:col-span-7 space-y-6">
+
+          <!-- 1. 宣傳影片 Embed
+               TODO：寶島冒險公會專屬宣傳影片拍攝完成後，請將下方 src 換成新的 YouTube 嵌入連結。
+               目前暫時沿用「心理測驗殺人事件」的影片。 -->
+          <div class="relative w-full aspect-video rounded-xl overflow-hidden border border-accent-gold/40 shadow-2xl bg-black">
+            <iframe class="w-full h-full"
+                    src="https://www.youtube.com/embed/uvxkTrYSvis"
+                    title="寶島冒險公會 官方宣傳影片"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen>
+            </iframe>
+          </div>
+
+          <!-- 2. 實物開箱照與說明文字 -->
+          <div class="rounded-xl overflow-hidden border border-border-subtle bg-bg-surface group">
+            <img src="../../image/product_adventure_contents.jpg" alt="寶島冒險公會 完整內容物" class="w-full h-auto object-cover transition duration-500 group-hover:scale-[1.02]" />
+            <div class="p-4 bg-bg-surface text-base font-mono text-text-muted text-center border-t border-border-subtle leading-relaxed">
+              ▲ 遊戲盒完整內容物（包含冒險者履歷、委託文件、會長來信、王國先鋒報與實體道具）
+            </div>
+          </div>
+        </div>
+
+        <!-- 右側：商品核心規格與上市通知面板 -->
+        <div class="lg:col-span-5 bg-bg-surface/90 border border-border-subtle rounded-xl p-6 sm:p-8 sticky top-28 glow-border">
+          <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-accent-blue-mystic/70 bg-[#141B27] text-[#E8DCCA] text-base font-serif font-medium mb-4">
+            <span class="w-2 h-2 rounded-full bg-accent-blue-mystic animate-pulse"></span>
+            開發中
+          </div>
+
+          <h1 class="text-3xl sm:text-4xl font-serif font-bold text-text-headline mb-3">
+            寶島冒險公會
+          </h1>
+          <p class="text-base font-mono text-accent-gold tracking-wider mb-6">本格推理 ｜ 角色調派推理遊戲</p>
+
+          <p class="text-base text-text-body leading-relaxed mb-6">
+            你是寶島冒險公會新上任的調遣師。每一週，公會都會送來新的委託與一疊冒險者履歷。誰的能力最合適？誰的厭惡會毀掉任務？從履歷、訪談、信件、報紙與道具中蒐集線索，為每個委託找出唯一最佳的人選，並揭開這座島嶼背後的真相。
+          </p>
+
+          <!-- 核心規格標籤 -->
+          <div class="grid grid-cols-3 gap-3 py-5 border-y border-border-subtle mb-6 text-center">
+            <div>
+              <div class="text-base text-text-muted font-serif">遊玩人數</div>
+              <div class="text-lg font-bold text-text-headline mt-1.5">1 - 4 人</div>
+            </div>
+            <div>
+              <div class="text-base text-text-muted font-serif">遊戲時長</div>
+              <div class="text-lg font-bold text-text-headline mt-1.5">約 200 分鐘</div>
+            </div>
+            <div>
+              <div class="text-base text-text-muted font-serif">任務週數</div>
+              <div class="text-lg font-bold text-text-headline mt-1.5">6 週任務</div>
+            </div>
+          </div>
+
+          <!-- 價格 -->
+          <div class="flex items-baseline gap-3 mb-6">
+            <span class="text-2xl font-serif font-bold text-accent-gold">NT$ 1290</span>
+          </div>
+
+          <!-- 下單 / 上市通知區 -->
+          <div class="space-y-5">
+            <button disabled class="w-full py-4 rounded bg-bg-hover text-text-muted font-serif font-bold text-base cursor-not-allowed border border-border-subtle flex items-center justify-center gap-2">
+              <i data-lucide="hammer" class="w-5 h-5"></i> 開發中，敬請期待
+            </button>
+
+            <!-- 上市通知登記（透過 Web3Forms 寄到工作室信箱） -->
+            <form id="notify-form" class="pt-5 border-t border-border-subtle space-y-3">
+              <input type="hidden" name="access_key" value="3951ecda-0024-495d-b683-25e298e98796" />
+              <input type="hidden" name="subject" value="【木芽故事館】寶島冒險公會 上市通知登記" />
+              <input type="hidden" name="from_name" value="木芽故事館官網通訊系統" />
+              <input type="hidden" name="type" value="上市通知登記：寶島冒險公會" />
+              <input type="hidden" name="message" value="此訪客希望在「寶島冒險公會」開放訂購時收到通知。" />
+              <input type="checkbox" name="botcheck" class="hidden" style="display: none;" />
+
+              <label for="notify-email" class="block text-base font-serif text-text-muted">正式開放訂購時，第一時間通知我：</label>
+              <div class="flex gap-2">
+                <input type="email" id="notify-email" name="email" required placeholder="請輸入您的 Email"
+                       class="flex-1 min-w-0 bg-[#090a0f] border border-border-subtle rounded px-3.5 py-2.5 text-base text-text-headline focus:outline-none focus:border-accent-gold transition" />
+                <button type="submit" id="notify-submit-btn" class="px-5 py-2.5 bg-accent-gold hover:bg-accent-gold-light text-bg-primary font-serif font-bold text-base rounded transition whitespace-nowrap disabled:opacity-60 disabled:cursor-wait">
+                  <span id="notify-btn-text">預約通知</span>
+                </button>
+              </div>
+              <div id="notify-result-msg" class="hidden p-3.5 rounded text-center text-base font-serif border"></div>
+            </form>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ================= 產品詳細介紹區 ================= -->
+
+      <!-- 1. 遊戲特色規格數據 -->
+      <section class="mt-20 pt-14 border-t border-border-subtle">
+        <div class="text-center max-w-2xl mx-auto mb-14">
+          <h2 class="text-2xl sm:text-3xl font-serif font-bold text-text-headline mb-4">
+            你不是偵探，是櫃檯人員<br class="hidden sm:block" />但每一張派遣單都是一場推理
+          </h2>
+          <p class="text-base text-text-body leading-relaxed">
+            以履歷、委託、信件、報紙與道具構成的六週任務，把「找出最適合的人選」變成一場完整的本格推理。
+          </p>
+        </div>
+
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-5">
+          <div class="p-6 rounded-xl bg-bg-surface/60 border border-border-subtle hover:border-accent-gold/50 transition text-center">
+            <div class="text-3xl sm:text-4xl font-serif font-bold text-accent-gold mb-2">20 位</div>
+            <div class="text-base text-text-muted font-serif">冒險者履歷與訪談紀錄</div>
+          </div>
+          <div class="p-6 rounded-xl bg-bg-surface/60 border border-border-subtle hover:border-accent-gold/50 transition text-center">
+            <div class="text-3xl sm:text-4xl font-serif font-bold text-accent-gold mb-2">6 週</div>
+            <div class="text-base text-text-muted font-serif">環環相扣的連載任務</div>
+          </div>
+          <div class="p-6 rounded-xl bg-bg-surface/60 border border-border-subtle hover:border-accent-gold/50 transition text-center">
+            <div class="text-3xl sm:text-4xl font-serif font-bold text-accent-gold mb-2">5 類</div>
+            <div class="text-base text-text-muted font-serif">履歷、委託、信件、報紙、道具</div>
+          </div>
+          <div class="p-6 rounded-xl bg-bg-surface/60 border border-border-subtle hover:border-accent-gold/50 transition text-center">
+            <div class="text-3xl sm:text-4xl font-serif font-bold text-accent-gold mb-2">1 個</div>
+            <div class="text-base text-text-muted font-serif">分級提示網站（卡關不怕）</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. 派遣守則（取自遊戲內會長來信，不含劇情劇透） -->
+      <section class="mt-20">
+        <div class="text-center max-w-2xl mx-auto mb-10">
+          <h2 class="text-2xl sm:text-3xl font-serif font-bold text-text-headline mb-3">
+            新人調遣師的三條守則
+          </h2>
+          <p class="text-base text-text-body leading-relaxed">
+            會長在入職信裡只留下簡單的原則，真正的難題，在於如何理解它們。
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="p-6 rounded-xl bg-bg-surface/80 border border-border-subtle hover:border-accent-gold/50 transition">
+            <div class="text-base font-mono text-accent-gold mb-2">▍ 守則 ONE</div>
+            <h3 class="text-xl font-serif font-bold text-text-headline mb-3">喜好看看就好，厭惡絕對避免</h3>
+            <p class="text-base text-text-body leading-relaxed">
+              每位冒險者都有自己的喜好與地雷。可以勉強的是喜好，不能碰的是厭惡。一次疏忽，整個任務就可能失敗。
+            </p>
+          </div>
+
+          <div class="p-6 rounded-xl bg-bg-surface/80 border border-border-subtle hover:border-accent-gold/50 transition">
+            <div class="text-base font-mono text-accent-gold mb-2">▍ 守則 TWO</div>
+            <h3 class="text-xl font-serif font-bold text-text-headline mb-3">委託很模糊，線索在別處</h3>
+            <p class="text-base text-text-body leading-relaxed">
+              委託書不會把一切說清楚。答案可能藏在信件、報紙、道具，甚至某位冒險者隨口說的一句話裡。
+            </p>
+          </div>
+
+          <div class="p-6 rounded-xl bg-bg-surface/80 border border-border-subtle hover:border-accent-gold/50 transition">
+            <div class="text-base font-mono text-accent-gold mb-2">▍ 守則 THREE</div>
+            <h3 class="text-xl font-serif font-bold text-text-headline mb-3">最佳人選，一定存在且唯一</h3>
+            <p class="text-base text-text-body leading-relaxed">
+              如果找不到，就代表你漏看了什麼。冒險者的自述不一定屬實，你得學會分辨哪些是事實、哪些只是說法。
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. 如何遊玩（影片 + 流程） -->
+      <section class="mt-20">
+        <div class="bg-bg-surface/40 border border-border-subtle rounded-2xl p-6 sm:p-10">
+          <div class="max-w-2xl mx-auto text-center mb-8">
+            <h2 class="text-2xl sm:text-3xl font-serif font-bold text-text-headline mb-3">
+              這款推理遊戲該如何遊玩？
+            </h2>
+            <p class="text-base text-text-body leading-relaxed">
+              拆封即玩、無需繁複準備。點擊下方影片，掌握完整辦案指南。
+            </p>
+          </div>
+
+          <!-- 教學影片 Embed
+               TODO：寶島冒險公會專屬遊玩教學影片拍攝完成後，請將下方 src 換成新的 YouTube 嵌入連結。
+               目前暫時沿用「心理測驗殺人事件」的教學影片。 -->
+          <div class="max-w-3xl mx-auto aspect-video rounded-xl overflow-hidden border border-border-subtle bg-black shadow-xl">
+            <iframe class="w-full h-full"
+                    src="https://www.youtube.com/embed/0khE_ZLIrEo"
+                    title="寶島冒險公會 遊玩方式介紹"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen>
+            </iframe>
+          </div>
+
+          <!-- 遊玩流程 -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mt-10">
+            <div class="p-5 rounded-xl bg-bg-surface/80 border border-border-subtle text-center">
+              <div class="text-3xl font-serif font-bold text-accent-gold mb-2">01</div>
+              <div class="text-lg font-serif font-bold text-text-headline mb-2">閱讀履歷</div>
+              <p class="text-base text-text-muted leading-relaxed">研究冒險者的技能、喜好、厭惡，以及訪談中的每一句話。</p>
+            </div>
+            <div class="p-5 rounded-xl bg-bg-surface/80 border border-border-subtle text-center">
+              <div class="text-3xl font-serif font-bold text-accent-gold mb-2">02</div>
+              <div class="text-lg font-serif font-bold text-text-headline mb-2">拆解委託</div>
+              <p class="text-base text-text-muted leading-relaxed">從委託文件裡找出任務的真正需求與隱藏條件。</p>
+            </div>
+            <div class="p-5 rounded-xl bg-bg-surface/80 border border-border-subtle text-center">
+              <div class="text-3xl font-serif font-bold text-accent-gold mb-2">03</div>
+              <div class="text-lg font-serif font-bold text-text-headline mb-2">蒐集線索</div>
+              <p class="text-base text-text-muted leading-relaxed">會長的來信、王國先鋒報與實體道具，都可能藏著關鍵。</p>
+            </div>
+            <div class="p-5 rounded-xl bg-bg-surface/80 border border-border-subtle text-center">
+              <div class="text-3xl font-serif font-bold text-accent-gold mb-2">04</div>
+              <div class="text-lg font-serif font-bold text-text-headline mb-2">蓋章回報</div>
+              <p class="text-base text-text-muted leading-relaxed">完成派遣後蓋上公務章，等待下週的消息，卡關時可前往提示網站。</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. 與其他推理娛樂比較表 -->
+      <section class="mt-20">
+        <h2 class="text-2xl sm:text-3xl font-serif font-bold text-text-headline text-center mb-10">
+          寶島冒險公會有什麼不一樣？
+        </h2>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse border border-border-subtle rounded-xl bg-bg-surface/60">
+            <thead>
+              <tr class="border-b border-border-subtle bg-bg-surface text-accent-gold font-serif text-base">
+                <th class="p-4 sm:p-5">維度</th>
+                <th class="p-4 sm:p-5 bg-accent-gold/10 text-accent-gold-light font-bold border-x border-border-subtle">寶島冒險公會</th>
+                <th class="p-4 sm:p-5 text-text-muted">實體密室逃脫</th>
+                <th class="p-4 sm:p-5 text-text-muted">一般推理劇本遊戲</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-border-subtle text-base text-text-body">
+              <tr>
+                <td class="p-4 sm:p-5 font-bold text-text-headline">推理核心</td>
+                <td class="p-4 sm:p-5 bg-accent-gold/5 font-bold text-accent-gold border-x border-border-subtle">以「派遣」為核心，找出每個委託的唯一最佳解</td>
+                <td class="p-4 sm:p-5">場景機關與道具解謎</td>
+                <td class="p-4 sm:p-5">多以找出兇手或真相為主</td>
+              </tr>
+              <tr>
+                <td class="p-4 sm:p-5 font-bold text-text-headline">人數限制</td>
+                <td class="p-4 sm:p-5 bg-accent-gold/5 font-bold text-accent-gold border-x border-border-subtle">1-4 人皆宜，單人也能玩</td>
+                <td class="p-4 sm:p-5">需湊滿多人開團</td>
+                <td class="p-4 sm:p-5">視作品而定</td>
+              </tr>
+              <tr>
+                <td class="p-4 sm:p-5 font-bold text-text-headline">劇情推進</td>
+                <td class="p-4 sm:p-5 bg-accent-gold/5 font-bold text-accent-gold border-x border-border-subtle">六週連載，前面的線索會在後面回收</td>
+                <td class="p-4 sm:p-5">多為單場一次性體驗</td>
+                <td class="p-4 sm:p-5">視作品而定</td>
+              </tr>
+              <tr>
+                <td class="p-4 sm:p-5 font-bold text-text-headline">卡關時</td>
+                <td class="p-4 sm:p-5 bg-accent-gold/5 font-bold text-accent-gold border-x border-border-subtle">分級提示網站，最後附完整推理過程</td>
+                <td class="p-4 sm:p-5">由現場人員給予提示</td>
+                <td class="p-4 sm:p-5">視作品而定</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- 5. 即將登場的冒險者（取自遊戲開頭的公開履歷，不含劇情劇透） -->
+      <section class="mt-20">
+        <div class="text-center max-w-2xl mx-auto mb-10">
+          <h2 class="text-2xl sm:text-3xl font-serif font-bold text-text-headline mb-3">
+            即將登場的冒險者
+          </h2>
+          <p class="text-base text-text-body leading-relaxed">
+            每位冒險者都有獨特的能力、癖好與地雷。<br class="hidden sm:block" />
+            記住：他們說的話，不一定全是真的。
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div class="p-6 rounded-xl bg-bg-surface/80 border border-border-subtle hover:border-accent-gold/50 transition">
+            <div class="text-base font-mono text-accent-gold mb-2">▍ 矮人族・戰士</div>
+            <h3 class="text-xl font-serif font-bold text-text-headline mb-3">布倫希爾德・銅鬚</h3>
+            <p class="text-base text-text-body leading-relaxed italic">
+              自稱「百年難得一遇的天才」，只接最有名望的英雄級委託，閃亮的鎧甲格外引人注目。
+            </p>
+          </div>
+
+          <div class="p-6 rounded-xl bg-bg-surface/80 border border-border-subtle hover:border-accent-gold/50 transition">
+            <div class="text-base font-mono text-accent-gold mb-2">▍ 龍人族・魔法師</div>
+            <h3 class="text-xl font-serif font-bold text-text-headline mb-3">伊格妮絲・蓋亞</h3>
+            <p class="text-base text-text-body leading-relaxed italic">
+              脾氣火爆，能讓大地升起岩壁，最討厭的兩樣東西是水災與笨蛋。
+            </p>
+          </div>
+
+          <div class="p-6 rounded-xl bg-bg-surface/80 border border-border-subtle hover:border-accent-gold/50 transition">
+            <div class="text-base font-mono text-accent-gold mb-2">▍ 矮人族・守護者</div>
+            <h3 class="text-xl font-serif font-bold text-text-headline mb-3">杜爾加・裂岩</h3>
+            <p class="text-base text-text-body leading-relaxed italic">
+              自稱曾是上個世紀古都大戰的工兵隊隊長，擅長雕刻，愛講過去的故事。
+            </p>
+          </div>
+
+          <div class="p-6 rounded-xl bg-bg-surface/80 border border-border-subtle hover:border-accent-gold/50 transition">
+            <div class="text-base font-mono text-accent-gold mb-2">▍ 獸人族・斥候</div>
+            <h3 class="text-xl font-serif font-bold text-text-headline mb-3">卡隆・泥爪</h3>
+            <p class="text-base text-text-body leading-relaxed italic">
+              瀕臨絕種的穿山甲，最愛偷東西，其他任務一概沒興趣。
+            </p>
+          </div>
+
+          <div class="p-6 rounded-xl bg-bg-surface/80 border border-border-subtle hover:border-accent-gold/50 transition">
+            <div class="text-base font-mono text-accent-gold mb-2">▍ 種族不明・骷髏騎士</div>
+            <h3 class="text-xl font-serif font-bold text-text-headline mb-3">無名</h3>
+            <p class="text-base text-text-body leading-relaxed italic">
+              一副會說話的骨頭架子，連自己的名字都不想提，只想開心地接任務。
+            </p>
+          </div>
+
+          <div class="p-6 rounded-xl bg-bg-surface/80 border border-border-subtle hover:border-accent-gold/50 transition">
+            <div class="text-base font-mono text-accent-gold mb-2">▍ 人類・弓箭手</div>
+            <h3 class="text-xl font-serif font-bold text-text-headline mb-3">克里斯・李</h3>
+            <p class="text-base text-text-body leading-relaxed italic">
+              武器是一枝便宜的鉛筆，討厭戰鬥、討伐，甚至討厭「完成委託」，卻堅稱自己能解決任何問題。
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 6. 開發進度 -->
+      <section class="mt-20">
+        <div class="bg-bg-surface/40 border border-border-subtle rounded-2xl p-6 sm:p-10">
+          <div class="text-center max-w-2xl mx-auto mb-8">
+            <h2 class="text-2xl sm:text-3xl font-serif font-bold text-text-headline mb-3">
+              開發進度
+            </h2>
+            <p class="text-base text-text-body leading-relaxed">
+              《寶島冒險公會》仍在開發中，留下您的 Email，正式開放訂購時我們會第一時間通知您。
+            </p>
+          </div>
+
+          <ul class="max-w-xl mx-auto space-y-4 text-base font-serif text-text-body">
+            <li class="flex items-center gap-3">
+              <i data-lucide="check-circle-2" class="w-5 h-5 text-accent-gold shrink-0"></i>
+              <span>六週劇本與謎題設計：<span class="text-accent-gold font-bold">已完成</span></span>
+            </li>
+            <li class="flex items-center gap-3">
+              <i data-lucide="check-circle-2" class="w-5 h-5 text-accent-gold shrink-0"></i>
+              <span>實體內容物製作：<span class="text-accent-gold font-bold">已完成</span></span>
+            </li>
+            <li class="flex items-center gap-3">
+              <i data-lucide="loader" class="w-5 h-5 text-text-muted shrink-0"></i>
+              <span>宣傳與教學影片拍攝：<span class="text-text-headline font-bold">籌備中</span></span>
+            </li>
+            <li class="flex items-center gap-3">
+              <i data-lucide="loader" class="w-5 h-5 text-text-muted shrink-0"></i>
+              <span>正式開放訂購：<span class="text-text-headline font-bold">敬請期待</span></span>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- ================= 頁尾 FOOTER：與官網一致 ================= -->
+  <footer class="py-12 bg-[#08090C] border-t border-border-subtle text-base text-text-muted font-serif">
+    <div class="max-w-4xl mx-auto px-4 flex flex-col items-center justify-center text-center space-y-2">
+      <div class="text-lg font-serif font-bold text-text-headline tracking-wide">木芽故事館</div>
+      <div>統一編號：61060052</div>
+      <div>合作信箱：<a href="mailto:wbstory23@gmail.com" class="font-sans hover:text-accent-gold transition-colors">wbstory23@gmail.com</a></div>
+      <div class="pt-1">© 2026 木芽故事館. All Rights Reserved.</div>
+
+      <div class="pt-2">
+        <a href="https://www.instagram.com/wbstory23/" target="_blank" rel="noopener noreferrer"
+           title="追蹤木芽故事館 Instagram"
+           class="group inline-flex w-9 h-9 rounded-full border border-border-subtle bg-bg-surface items-center justify-center transition-all duration-300 hover:border-accent-gold hover:shadow-[0_0_12px_rgba(212,175,55,0.35)]">
+          <svg class="w-4.5 h-4.5 fill-current text-accent-gold/70 group-hover:text-accent-gold-light transition-colors duration-300" viewBox="0 0 24 24">
+            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    if (window.lucide) {
+      window.lucide.createIcons();
+    }
+
+    // 手機選單開關（與官網 nav.js 行為一致）
+    const mobileBtn = document.getElementById('mobile-menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    mobileBtn?.addEventListener('click', () => {
+      mobileMenu?.classList.toggle('hidden');
+    });
+    document.querySelectorAll('.mobile-nav-link').forEach(link => {
+      link.addEventListener('click', () => mobileMenu?.classList.add('hidden'));
+    });
+
+    // 上市通知登記：透過 Web3Forms 寄送，結果顯示在表單下方（不跳 alert）
+    const notifyForm = document.getElementById('notify-form');
+    const notifyBtn = document.getElementById('notify-submit-btn');
+    const notifyBtnText = document.getElementById('notify-btn-text');
+    const notifyResult = document.getElementById('notify-result-msg');
+
+    const MSG_OK_CLASS = 'p-3.5 rounded text-center text-base font-serif border border-accent-gold/60 bg-[#162117] text-accent-gold';
+    const MSG_ERR_CLASS = 'p-3.5 rounded text-center text-base font-serif border border-accent-crimson bg-[#241315] text-red-300';
+
+    notifyForm?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      notifyBtnText.textContent = '登記中...';
+      notifyBtn.disabled = true;
+      notifyResult.classList.add('hidden');
+
+      const json = JSON.stringify(Object.fromEntries(new FormData(notifyForm)));
+
+      fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: json
+      })
+      .then(async (response) => {
+        const res = await response.json();
+        if (response.status === 200) {
+          notifyResult.textContent = '✔ 登記成功！《寶島冒險公會》開放訂購時，我們會第一時間通知您。';
+          notifyResult.className = MSG_OK_CLASS;
+          notifyForm.reset();
+        } else {
+          notifyResult.textContent = '✖ 登記失敗：' + (res.message || '請稍後再試');
+          notifyResult.className = MSG_ERR_CLASS;
+        }
+      })
+      .catch(() => {
+        notifyResult.textContent = '✖ 網路連線異常，請稍後再試，或直接來信至 wbstory23@gmail.com';
+        notifyResult.className = MSG_ERR_CLASS;
+      })
+      .then(() => {
+        notifyBtn.disabled = false;
+        notifyBtnText.textContent = '預約通知';
+      });
+    });
+  </script>
+</body>
+</html>

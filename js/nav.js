@@ -18,11 +18,6 @@ export function initNavigation() {
     });
   });
 
-  // 聯絡表單送出防呆
-  const contactForm = document.getElementById('contact-form');
-  contactForm?.addEventListener('submit', (e) => {
-    e.preventDefault();
-    alert('【木芽故事館】已收到您的合作訊息，我們將儘速與您聯繫！');
-    contactForm.reset();
-  });
+  // 註：聯絡表單的送出邏輯統一由 index.html 內的 Web3Forms 腳本處理，
+  // 此處不再重複綁定 submit 事件，避免跳出 alert 或在送出失敗時誤報成功。
 }
